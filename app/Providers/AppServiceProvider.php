@@ -53,5 +53,20 @@ class AppServiceProvider extends ServiceProvider
 
         Gate::policy(QaThread::class, QaThreadPolicy::class);
         Gate::policy(QaReply::class, QaReplyPolicy::class);
-        Gate::policy(Answer::class, AnswerPolicy::class);}
+        Gate::policy(Answer::class, AnswerPolicy::class);
+
+        // ログインユーザーが管理者であれば、一律で「false」を返して処理を強制拒否（ブロック）する
+        Gate::before(function ($user, string $ability) {
+
+            if (method_exists($user, 'isAdmin') && $user->isAdmin()) {
+                // 管理者は「回答の投稿（create）」と「回答の編集（update）」の権限だけは絶対に持たせない
+                if (in_array($ability, ['create', 'update'], true)) {
+                    return false;
+                }
+
+                // 強制削除（delete）など、上記以外の管理権限はこれまで通り無条件で通過（true）させる
+                return true;
+            }
+        });
+    }
 }

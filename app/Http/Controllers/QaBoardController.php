@@ -189,6 +189,7 @@ class QaBoardController extends Controller
             'replies' => $replies,
         ]);
     }
+
     /**
      * ⑤ 質問編集画面
      * GET /qa-board/{thread}/edit

@@ -43,7 +43,7 @@ use App\Http\Controllers\WeakDrillController;
 use App\Http\Controllers\WeakDrillResultController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\QaBoardController;                 // 追加：Q&A掲示板（受講者・コーチ用）
-use App\Http\Controllers\Admin\AdminQaBoardController;      // 追加：Q&A掲示板（管理者用）
+use App\Http\Controllers\AdminQaBoardController;      // 追加：Q&A掲示板（管理者用）
 
 
 Route::get('/', function () {
@@ -516,6 +516,6 @@ Route::middleware(['can:is-admin'])->group(function () {
     Route::get('/admin/qa-board', [AdminQaBoardController::class, 'index'])->name('admin.qa-board.index');
     Route::get('/admin/qa-board/{thread}', [AdminQaBoardController::class, 'show'])->name('admin.qa-board.show');
     Route::delete('/admin/qa-board/{thread}', [AdminQaBoardController::class, 'destroy'])->name('admin.qa-board.destroy');
-    Route::delete('/admin/qa-board/{thread}/replies/{admin_reply}', [AdminQaBoardController::class, 'destroyReply'])->name('admin.qa-board.destroyReply');
+    Route::delete('/admin/qa-board/{thread}/replies/{reply}', [AdminQaBoardController::class, 'destroyReply'])->name('admin.qa-board.replies.destroy');
 });
 

@@ -347,6 +347,14 @@ class User extends Authenticatable
     }
 
     /**
+     * ユーザーが管理者かどうかを判定するメソッド
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role === UserRole::Admin;
+    }
+
+    /**
      * ユーザーが現在「有効な受講生（または有効なスタッフ）」かどうかを判定する
      */
     public function isActiveUser(): bool
