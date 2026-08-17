@@ -42,6 +42,9 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\WeakDrillController;
 use App\Http\Controllers\WeakDrillResultController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\QaBoardController;                 // 追加：Q&A掲示板（受講者・コーチ用）
+use App\Http\Controllers\Admin\AdminQaBoardController;      // 追加：Q&A掲示板（管理者用）
+
 
 Route::get('/', function () {
     return auth()->check()
@@ -474,3 +477,45 @@ if (app()->environment('local')) {
         return view('_dev.components');
     })->name('_dev.components');
 }
+
+// ============================================================
+// Q&A掲示板ルート（受講生・コーチ・管理者）
+// ============================================================
+Route::middleware(['web', 'auth'])->group(function () {
+
+    // ① 一覧画面
+    Route::get('/qa-board', [QaBoardController::class, 'index'])->name('qa-board.index');
+
+    // ② 受講生のみがアクセスできる投稿系パス
+    Route::middleware(['can:is-student'])->group(function () {
+        Route::get('/qa-board/create', [QaBoardController::class, 'create'])->name('qa-board.create');
+        Route::post('/qa-board', [QaBoardController::class, 'store'])->name('qa-board.store');
+    });
+
+    // ③ 質問詳細画面
+    Route::get('/qa-board/{thread}', [QaBoardController::class, 'show'])->name('qa-board.show');
+
+    // ④ 質問の投稿者本人のみのアクション
+    Route::get('/qa-board/{thread}/edit', [QaBoardController::class, 'edit'])->name('qa-board.edit');
+    Route::patch('/qa-board/{thread}', [QaBoardController::class, 'update'])->name('qa-board.update');
+    Route::delete('/qa-board/{thread}', [QaBoardController::class, 'destroy'])->name('qa-board.destroy');
+    Route::post('/qa-board/{thread}/resolve', [QaBoardController::class, 'resolve'])->name('qa-board.resolve');
+    Route::post('/qa-board/{thread}/unresolve', [QaBoardController::class, 'unresolve'])->name('qa-board.unresolve');
+
+    // ⑤ 回答（リプライ）関連
+    Route::post('/qa-board/{thread}/replies', [QaBoardController::class, 'storeReply'])->name('qa-board.replies.store');
+
+    // 回答の投稿者本人のみ
+    Route::get('/qa-board/{thread}/replies/{reply}/edit', [QaBoardController::class, 'editReply'])->name('qa-board.replies.edit');
+    Route::patch('/qa-board/{thread}/replies/{reply}', [QaBoardController::class, 'updateReply'])->name('qa-board.replies.update');
+    Route::delete('/qa-board/{thread}/replies/{reply}', [QaBoardController::class, 'destroyReply'])->name('qa-board.replies.destroy');
+});
+
+    // ⑥ 管理者モデレーション
+Route::middleware(['can:is-admin'])->group(function () {
+    Route::get('/admin/qa-board', [AdminQaBoardController::class, 'index'])->name('admin.qa-board.index');
+    Route::get('/admin/qa-board/{thread}', [AdminQaBoardController::class, 'show'])->name('admin.qa-board.show');
+    Route::delete('/admin/qa-board/{thread}', [AdminQaBoardController::class, 'destroy'])->name('admin.qa-board.destroy');
+    Route::delete('/admin/qa-board/{thread}/replies/{admin_reply}', [AdminQaBoardController::class, 'destroyReply'])->name('admin.qa-board.destroyReply');
+});
+
