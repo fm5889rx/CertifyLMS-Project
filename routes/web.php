@@ -42,8 +42,9 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\WeakDrillController;
 use App\Http\Controllers\WeakDrillResultController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\QaBoardController;                 // 追加：Q&A掲示板（受講者・コーチ用）
-use App\Http\Controllers\AdminQaBoardController;      // 追加：Q&A掲示板（管理者用）
+use App\Http\Controllers\QaBoardController;             // 追加：Q&A掲示板（受講者・コーチ用）
+use App\Http\Controllers\AdminQaBoardController;        // 追加：Q&A掲示板（管理者用）
+use App\Http\Controllers\AdminMeetingPackController;    // 追加：面談パックのマスタ管理用コントローラ
 
 
 Route::get('/', function () {
@@ -519,3 +520,19 @@ Route::middleware(['can:is-admin'])->group(function () {
     Route::delete('/admin/qa-board/{thread}/replies/{reply}', [AdminQaBoardController::class, 'destroyReply'])->name('admin.qa-board.replies.destroy');
 });
 
+// 管理者（Admin）専用: 面談パックマスタ管理 (S-B-02)
+Route::middleware(['web', 'auth', 'can:is-admin'])->prefix('admin')->name('admin.')->group(function () {
+    // 1. CRUD基本ルート
+    Route::get('/meeting-packs', [AdminMeetingPackController::class, 'index'])->name('meeting-packs.index');
+    Route::get('/meeting-packs/create', [AdminMeetingPackController::class, 'create'])->name('meeting-packs.create');
+    Route::post('/meeting-packs', [AdminMeetingPackController::class, 'store'])->name('meeting-packs.store');
+    Route::get('/meeting-packs/{plan}', [AdminMeetingPackController::class, 'show'])->name('meeting-packs.show');
+    Route::get('/meeting-packs/{plan}/edit', [AdminMeetingPackController::class, 'edit'])->name('meeting-packs.edit');
+    Route::patch('/meeting-packs/{plan}', [AdminMeetingPackController::class, 'update'])->name('meeting-packs.update');
+    Route::delete('/meeting-packs/{plan}', [AdminMeetingPackController::class, 'destroy'])->name('meeting-packs.destroy');
+
+    // 2. 状態遷移（ライフサイクル）ルート
+    Route::post('/meeting-packs/{plan}/publish', [AdminMeetingPackController::class, 'publish'])->name('meeting-packs.publish');
+    Route::post('/meeting-packs/{plan}/archive', [AdminMeetingPackController::class, 'archive'])->name('meeting-packs.archive');
+    Route::post('/meeting-packs/{plan}/unarchive', [AdminMeetingPackController::class, 'unarchive'])->name('meeting-packs.unarchive');
+});

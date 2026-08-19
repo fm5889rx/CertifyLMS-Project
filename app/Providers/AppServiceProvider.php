@@ -59,11 +59,14 @@ class AppServiceProvider extends ServiceProvider
         Gate::before(function ($user, string $ability) {
 
             if (method_exists($user, 'isAdmin') && $user->isAdmin()) {
-                // 管理者は「回答の投稿（create）」と「回答の編集（update）」の権限だけは絶対に持たせない
-                if (in_array($ability, ['create', 'update'], true)) {
-                    return false;
-                }
 
+                // 対象（第一引数）が Answerモデルまたはクラス名である場合のみ、作成・編集を一律非表示にする
+                $target = $arguments[0] ?? null;
+                if ($target instanceof Answer || $target === Answer::class) {
+                    if (in_array($ability, ['create', 'update'], true)) {
+                        return false;
+                    }
+                }
                 // 強制削除（delete）など、上記以外の管理権限はこれまで通り無条件で通過（true）させる
                 return true;
             }
