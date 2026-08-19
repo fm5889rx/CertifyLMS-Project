@@ -86,7 +86,7 @@ class QaBoardControllerTest extends TestCase
                 'certification_id' => $this->certification->id,
                 'title'            => '未解決のテスト質問',
                 'body'             => '掲示板の本文です',
-                'status'           => QaThreadStatus::Resolved->value, // 💡正方向：先頭大文字
+                'status'           => QaThreadStatus::Resolved->value,
             ]);
         }
 
@@ -99,7 +99,7 @@ class QaBoardControllerTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('未解決のテスト質問');
-        $this->assertStringContainsString('status%5B', $response->getContent()); // 💡配列型クエリのエンコード対応
+        $this->assertStringContainsString('status%5B', $response->getContent());
     }
 
     /**
@@ -211,17 +211,17 @@ class QaBoardControllerTest extends TestCase
             'certification_id' => $this->certification->id,
             'title'            => 'already_resolved_question',
             'body'             => '本文',
-            'status'           => QaThreadStatus::Resolved->value, // 💡正方向：先頭大文字
+            'status'           => QaThreadStatus::Resolved->value,
             'is_resolved'      => true,
             'resolved_at'      => now(),
         ]);
 
-        // 💡 ログインユーザーは、Gateで一律falseになる管理者ではなく、一般ユーザーを使って衝突させます
+        // ログインユーザーは、Gateで一律falseになる管理者ではなく、一般ユーザーを使って衝突させる
         $response = $this->actingAs($this->anotherStudent)->post(route('qa-board.replies.store', $resolvedThread), [
             'body' => '解決済スレッドへの割り込み回答テキスト',
         ]);
 
-        $response->assertStatus(302); // 💡 本番コードの仕様：403ではなく親切リダイレクト（302）で戻る
+        $response->assertStatus(302); // 403ではなくリダイレクト（302）で戻る
         $this->assertDatabaseMissing('answers', [
             'question_id' => $resolvedThread->id,
             'body'        => '解決済スレッドへの割り込み回答テキスト',

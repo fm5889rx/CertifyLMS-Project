@@ -124,7 +124,7 @@ class AdminMeetingPackControllerTest extends TestCase
     public function test_面談パック新設時に必須項目や文字数上限を満たさない場合はバリデーションエラーになること(): void
     {
         $invalidData = [
-            'name'            => str_repeat('A', 101), // 💡 マイグレーション制限の100文字をオーバー
+            'name'            => str_repeat('A', 101), //  マイグレーション制限の100文字をオーバー
             'meeting_count'   => -5,                   // 不正な範囲の整数
             'price'           => -1000,                // 負の価格
         ];
@@ -200,14 +200,14 @@ class AdminMeetingPackControllerTest extends TestCase
             'name'                => '絶対に消してはいけない公開中パック',
             'meeting_count'       => 2,
             'price'               => 2000,
-            'status'              => MeetingPackStatus::Published->value, // 💡正方向：Published
+            'status'              => MeetingPackStatus::Published->value,
             'created_by_user_id'  => $this->adminUser->id,
             'updated_by_user_id'  => $this->adminUser->id,
         ]);
 
         $response = $this->actingAs($this->adminUser)->delete(route('admin.meeting-packs.destroy', $publishedPack->id));
 
-        // 💡 1件目の最大の学び：403ではなく、元の画面（302リリダイレクト）に戻されて、データが「残っていること」を厳格に検証！
+        // 403ではなく、元の画面（302リリダイレクト）に戻されて、データが「残っていること」を厳格に検証
         $response->assertStatus(302);
         $response->assertSessionHas('danger');
         $this->assertDatabaseHas('meeting_packs', ['id' => $publishedPack->id]);

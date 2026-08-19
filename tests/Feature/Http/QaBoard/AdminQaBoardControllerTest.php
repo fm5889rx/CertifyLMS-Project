@@ -35,7 +35,7 @@ class AdminQaBoardControllerTest extends TestCase
 
         $inProgressStatus = defined('\App\Enums\UserStatus::InProgress') ? \App\Enums\UserStatus::InProgress : 'in_progress';
 
-        // 💡 100%本物の管理者権限（UserRole::Admin）を持つアカウントを生成
+        // 管理者権限（UserRole::Admin）を持つアカウントを生成
         $this->adminUser = User::factory()->create([
             'role'   => UserRole::Admin ?? 'admin',
             'status' => $inProgressStatus,
@@ -58,7 +58,6 @@ class AdminQaBoardControllerTest extends TestCase
 
     /**
      * ② 管理者：質問スレッドの強制削除（依存回答の巻き添え物理削除を含む）テスト
-     * 💡 コントローラが要求する「string $thread_id」および「{admin_thread}」パラメータを完全網羅
      */
     public function test_管理権限により質問スレッドとそれに紐づく全回答を一括で強制物理削除できること(): void
     {
@@ -78,14 +77,14 @@ class AdminQaBoardControllerTest extends TestCase
             'body'        => '巻き添えで消える回答テキスト',
         ]);
 
-        // 💡 完璧に適合させた route('admin.qa-board.destroy') を使って強制DELETE！
+        // route('admin.qa-board.destroy') を使って強制DELETE
         $response = $this->actingAs($this->adminUser)->delete(route('admin.qa-board.destroy', [
             'thread' => $thread->id
         ]));
 
         $response->assertStatus(302);
         $response->assertRedirect(route('admin.qa-board.index'));
-        $response->assertSessionHas('danger'); // 💡 本物コントローラの出す 'danger' フラッシュメッセージを検証
+        $response->assertSessionHas('danger'); // フラッシュメッセージを検証
 
         // データベースから親も子（回答）も完全に跡形もなく消えていることを厳格に証明
         $this->assertDatabaseMissing('questions', ['id' => $thread->id]);
@@ -94,7 +93,6 @@ class AdminQaBoardControllerTest extends TestCase
 
     /**
      * ③ 管理者：不適切な回答（リプライ）のピンポイント削除テスト
-     * 💡 共通Bladeが要求する「{reply}」パラメータに100%完全適合
      */
     public function test_管理権限によりスレッド内の不適切な回答をピンポイントでモデレーション削除できること(): void
     {
@@ -114,7 +112,7 @@ class AdminQaBoardControllerTest extends TestCase
             'body'        => '管理者によって削除される不適切な回答テキスト',
         ]);
 
-        // 💡 共通Bladeと完全に同期した route名 と パラメータキー（reply）で送信！
+        // Bladeと同期した route名 と パラメータキー（reply）で送信
         $response = $this->actingAs($this->adminUser)->delete(route('admin.qa-board.replies.destroy', [
             'thread' => $thread->id,
             'reply'  => $badReply->id,

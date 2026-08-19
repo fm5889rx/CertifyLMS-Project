@@ -45,6 +45,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\QaBoardController;             // 追加：Q&A掲示板（受講者・コーチ用）
 use App\Http\Controllers\AdminQaBoardController;        // 追加：Q&A掲示板（管理者用）
 use App\Http\Controllers\AdminMeetingPackController;    // 追加：面談パックのマスタ管理用コントローラ
+use App\Http\Controllers\AdminPlanController;           // 追加：プランのマスタ管理用コントローラ
 
 
 Route::get('/', function () {
@@ -520,7 +521,9 @@ Route::middleware(['can:is-admin'])->group(function () {
     Route::delete('/admin/qa-board/{thread}/replies/{reply}', [AdminQaBoardController::class, 'destroyReply'])->name('admin.qa-board.replies.destroy');
 });
 
+// ============================================================
 // 管理者（Admin）専用: 面談パックマスタ管理 (S-B-02)
+// ============================================================
 Route::middleware(['web', 'auth', 'can:is-admin'])->prefix('admin')->name('admin.')->group(function () {
     // 1. CRUD基本ルート
     Route::get('/meeting-packs', [AdminMeetingPackController::class, 'index'])->name('meeting-packs.index');
@@ -535,4 +538,22 @@ Route::middleware(['web', 'auth', 'can:is-admin'])->prefix('admin')->name('admin
     Route::post('/meeting-packs/{plan}/publish', [AdminMeetingPackController::class, 'publish'])->name('meeting-packs.publish');
     Route::post('/meeting-packs/{plan}/archive', [AdminMeetingPackController::class, 'archive'])->name('meeting-packs.archive');
     Route::post('/meeting-packs/{plan}/unarchive', [AdminMeetingPackController::class, 'unarchive'])->name('meeting-packs.unarchive');
+});
+
+// ============================================================
+// 管理者（Admin）専用: プランマスタ管理 (S-B-03)
+// ============================================================
+Route::middleware(['web', 'auth', 'can:is-admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/plans', [AdminPlanController::class, 'index'])->name('plans.index');
+    Route::get('/plans/create', [AdminPlanController::class, 'create'])->name('plans.create');
+    Route::post('/plans', [AdminPlanController::class, 'store'])->name('plans.store');
+    Route::get('/plans/{plan}', [AdminPlanController::class, 'show'])->name('plans.show');
+    Route::get('/plans/{plan}/edit', [AdminPlanController::class, 'edit'])->name('plans.edit');
+    Route::put('/plans/{plan}', [AdminPlanController::class, 'update'])->name('plans.update');
+    Route::delete('/plans/{plan}', [AdminPlanController::class, 'destroy'])->name('plans.destroy');
+
+    // 状態遷移
+    Route::post('/plans/{plan}/publish', [AdminPlanController::class, 'publish'])->name('plans.publish');
+    Route::post('/plans/{plan}/archive', [AdminPlanController::class, 'archive'])->name('plans.archive');
+    Route::post('/plans/{plan}/unarchive', [AdminPlanController::class, 'unarchive'])->name('plans.unarchive');
 });
