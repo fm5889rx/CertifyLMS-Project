@@ -20,7 +20,7 @@ class QaThreadSeeder extends Seeder
         $allCertifications = Certification::all();
         $users = User::all();
 
-        // 💡 万が一、他のシーダーが回っていない場合のための安全対策
+        // 万が一、他のシーダーが回っていない場合のための安全対策
         if ($allCertifications->isEmpty()) {
             throw new \Exception('エラー: certificationsテーブルが空です。先に資格マスターのシーダーを実行してください。');
         }
