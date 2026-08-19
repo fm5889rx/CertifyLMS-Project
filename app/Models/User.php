@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 
 /**
  * プラン受講中のユーザーを表す Model。
@@ -309,5 +310,68 @@ class User extends Authenticatable
     public function scopeActive(Builder $query): Builder
     {
         return $query->whereIn('status', [UserStatus::InProgress, UserStatus::Graduated]);
+    }
+
+    /**
+     * 1人のユーザーは複数の質問を持つ
+     * @return HasMany<Question, $this>
+     */
+    public function questions(): HasMany
+    {
+        return $this->hasMany(Question::class);
+    }
+
+    /**
+     * 1人のユーザーは複数の回答を持つ
+     * @return HasMany<Answer, $this>
+     */
+    public function answers(): HasMany
+    {
+        return $this->hasMany(Answer::class);
+    }
+
+    /**
+     * ユーザーが受講生かどうかを判定するメソッド
+     */
+    public function isStudent(): bool
+    {
+        return $this->role === UserRole::Student;
+    }
+
+    /**
+     * ユーザーがコーチかどうかを判定するメソッド
+     */
+    public function isCoach(): bool
+    {
+        return $this->role === UserRole::Coach;
+    }
+
+    /**
+     * ユーザーが管理者かどうかを判定するメソッド
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role === UserRole::Admin;
+    }
+
+    /**
+     * ユーザーが現在「有効な受講生（または有効なスタッフ）」かどうかを判定する
+     */
+    public function isActiveUser(): bool
+    {
+        return $this->status === 'in_progress'
+            || $this->status === UserStatus::InProgress
+            || (isset($this->status->value)) && $this->status->value === 'in_progress';
+    }
+
+    /**
+     * コーチが、指定された資格IDを「担当しているか」を判定する
+     */
+    public function isAssignedToCertification(string $certificationId): bool
+    {
+        return DB::table('certification_coach_assignments')
+            ->where('user_id', $this->id)
+            ->where('certification_id', $certificationId)
+            ->exists();
     }
 }
