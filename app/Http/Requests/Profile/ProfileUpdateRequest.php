@@ -24,8 +24,8 @@ class ProfileUpdateRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'name'         => ['required', 'string', 'max:50'],            // 氏名：必須 / 50文字上限
-            'introduction' => ['nullable', 'string', 'max:1000'],          // 自己紹介：任意 / 1000文字上限
+            'name' => ['required', 'string', 'max:50'],            // 氏名：必須 / 50文字上限
+            'bio'  => ['nullable', 'string', 'max:1000'],          // 自己紹介：任意 / 1000文字上限
         ];
 
         // ログインしている本人のロールが「コーチ」の場合のみ、Blade内の入力欄に合わせて

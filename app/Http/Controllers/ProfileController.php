@@ -37,10 +37,9 @@ class ProfileController extends Controller
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
-        $data = $request->validated();
 
-        $user->name = $data['name'];
-        $user->bio = $data['introduction'] ?? null;
+        $user->name = $request->input('name');
+        $user->bio = $request->input('bio');
 
         $user->save();
 
