@@ -42,10 +42,11 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\WeakDrillController;
 use App\Http\Controllers\WeakDrillResultController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\QaBoardController;             // 追加：Q&A掲示板（受講者・コーチ用）
-use App\Http\Controllers\AdminQaBoardController;        // 追加：Q&A掲示板（管理者用）
-use App\Http\Controllers\AdminMeetingPackController;    // 追加：面談パックのマスタ管理用コントローラ
-use App\Http\Controllers\AdminPlanController;           // 追加：プランのマスタ管理用コントローラ
+use App\Http\Controllers\QaBoardController;             // 追加：S-B-01（受講者・コーチ用）
+use App\Http\Controllers\AdminQaBoardController;        // 追加：S-B-01（管理者用）
+use App\Http\Controllers\AdminMeetingPackController;    // 追加：S-B-02
+use App\Http\Controllers\AdminPlanController;           // 追加：S-B-03
+use App\Http\Controllers\NotificationController;        // 追加：S-B-04
 
 
 Route::get('/', function () {
@@ -556,4 +557,14 @@ Route::middleware(['web', 'auth', 'can:is-admin'])->prefix('admin')->name('admin
     Route::post('/plans/{plan}/publish', [AdminPlanController::class, 'publish'])->name('plans.publish');
     Route::post('/plans/{plan}/archive', [AdminPlanController::class, 'archive'])->name('plans.archive');
     Route::post('/plans/{plan}/unarchive', [AdminPlanController::class, 'unarchive'])->name('plans.unarchive');
+});
+
+// ============================================================
+// 👥 認証ユーザー共通: 通知基盤機能 (S-B-04)
+// ============================================================
+Route::middleware(['web', 'auth'])->group(function () {
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('/notifications/{notification}', [NotificationController::class, 'show'])->name('notifications.show');
+    Route::post('/notifications/{notification}/read', [NotificationController::class, 'read'])->name('notifications.markAsRead');
+    Route::post('/notifications/read-all', [NotificationController::class, 'readAll'])->name('notifications.markAllAsRead');
 });
