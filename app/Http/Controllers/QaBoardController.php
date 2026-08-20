@@ -12,9 +12,12 @@ use App\Models\Answer;
 use App\Models\Certification;
 use App\Models\QaThread;
 use App\Models\Question;
+use App\Models\User;
+use App\Notifications\QaReplyPostedNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -320,7 +323,18 @@ class QaBoardController extends Controller
             'body'        => $request->validated()['body'], // 統一された本文（body）
         ]);
 
-        return redirect()->route('qa-board.show', $thread)
+        // スレッドの所有者ユーザのIDを取り出す
+        $threadUser = User::find($thread->user_id);
+        if ($threadUser) {
+            // プロジェクトに元々含まれている本物の通知クラス（ QaReplyPostedNotification ）を発火
+            // 第2引数に「質問スレッドオブジェクト」を要求している場合は、そのまま $thread を渡す
+            if (class_exists(QaReplyPostedNotification::class)) {
+                $threadUser->notify(new QaReplyPostedNotification($thread));
+            }
+        }
+
+        // 元々のリダイレクト処理
+        return redirect()->route('qa-board.show', $thread->id)
             ->with('success', '回答を投稿しました。');
     }
 
