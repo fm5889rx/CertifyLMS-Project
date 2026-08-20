@@ -47,6 +47,7 @@ use App\Http\Controllers\AdminQaBoardController;        // 追加：S-B-01（管
 use App\Http\Controllers\AdminMeetingPackController;    // 追加：S-B-02
 use App\Http\Controllers\AdminPlanController;           // 追加：S-B-03
 use App\Http\Controllers\NotificationController;        // 追加：S-B-04
+use App\Http\Controllers\LearningGoalController;        // 追加：S-B-05
 
 
 Route::get('/', function () {
@@ -567,4 +568,21 @@ Route::middleware(['web', 'auth'])->group(function () {
     Route::get('/notifications/{notification}', [NotificationController::class, 'show'])->name('notifications.show');
     Route::post('/notifications/{notification}/read', [NotificationController::class, 'read'])->name('notifications.markAsRead');
     Route::post('/notifications/read-all', [NotificationController::class, 'readAll'])->name('notifications.markAllAsRead');
+});
+
+// ============================================================
+// 受講生本人専用: 個人学習目標管理 (S-B-05 最終確定版)
+// ============================================================
+Route::middleware(['web', 'auth'])->group(function () {
+    // 1. 追加フォーム
+    Route::post('/enrollments/{enrollment}/goals', [LearningGoalController::class, 'store'])->name('enrollment-goals.store');
+
+    // 2. 編集・更新・削除 (パス名: enrollment-goals)
+    Route::get('/enrollment-goals/{goal}/edit', [LearningGoalController::class, 'edit'])->name('enrollment-goals.edit');
+    Route::patch('/enrollment-goals/{goal}', [LearningGoalController::class, 'update'])->name('enrollment-goals.update');
+    Route::delete('/enrollment-goals/{goal}', [LearningGoalController::class, 'destroy'])->name('enrollment-goals.destroy');
+
+    // 3. 達成マーク(POST) と 達成解除(DELETE) の分離
+    Route::post('/enrollment-goals/{goal}/achieve', [LearningGoalController::class, 'achieve'])->name('enrollment-goals.achieve');
+    Route::delete('/enrollment-goals/{goal}/achieve', [LearningGoalController::class, 'unachieve'])->name('enrollment-goals.unachieve');
 });
