@@ -48,6 +48,7 @@ use App\Http\Controllers\AdminMeetingPackController;    // 追加：S-B-02
 use App\Http\Controllers\AdminPlanController;           // 追加：S-B-03
 use App\Http\Controllers\NotificationController;        // 追加：S-B-04
 use App\Http\Controllers\LearningGoalController;        // 追加：S-B-05
+use App\Http\Controllers\ProfileController;             // 追加：S-B-06
 
 
 Route::get('/', function () {
@@ -585,4 +586,17 @@ Route::middleware(['web', 'auth'])->group(function () {
     // 3. 達成マーク(POST) と 達成解除(DELETE) の分離
     Route::post('/enrollment-goals/{goal}/achieve', [LearningGoalController::class, 'achieve'])->name('enrollment-goals.achieve');
     Route::delete('/enrollment-goals/{goal}/achieve', [LearningGoalController::class, 'unachieve'])->name('enrollment-goals.unachieve');
+});
+
+// 📄 routes/web.php
+
+// 👥 認証ユーザー共通（修了済含む）: 設定・プロフィール管理 (S-B-06 最終適合版)
+Route::middleware(['web', 'auth'])->group(function () {
+    Route::get('/settings/profile', [ProfileController::class, 'edit'])->name('settings.profile.edit');
+    Route::patch('/settings/profile', [ProfileController::class, 'update'])->name('settings.profile.update'); // 👈 PATCH仕様
+    Route::put('/settings/password', [ProfileController::class, 'updatePassword'])->name('settings.password.update'); // 👈 PUT仕様
+
+    // アバター（アップロード / 削除）
+    Route::post('/settings/avatar', [ProfileController::class, 'uploadAvatar'])->name('settings.avatar.store');
+    Route::delete('/settings/avatar', [ProfileController::class, 'deleteAvatar'])->name('settings.avatar.destroy');
 });
