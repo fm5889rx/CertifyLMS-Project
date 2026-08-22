@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Models\Announcement;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -46,13 +47,14 @@ class NotificationController extends Controller
         // 1. ログイン中の本人の通知一覧から該当の通知を安全に牽引
         $notification = Auth::user()->notifications()->findOrFail($id);
 
-        // 2. 通知を既読化（4件目の要件）
+        // 2. 通知を既読化
         $notification->markAsRead();
 
-        // これが「お知らせ配信」の通知だった場合announcement_idを使って、お知らせ全文データを取得
+        // これが「お知らせ配信」の通知だった場合、announcement_idを使ってお知らせ全文データを取得
         $announcement = null;
         if (isset($notification->data['announcement_id'])) {
-            $announcement = \App\Models\Announcement::find($notification->data['announcement_id']);
+            $announcementId = strtoupper($notification->data['announcement_id']);
+            $announcement = Announcement::find($announcementId);
         }
 
         // 4. 提供済みの通知詳細ページ（notifications/show.blade.php）へデータを渡す
