@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Models\Announcement;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Notifications\DatabaseNotification; // 💡 ⭕ 純正モデルをダイレクトにインポート！
+use Illuminate\Notifications\DatabaseNotification;
 
 class NotificationController extends Controller
 {
@@ -19,8 +20,7 @@ class NotificationController extends Controller
     {
         $tab = $request->input('tab', 'all');
 
-        // 💡 ⭕ 修正の命：手動DBを廃止し、Laravel純正通知モデルを直撃！
-        // これにより、created_at や read_at が100%完璧に Carbon インスタンス(オブジェクト型)としてBladeへ渡ります。
+        // Laravel純正通知モデルでCarbonインスタンス(オブジェクト型)としてBladeへ送る
         $query = DatabaseNotification::where('notifiable_id', Auth::id())
             ->where('notifiable_type', 'App\Models\User');
 
@@ -44,27 +44,21 @@ class NotificationController extends Controller
      */
     public function show(string $id): View
     {
-        // 💡 純正モデルから1件を確実に特定（なければ404）
-        $notification = DatabaseNotification::where('id', $id)->firstOrFail();
+        // 1. ログイン中の本人の通知一覧から該当の通知を安全に牽引
+        $notification = Auth::user()->notifications()->findOrFail($id);
 
-        if ((string)$notification->notifiable_id !== (string)Auth::id()) {
-            abort(403, 'この通知を閲覧する権限がありません。');
+        // 2. 通知を既読化
+        $notification->markAsRead();
+
+        // これが「お知らせ配信」の通知だった場合、announcement_idを使ってお知らせ全文データを取得
+        $announcement = null;
+        if (isset($notification->data['announcement_id'])) {
+            $announcementId = strtoupper($notification->data['announcement_id']);
+            $announcement = Announcement::find($announcementId);
         }
 
-        // 詳細を開いた瞬間に自動で既読化（純正モデルが持つmarkAsReadメソッドで美しく更新）
-        if ($notification->read_at === null) {
-            $notification->markAsRead();
-        }
-
-        $unreadCount = DatabaseNotification::where('notifiable_id', Auth::id())
-            ->where('notifiable_type', 'App\Models\User')
-            ->whereNull('read_at')
-            ->count();
-
-        // 💡 純正オブジェクトの属性に合わせ、Bladeが扱いやすいようにデータをマウント
-        $notificationData = $notification->data;
-
-        return view('notifications.show', compact('notification', 'notificationData', 'unreadCount'));
+        // 4. 提供済みの通知詳細ページ（notifications/show.blade.php）へデータを渡す
+        return view('notifications.show', compact('notification', 'announcement'));
     }
 
     /**
@@ -83,7 +77,7 @@ class NotificationController extends Controller
             $notification->markAsRead();
         }
 
-        // 💡 完璧にパッキングされたJSONデータから、Q&A掲示板等の本物のリダイレクト先URLを抽出
+        // 完璧にパッキングされたJSONデータから、Q&A掲示板等の本物のリダイレクト先URLを抽出
         $data = $notification->data;
         $redirectUrl = $data['url'] ?? $data['path'] ?? route('dashboard.index');
 

@@ -49,6 +49,8 @@ use App\Http\Controllers\AdminPlanController;           // 追加：S-B-03
 use App\Http\Controllers\NotificationController;        // 追加：S-B-04
 use App\Http\Controllers\LearningGoalController;        // 追加：S-B-05
 use App\Http\Controllers\ProfileController;             // 追加：S-B-06
+use App\Http\Controllers\EnrollmentNoteController;      // 追加：S-B-07
+use App\Http\Controllers\AnnouncementController;        // 追加：S-B-08
 
 
 Route::get('/', function () {
@@ -588,9 +590,10 @@ Route::middleware(['web', 'auth'])->group(function () {
     Route::delete('/enrollment-goals/{goal}/achieve', [LearningGoalController::class, 'unachieve'])->name('enrollment-goals.unachieve');
 });
 
-// 📄 routes/web.php
 
-// 👥 認証ユーザー共通（修了済含む）: 設定・プロフィール管理 (S-B-06 最終適合版)
+// ============================================================
+// 認証ユーザー共通（修了済含む）: 設定・プロフィール管理 (S-B-06 最終適合版)
+// ============================================================
 Route::middleware(['web', 'auth'])->group(function () {
     Route::get('/settings/profile', [ProfileController::class, 'edit'])->name('settings.profile.edit');
     Route::patch('/settings/profile', [ProfileController::class, 'update'])->name('settings.profile.update'); // 👈 PATCH仕様
@@ -599,4 +602,25 @@ Route::middleware(['web', 'auth'])->group(function () {
     // アバター（アップロード / 削除）
     Route::post('/settings/avatar', [ProfileController::class, 'uploadAvatar'])->name('settings.avatar.store');
     Route::delete('/settings/avatar', [ProfileController::class, 'deleteAvatar'])->name('settings.avatar.destroy');
+});
+
+// ============================================================
+// 担当コーチ / 管理者専用: 受講生メモの管理 (S-B-07 最終適合版)
+// ============================================================
+Route::middleware(['web', 'auth'])->group(function () {
+    Route::post('/enrollments/{enrollment}/notes', [EnrollmentNoteController::class, 'store'])->name('enrollment-notes.store');
+    Route::get('/enrollment-notes/{note}/edit', [EnrollmentNoteController::class, 'edit'])->name('enrollment-notes.edit');
+    Route::patch('/enrollment-notes/{note}', [EnrollmentNoteController::class, 'update'])->name('enrollment-notes.update');
+    Route::delete('/enrollment-notes/{note}', [EnrollmentNoteController::class, 'destroy'])->name('enrollment-notes.destroy');
+});
+
+// ============================================================
+// 管理者専用: お知らせ配信機能 (S-B-08)
+Route::middleware(['web', 'auth'])->group(function () {
+    Route::get('/admin/announcements', [AnnouncementController::class, 'index'])->name('admin.announcements.index');
+    Route::get('/admin/announcements/create', [AnnouncementController::class, 'create'])->name('admin.announcements.create');
+    Route::post('/admin/announcements', [AnnouncementController::class, 'store'])->name('admin.announcements.store');
+    Route::get('/admin/announcements/{announcement}', [AnnouncementController::class, 'show'])->name('admin.announcements.show');
+
+    Route::get('/notifications/{notification}', [NotificationController::class, 'show'])->name('notifications.show');
 });
