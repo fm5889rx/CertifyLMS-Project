@@ -10,7 +10,7 @@ use App\Models\QuestionCategory;
 use App\Models\User;
 
 /**
- * 出題分野マスタの認可ポリシー。
+ * 出題分野マスタの認可ポリシー。（B-B-01修正版）
  *
  * - admin: 全資格配下を CRUD 可
  * - coach: 担当資格配下のみ CRUD 可
@@ -42,7 +42,9 @@ class QuestionCategoryPolicy
     {
         return match ($auth->role) {
             UserRole::Admin => true,
-            UserRole::Coach => false,
+            // 修正前：UserRole::Coach => false,
+            // 修正後：担当資格であれば、出題分野マスタの全CRUD操作を許可
+            UserRole::Coach => $certification->coaches()->where('users.id', $auth->id)->exists(),
             default => false,
         };
     }

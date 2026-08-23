@@ -36,6 +36,7 @@ class DatabaseSeeder extends Seeder
             EnrollmentNoteSeeder::class,            // 追加：S-B-07
             AnnouncementSeeder::class,              // 追加：S-B-08
             MeetingReminderTestDataSeeder::class,   // 追加：S-B-09
+            ContentManagementBugFixSeeder::class,   // 追加：B-B-01
         ]);
     }
 }
