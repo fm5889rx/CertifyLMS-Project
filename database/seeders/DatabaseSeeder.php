@@ -30,11 +30,12 @@ class DatabaseSeeder extends Seeder
             MockExamSeeder::class,
             ChatSeeder::class,
             CertificateSeeder::class,
-            QaThreadSeeder::class,          // 追加：S-B-01
-            NotificationSeeder::class,      // 追加：S-B-04
-            LearningGoalSeeder::class,      // 追加：S-B-05
-            EnrollmentNoteSeeder::class,    // 追加：S-B-07
-            AnnouncementSeeder::class,      // 追加：S-B-08
+            QaThreadSeeder::class,                  // 追加：S-B-01
+            NotificationSeeder::class,              // 追加：S-B-04
+            LearningGoalSeeder::class,              // 追加：S-B-05
+            EnrollmentNoteSeeder::class,            // 追加：S-B-07
+            AnnouncementSeeder::class,              // 追加：S-B-08
+            MeetingReminderTestDataSeeder::class,   // 追加：S-B-09
         ]);
     }
 }
