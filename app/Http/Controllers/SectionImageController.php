@@ -10,6 +10,7 @@ use App\Models\SectionImage;
 use App\UseCases\SectionImage\DestroyAction;
 use App\UseCases\SectionImage\StoreAction;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 
 /**
  * 教材内画像(SectionImage) のアップロード / 削除 Controller。JSON 応答で Markdown 編集 UI から呼ばれる。
@@ -27,11 +28,16 @@ class SectionImageController extends Controller
         ], 201);
     }
 
-    public function destroy(SectionImage $image, DestroyAction $action): JsonResponse
+    public function destroy(SectionImage $image, DestroyAction $action): JsonResponse|RedirectResponse
     {
         $this->authorize('delete', $image);
 
         $action($image);
+
+        // 通常のWebフォーム送信時はリダイレクトバック
+        if (!request()->expectsJson() && !request()->ajax()) {
+            return redirect()->back()->with('success', '教材内画像を削除しました。');
+        }
 
         return response()->json(null, 204);
     }
