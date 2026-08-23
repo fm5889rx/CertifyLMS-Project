@@ -8,7 +8,8 @@ use App\Models\Section;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * Section 編集中の Markdown プレビュー API リクエスト。MarkdownRenderingService で HTML 化されたサニタイズ済み出力を返却する。
+ * Section 編集中の Markdown プレビュー API リクエスト。（B-B-01修正版）
+ * MarkdownRenderingService で HTML 化されたサニタイズ済み出力を返却する。
  */
 class PreviewRequest extends FormRequest
 {
@@ -16,8 +17,9 @@ class PreviewRequest extends FormRequest
     {
         $section = $this->route('section');
 
+        // 修正前：return $section instanceof Section && ($this->user()?->can('preview', $section) ?? false);
         return $section instanceof Section
-            && ($this->user()?->can('preview', $section) ?? false);
+            && ($this->user()?->can('update', $section) ?? false);
     }
 
     /**

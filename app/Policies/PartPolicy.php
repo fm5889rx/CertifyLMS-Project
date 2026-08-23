@@ -11,7 +11,7 @@ use App\Models\Part;
 use App\Models\User;
 
 /**
- * Part の認可ポリシー。
+ * Part の認可ポリシー。(B-B-01 による修正版)
  *
  * - admin: 全資格配下を CRUD 可
  * - coach: 担当資格(certification_coach_assignments)配下のみ CRUD 可
@@ -19,20 +19,30 @@ use App\Models\User;
  */
 class PartPolicy
 {
+    /**
+     * 【バグ修正】：担当資格配下の教材管理一覧（Part一覧）へのアクセス解放
+     */
     public function viewAny(User $auth, Certification $certification): bool
     {
         return match ($auth->role) {
             UserRole::Admin => true,
-            UserRole::Coach => false,
+            // 修正前：UserRole::Coach => false,
+            // 修正後：ログイン中のコーチが「担当資格」にアサインされているかリレーションでチェック
+            UserRole::Coach => $this->assignedCoach($auth, $certification),
             default => false,
         };
     }
 
+    /**
+     * 【バグ修正】：担当資格配下の各教材詳細（Part詳細等）へのアクセス解放
+     */
     public function view(User $auth, Part $part): bool
     {
         return match ($auth->role) {
             UserRole::Admin => true,
-            UserRole::Coach => false,
+            // 修正前: UserRole::Coach => false,
+            // 修正後：親リレーション「$part->certification」を通じて担当資格かをチェック
+            UserRole::Coach => $this->assignedCoach($auth, $part->certification),
             default => $part->status === ContentStatus::Published,
         };
     }
@@ -67,11 +77,16 @@ class PartPolicy
         return $this->canManage($auth, $certification);
     }
 
+    /**
+     * 【バグ修正】：作成・編集・削除・公開・並び替えに関する共通権門番の解放
+     */
     private function canManage(User $auth, Certification $certification): bool
     {
         return match ($auth->role) {
             UserRole::Admin => true,
-            UserRole::Coach => false,
+            // 修正前: UserRole::Coach => false,
+            // 修正後：ここを一括解放することで、配下のChapter/Section/演習問題等のCRUDの403エラーを無くす
+            UserRole::Coach => $this->assignedCoach($auth, $certification),
             default => false,
         };
     }
