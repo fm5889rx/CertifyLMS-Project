@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Feature\Http\Notification;
+namespace Tests\Feature\Http\Notifications;
 
 use App\Models\User;
 use App\Models\Question;
