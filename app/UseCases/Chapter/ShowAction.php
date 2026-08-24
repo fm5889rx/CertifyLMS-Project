@@ -8,6 +8,7 @@ use App\Models\Chapter;
 
 /**
  * Chapter 詳細取得ユースケース。親 Part / Certification と配下 Section を Eager Load する。
+ * B-B-02修正版
  */
 final class ShowAction
 {
@@ -15,7 +16,7 @@ final class ShowAction
     {
         return $chapter->load([
             'part.certification',
-            'sections',
+            'sections' => fn ($q) => $q->ordered(), // B-B-02：ordered()追加
         ]);
     }
 }
