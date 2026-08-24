@@ -48,7 +48,7 @@ class LearningContentFilterTest extends TestCase
             'name' => 'テストフィルタカテゴリ',
         ]);
 
-        // 初期状態は「公開停止（Private / Archived）」状態の資格をマウント
+        // 初期状態は「公開停止（Archived）」状態の資格をマウント
         $statusArchived = defined('\App\Enums\CertificationStatus::Archived')
             ? CertificationStatus::Archived
             : (defined('\App\Enums\CertificationStatus::Private') ? CertificationStatus::Private : 'archived');
