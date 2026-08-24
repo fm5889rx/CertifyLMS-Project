@@ -38,6 +38,7 @@ class DatabaseSeeder extends Seeder
             MeetingReminderTestDataSeeder::class,       // 追加：S-B-09
             ContentManagementBugFixSeeder::class,       // 追加：B-B-01
             ContentManagementSortBugFixSeeder::class,   // 追加：B-B-02
+            LearningContentBugFixSeeder::class,         // 追加：B-B-03
         ]);
     }
 }

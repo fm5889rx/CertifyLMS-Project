@@ -11,7 +11,7 @@ use App\Models\Part;
 use App\Models\User;
 
 /**
- * Part の認可ポリシー。(B-B-01 による修正版)
+ * Part の認可ポリシー。(B-B-01 による修正版)->（B-B-03による修正版）
  *
  * - admin: 全資格配下を CRUD 可
  * - coach: 担当資格(certification_coach_assignments)配下のみ CRUD 可
@@ -20,7 +20,7 @@ use App\Models\User;
 class PartPolicy
 {
     /**
-     * 【バグ修正】：担当資格配下の教材管理一覧（Part一覧）へのアクセス解放
+     * 【B-B-01修正】：担当資格配下の教材管理一覧（Part一覧）へのアクセス解放
      */
     public function viewAny(User $auth, Certification $certification): bool
     {
@@ -34,16 +34,21 @@ class PartPolicy
     }
 
     /**
-     * 【バグ修正】：担当資格配下の各教材詳細（Part詳細等）へのアクセス解放
+     * 【B-B-01修正】：担当資格配下の各教材詳細（Part詳細等）へのアクセス解放
+     * 
      */
     public function view(User $auth, Part $part): bool
     {
         return match ($auth->role) {
             UserRole::Admin => true,
-            // 修正前: UserRole::Coach => false,
-            // 修正後：親リレーション「$part->certification」を通じて担当資格かをチェック
+            // B-B-01修正前：UserRole::Coach => false,
+            // B-B-01修正後：親リレーション「$part->certification」を通じて担当資格かをチェック
             UserRole::Coach => $this->assignedCoach($auth, $part->certification),
-            default => $part->status === ContentStatus::Published,
+            // B-B-03修正前：default => $part->status === ContentStatus::Published,
+            // B-B-03修正後：教材自体が Published であり、かつ親資格のステータスも Publishedである場合のみ閲覧を許可
+            default => $part->status === ContentStatus::Published
+                && $part->certification
+                && $part->certification->status === \App\Enums\CertificationStatus::Published,
         };
     }
 
@@ -78,7 +83,7 @@ class PartPolicy
     }
 
     /**
-     * 【バグ修正】：作成・編集・削除・公開・並び替えに関する共通権門番の解放
+     * 【B-B-01バグ修正】：作成・編集・削除・公開・並び替えに関する共通権門番の解放
      */
     private function canManage(User $auth, Certification $certification): bool
     {

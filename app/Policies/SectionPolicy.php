@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Policies;
 
 use App\Enums\ContentStatus;
+use App\Enums\CertificationStatus;      // 追加：B-B-03
 use App\Enums\UserRole;
 use App\Models\Certification;
 use App\Models\Chapter;
@@ -12,7 +13,7 @@ use App\Models\Section;
 use App\Models\User;
 
 /**
- * Section の認可ポリシー。（B-B-01修正版）
+ * Section の認可ポリシー。（B-B-01修正版）->（B-B-03修正版）
  *
  * - admin: 全資格配下を CRUD 可
  * - coach: 担当資格配下のみ CRUD 可、Draft 状態の view も可
@@ -44,7 +45,13 @@ class SectionPolicy
             UserRole::Coach => $section->chapter && $section->chapter->part && $section->chapter->part->certification
                 ? $this->assignedCoach($auth, $section->chapter->part->certification)
                 : false,
-            default => $section->status === ContentStatus::Published,
+            // B-B-03修正前：default => $section->status === ContentStatus::Published,
+            // B-B-03修正後：最小単位のSectionでも、3階層を遡って親資格のステータスが Published であることをチェック
+            default => $section->status === ContentStatus::Published
+                && $section->chapter
+                && $section->chapter->part
+                && $section->chapter->part->certification
+                && $section->chapter->part->certification->status === CertificationStatus::Published,
         };
     }
 

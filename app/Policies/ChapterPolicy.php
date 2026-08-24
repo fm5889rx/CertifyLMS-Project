@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Policies;
 
 use App\Enums\ContentStatus;
+use App\Enums\CertificationStatus;      // 追加：B-B-03
 use App\Enums\UserRole;
 use App\Models\Certification;
 use App\Models\Chapter;
@@ -12,7 +13,7 @@ use App\Models\Part;
 use App\Models\User;
 
 /**
- * Chapter の認可ポリシー。(B-B-01修正版)
+ * Chapter の認可ポリシー。(B-B-01修正版)->（B-B-03修正版）
  */
 class ChapterPolicy
 {
@@ -38,7 +39,12 @@ class ChapterPolicy
             UserRole::Coach => $chapter->part && $chapter->part->certification
                 ? $this->assignedCoach($auth, $chapter->part->certification)
                 : false,
-            default => $chapter->status === ContentStatus::Published,
+            // B-B-03修正前：default => $chapter->status === ContentStatus::Published,
+            // B-B-03修正後：最上位の親資格のステータスも Published であることをチェック
+            default => $chapter->status === ContentStatus::Published
+                && $chapter->part
+                && $chapter->part->certification
+                && $chapter->part->certification->status === CertificationStatus::Published,
         };
     }
 
