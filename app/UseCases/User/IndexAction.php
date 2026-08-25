@@ -10,7 +10,7 @@ use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 /**
- * 管理者向けユーザー一覧 (`UserController::index`) のクエリ Action。
+ * 管理者向けユーザー一覧 (`UserController::index`) のクエリ Action。（B-B-04修正版）
  *
  * role / status / keyword フィルタを適用し、in_progress → invited → graduated → withdrawn のステータス
  * 優先順位 + created_at 降順で paginate する。`status=withdrawn` 指定時のみ soft delete 済の User を含める。
@@ -25,7 +25,13 @@ final class IndexAction
     ): LengthAwarePaginator {
         $query = User::query();
 
-        $query->withTrashed();
+        // 修正前: $query->withTrashed(); （一律で退会者を含めてしまっていた）
+        // 修正後：仕様コメントおよび要件の通り、状態フィルタ（$status）が明示的に
+        // 「UserStatus::Withdrawn（退会済）」に指定されている場合のみ、論理削除（soft delete）された
+        // 退会済みユーザーを表示
+        if ($status === UserStatus::Withdrawn) {
+            $query->withTrashed();
+        }
 
         if ($keyword !== null && $keyword !== '') {
             $query->where(function ($q) use ($keyword) {
