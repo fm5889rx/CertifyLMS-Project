@@ -101,6 +101,14 @@ final class OnboardAction
                 );
             }
 
+            // B-B-06で追加
+            // ユーザー側の更新がコミットされる同じトランザクション内において、
+            // この招待データ自体を「受諾済み（Accepted）」へと移行し、受諾日時を保存
+            $invitation->forceFill([
+                'status' => InvitationStatus::Accepted,
+                'accepted_at' => $now, // 💡 setupで生成した $now をそのまま流用
+            ])->save();
+
             return $user->refresh();
         });
 
