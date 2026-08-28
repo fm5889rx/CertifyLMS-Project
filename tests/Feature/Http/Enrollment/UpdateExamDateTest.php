@@ -11,7 +11,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
- * 受講生本人による目標受験日設定 (`enrollments.updateExamDate`) の検証。
+ * 受講生本人による目標受験日設定 (`enrollments.updateExamDate`) の検証。（B-B-08修正版）
  * 本人は設定 / 変更でき、他受講生は 403、passed は 403、過去日は 422。
  */
 class UpdateExamDateTest extends TestCase
@@ -32,8 +32,10 @@ class UpdateExamDateTest extends TestCase
             ->patch(route('enrollments.updateExamDate', $enrollment), ['exam_date' => $examDate]);
 
         // Assert
+        // B-B-08で追加
+        // assertSessionHas()の検証内容にフラッシュメッセージを追加
         $response->assertRedirect(route('enrollments.show', $enrollment));
-        $response->assertSessionHas('success');
+        $response->assertSessionHas('success', '目標受験日を更新しました。');
         $this->assertDatabaseHas('enrollments', [
             'id' => $enrollment->id,
             'exam_date' => $examDate,

@@ -168,8 +168,10 @@ class EnrollmentController extends Controller
     ): RedirectResponse {
         $action($enrollment, $request->validated());
 
+        // B-B=08による追加
+        // リダイレクト先をダッシュボードから受験登録の詳細画面に変更
         return redirect()
-            ->route('dashboard.index')
+            ->route('enrollments.show', $enrollment)
             ->with('success', '目標受験日を更新しました。');
     }
 
