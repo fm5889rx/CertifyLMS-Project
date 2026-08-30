@@ -26,7 +26,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 /**
- * 受講登録 Controller。3 ロール共通の閲覧導線(index / show)を提供する。
+ * 受講登録 Controller。3 ロール共通の閲覧導線(index / show)を提供する。(B-B-08修正版)
  *
  * - student: 自分の受講登録 一覧 / 詳細 + 自己登録 / 受講解除 / failed からの再挑戦 + 目標受験日の設定
  * - coach: 担当資格に登録された受講生の一覧 / 詳細(進捗カード + コーチメモ + 個人目標閲覧)
@@ -168,7 +168,7 @@ class EnrollmentController extends Controller
     ): RedirectResponse {
         $action($enrollment, $request->validated());
 
-        // B-B=08による追加
+        // B-B-08による追加
         // リダイレクト先をダッシュボードから受験登録の詳細画面に変更
         return redirect()
             ->route('enrollments.show', $enrollment)

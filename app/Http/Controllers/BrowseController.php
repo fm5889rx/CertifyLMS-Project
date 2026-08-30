@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Enums\CertificationStatus;      // 追加：B-B-03
+use App\Enums\EnrollmentStatus;
 use App\Models\Chapter;
 use App\Models\Enrollment;
 use App\Models\Part;
@@ -18,7 +19,7 @@ use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 /**
- * 受講生向け教材ブラウジング Controller。（B-B-03による修正版）
+ * 受講生向け教材ブラウジング Controller。（B-B-03による修正->B-B-09による修正版）
  * /learning(empty-state)→/learning/enrollments/{enrollment}→/learning/parts/{part}→
  * /learning/chapters/{chapter}→/learning/sections/{section} の 5 階層動線を提供する。
  *
@@ -57,6 +58,19 @@ class BrowseController extends Controller
             abort(404);
         }
 
+        // B-B-09で追加：
+        // ログイン中の受講生本人が、このPartの親資格に対して「受講登録」を保持しているかチェックし、
+        // 未登録の資格の教材を直リンクで盗み見ようとした不純なアクセスは、403 Forbidden で遮断する
+        $hasValidEnrollment = Enrollment::query()
+            ->where('user_id', auth()->id())
+            ->where('certification_id', $part->certification_id)
+            ->whereIn('status', [EnrollmentStatus::Learning->value, EnrollmentStatus::Passed->value])
+            ->exists();
+
+        if (!$hasValidEnrollment) {
+            abort(403, 'この資格の教材を閲覧するには、有効な受講登録が必要です。');
+        }
+
         return view('learning.parts.show', $action($part, auth()->user()));
     }
 
@@ -69,6 +83,18 @@ class BrowseController extends Controller
             abort(404);
         }
 
+        // B-B-09で追加：
+        // ログイン中の受講生本人が、このChapterの属する親資格に対して受講登録を保持しているかでブロック
+        $hasValidEnrollment = Enrollment::query()
+            ->where('user_id', auth()->id())
+            ->where('certification_id', $chapter->part?->certification_id)
+            ->whereIn('status', [EnrollmentStatus::Learning->value, EnrollmentStatus::Passed->value])
+            ->exists();
+
+        if (!$hasValidEnrollment) {
+            abort(403, 'この資格の教材を閲覧するには、有効な受講登録が必要です。');
+        }
+
         return view('learning.chapters.show', $action($chapter, auth()->user()));
     }
 
@@ -79,6 +105,18 @@ class BrowseController extends Controller
         $certification = $section->chapter?->part?->certification;
         if (!$certification || $certification->status !== CertificationStatus::Published) {
             abort(404);
+        }
+
+        // B-B-09で追加：
+        // 最末端の Section 読了動線であっても、親資格への受講登録状況を遡ってブロック
+        $hasValidEnrollment = Enrollment::query()
+            ->where('user_id', auth()->id())
+            ->where('certification_id', $certification->id)
+            ->whereIn('status', [EnrollmentStatus::Learning->value, EnrollmentStatus::Passed->value])
+            ->exists();
+
+        if (!$hasValidEnrollment) {
+            abort(403, 'この資格の教材を閲覧するには、有効な受講登録が必要です。');
         }
 
         return view('learning.sections.show', $action($section, auth()->user()));
