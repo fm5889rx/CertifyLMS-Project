@@ -34,7 +34,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 /**
- * 1on1 面談予約 (Meeting) の HTTP エントリポイント。
+ * 1on1 面談予約 (Meeting) の HTTP エントリポイント。（B-B-10修正版）
  *
  * 受講生視点(index / show / create / store / cancel / fetchAvailability)とコーチ視点
  * (indexAsCoach / upsertMemo)を 1 Controller に集約する。予約 / キャンセル / メモ保存の
@@ -233,7 +233,9 @@ class MeetingController extends Controller
 
         $actor = auth()->user();
 
-        DB::transaction(function () use ($meeting, $actor) {
+        // B-B-10による追加：
+        // use の引数に $refundAction を追加
+        DB::transaction(function () use ($meeting, $actor, $refundAction) {
             $locked = Meeting::query()->whereKey($meeting->id)->lockForUpdate()->first();
             if ($locked === null || $locked->status !== MeetingStatus::Reserved) {
                 throw MeetingStatusTransitionException::forCancel();
@@ -248,7 +250,13 @@ class MeetingController extends Controller
                 'canceled_by_user_id' => $actor->id,
                 'canceled_at' => now(),
             ]);
-        });
+
+
+            // B-B-10による追加：
+            // 予約時に面談回数を引かれた「対象の受講生（$meeting->student）」に対して、
+            // この面談ID（$meeting->id）の返却履歴を 1 回分プラス（Refunded）で起票させて残数を復活
+            ($refundAction)($meeting->student, $meeting->id);
+        }); //
 
         return redirect()
             ->route('meetings.show', $meeting)
