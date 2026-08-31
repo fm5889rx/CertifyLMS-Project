@@ -11,7 +11,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 /**
- * ChatMember.last_read_at 基準で個人別未読件数を集計する Service。
+ * ChatMember.last_read_at 基準で個人別未読件数を集計する Service。（B-B-14修正版）
  *
  * グループ chat としての自然な「個人別既読」を実現するため、未読は全員共通ではなく
  * ログイン User 自身の last_read_at を起点に算出する。
@@ -36,8 +36,11 @@ class ChatUnreadCountService
             return 0;
         }
 
+        // B-B-14：自己メッセージの完全除外：
+        // 自分が送信した発言（sender_user_id）はカウントから除外
         return ChatMessage::query()
             ->where('chat_room_id', $room->id)
+            ->where('sender_user_id', '!=', $user->id)
             ->when($member->last_read_at !== null, function ($q) use ($member): void {
                 $q->where('created_at', '>', $member->last_read_at);
             })
@@ -72,8 +75,11 @@ class ChatUnreadCountService
             return $result;
         }
 
+        // B-B-14：自己メッセージの完全除外：
+        // 1集約クエリ（部屋別バッジ表示用）であっても、自分が送信したメッセージは除外
         $counts = ChatMessage::query()
             ->whereIn('chat_room_id', $members->pluck('chat_room_id')->all())
+            ->where('sender_user_id', '!=', $user->id)
             ->where(function ($q) use ($members): void {
                 foreach ($members as $member) {
                     $q->orWhere(function ($inner) use ($member): void {
@@ -103,6 +109,8 @@ class ChatUnreadCountService
      */
     public function roomCountForUser(User $user): int
     {
+        // B-B-14：自己メッセージの完全除外：
+        // サイドバーバッジ（総件数）の集計時にも、自分が送信した発言はカウントに含めない
         return ChatRoom::query()
             ->whereHas('members', function ($q) use ($user): void {
                 $q->where('user_id', $user->id);
@@ -111,6 +119,7 @@ class ChatUnreadCountService
                 $q->select(DB::raw(1))
                     ->from('chat_messages')
                     ->whereColumn('chat_messages.chat_room_id', 'chat_rooms.id')
+                    ->where('chat_messages.sender_user_id', '!=', $user->id)
                     ->where(function ($inner) use ($user): void {
                         $inner->whereRaw(
                             'chat_messages.created_at > COALESCE((SELECT last_read_at FROM chat_members WHERE chat_members.chat_room_id = chat_rooms.id AND chat_members.user_id = ? LIMIT 1), "1970-01-01")',
