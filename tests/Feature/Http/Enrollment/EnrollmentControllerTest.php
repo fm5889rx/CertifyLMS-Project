@@ -284,4 +284,46 @@ class EnrollmentControllerTest extends TestCase
         // active-learning Middleware で 403
         $response->assertForbidden();
     }
+
+    /**
+     * B-B-15 認可境界値拡張テスト
+     * コーチが受講登録一覧を開いた際、自分が担当として割り当てられた資格の受講生のみが抽出され、
+     * 担当外の資格に属する受講生データが一覧からシャットアウトされることを検証する
+     */
+    public function test_コーチの受講登録管理一覧には自分が担当として割り当てられた資格の受講生のみが表示され担当外の受講生は完全に除外されること(): void
+    {
+        // 1. 各ロールのアカウント生成
+        $coach = User::factory()->coach()->inProgress()->create();
+        $studentA = User::factory()->student()->inProgress()->create();
+        $studentB = User::factory()->student()->inProgress()->create();
+
+        // 2. コーチが担当する資格X と、担当しない資格Y をそれぞれ生成
+        $assignedCert = Certification::factory()->published()->create(['name' => '担当資格X']);
+        $unassignedCert = Certification::factory()->published()->create(['name' => '担当外資格Y']);
+
+        // 3. 多対多の結合テーブルモデルに、コーチと資格X の割り当て関係をマウント
+        $coach->assignedCertifications()->attach($assignedCert->id, [
+            'id' => (string) \Illuminate\Support\Str::ulid(),
+            'assigned_by_user_id' => User::factory()->admin()->create()->id,
+            'assigned_at' => now(),
+        ]);
+
+        // 4. それぞれの資格に受講登録（Enrollment）データを生成
+        $ownEnrollment = Enrollment::factory()->for($studentA)->for($assignedCert)->create();
+        $otherEnrollment = Enrollment::factory()->for($studentB)->for($unassignedCert)->create();
+
+        // 5. コーチとして受講登録の管理一覧エンドポイントへ GET リクエストを直撃！
+        $response = $this->actingAs($coach)->get(route('enrollments.index'));
+
+        $response->assertStatus(200);
+        $response->assertViewIs('enrollment.index');
+
+        // 6. 画面に流し込まれた一覧データ（enrollments）の集合の中に、
+        // 担当資格のデータ（$ownEnrollment->id）は確実に含まれており、
+        // かつ担当外のデータ（$otherEnrollment->id）は 100% 完全に除外されている事実を検証
+        $response->assertViewHas('enrollments', function ($enrollments) use ($ownEnrollment, $otherEnrollment) {
+            $ids = collect($enrollments->items())->pluck('id');
+            return $ids->contains($ownEnrollment->id) && ! $ids->contains($otherEnrollment->id);
+        });
+    }
 }
