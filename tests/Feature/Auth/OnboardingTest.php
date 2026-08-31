@@ -339,4 +339,39 @@ class OnboardingTest extends TestCase
             'meeting_url' => null,
         ]);
     }
+
+    /**
+     * 【B-B-12 境界値拡張テスト】：
+     * オンボーディング完了後に一度ログアウトし、設定した新パスワードで Fortify 再ログインを試みた際、
+     * scopeActive に弾かれることなく安全にダッシュボードへ入れることを未来劫にわたりアサート保証します！
+     */
+    public function test_store_allows_subsequent_re_login_with_new_password_after_logout(): void
+    {
+        $invitation = $this->freshInvitation();
+        $userBefore = $invitation->user;
+
+        // 1. オンボーディングを実行（パスワード：secret-pass）
+        $this->post($this->postUrl($invitation), [
+            'name' => '受講太郎',
+            'password' => 'secret-pass',
+            'password_confirmation' => 'secret-pass',
+        ]);
+
+        // 2. 自動ログインセッションを明示的にクリア（ログアウト状態を再現）
+        \Illuminate\Support\Facades\Auth::logout();
+        session()->flush();
+
+        // 3. 再ログインの監査：
+        // Fortify の認証エンドポイント（/login）へ、設定した新パスワードをポスト送信
+        $response = $this->post('/login', [
+            'email'    => $userBefore->email,
+            'password' => 'secret-pass',
+        ]);
+
+        // 4. ユーザーステータスが正しく InProgress に移行しているため、
+        // ログインが成功（302）してダッシュボードへ美しくリダイレクトされる事実を厳格アサート証明！！！
+        $response->assertStatus(302);
+        $response->assertRedirect(route('dashboard.index'));
+        $this->assertAuthenticatedAs($userBefore);
+    }
 }

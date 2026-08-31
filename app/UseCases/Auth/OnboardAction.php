@@ -63,9 +63,12 @@ final class OnboardAction
 
             $now = now();
 
+            // B-B-12にて追加
+            // 活動状態への移行キー（status）を追加
             $attrs = [
                 'name' => $validated['name'],
                 'bio' => $validated['bio'] ?? null,
+                'status' => UserStatus::InProgress,         // ユーザーステータスを「受講中」に変更
                 'password' => Hash::make($validated['password']),
                 'profile_setup_completed' => true,
                 'email_verified_at' => $now,
