@@ -9,7 +9,7 @@ use App\Models\Invitation;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * オンボーディングフォーム(初回パスワード設定 + プロフィール入力)のリクエスト。
+ * オンボーディングフォーム(初回パスワード設定 + プロフィール入力)のリクエスト。（B-B-13修正版）
  *
  * 認可は署名付き URL に委ねるため `authorize()` は常に true。
  * コーチ宛て招待の場合は固定面談 URL(`meeting_url`)の入力を必須化し、受講生宛てでは表示しない。
@@ -29,7 +29,7 @@ class OnboardingRequest extends FormRequest
         $rules = [
             'name' => ['required', 'string', 'max:50'],
             'bio' => ['nullable', 'string', 'max:1000'],
-            'password' => ['required', 'string', 'min:8'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'], // B-B-13：confirmed追加
         ];
 
         if ($this->invitedRole() === UserRole::Coach) {
