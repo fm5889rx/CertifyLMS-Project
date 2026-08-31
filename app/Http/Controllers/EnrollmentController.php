@@ -26,7 +26,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 /**
- * 受講登録 Controller。3 ロール共通の閲覧導線(index / show)を提供する。(B-B-08修正版)
+ * 受講登録 Controller。3 ロール共通の閲覧導線(index / show)を提供する。(B-B-08修正->B-B-15修正）
  *
  * - student: 自分の受講登録 一覧 / 詳細 + 自己登録 / 受講解除 / failed からの再挑戦 + 目標受験日の設定
  * - coach: 担当資格に登録された受講生の一覧 / 詳細(進捗カード + コーチメモ + 個人目標閲覧)
@@ -54,6 +54,14 @@ class EnrollmentController extends Controller
         $query = Enrollment::query()
             ->forUser($user)
             ->with(['user', 'certification.category', 'latestStatusLog']);
+
+        // B-B-15：コーチ担当スコープの確認
+        // ログイン中のユーザーが「コーチ」である場合は、自身の担当資格（assignedCertifications）の
+        // ID一覧を配列で引っこ抜き、その資格に紐付く受講登録（Enrollment）レコードのみに制限する
+        if ($user->role === UserRole::Coach) {
+            $assignedIds = $user->assignedCertifications()->pluck('certifications.id')->all();
+            $query->whereIn('certification_id', $assignedIds);
+        }
 
         if ($user->role === UserRole::Admin && $request->boolean('with_trashed')) {
             $query->withTrashed();
