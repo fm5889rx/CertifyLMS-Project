@@ -11,7 +11,7 @@ use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 /**
- * admin / coach 用の資格マスタ一覧をフィルタ付きで取得するユースケース。
+ * admin / coach 用の資格マスタ一覧をフィルタ付きで取得するユースケース。（B-B-11修正版）
  * 公開中 → 下書き → アーカイブ の順で並び、同 status 内は最終更新の降順。
  * 表示行は `Certification::scopeForUser($viewer)` でロール別に絞り込む(admin = 全件 / coach = 担当のみ)。
  */
@@ -32,8 +32,11 @@ final class IndexAction
 
         $query->keyword($keyword);
 
+        // B-B-11にて変更：
+        // 修正前：CertificationStatus::Draftー>value
+        // 修正後：引数の$statusを参照するように変更
         if ($status !== null) {
-            $query->where('status', CertificationStatus::Draft->value);
+            $query->where('status', $status->value);
         }
 
         if ($categoryId !== null && $categoryId !== '') {
