@@ -19,7 +19,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Route;
 
 /**
- * コーチダッシュボードの ViewModel を組み立てる Action。
+ * コーチダッシュボードの ViewModel を組み立てる Action。（T-B-01修正版）
  *
  * 担当資格に紐付く Enrollment 一覧(certification.coaches 経由) + 今日 / 明日の面談予約 +
  * 未読 chat 件数 + 未読 chat ルーム上位 5 件 + 未回答 Q&A 件数 + 直近 Q&A 上位 5 件 を集約する。
@@ -41,13 +41,23 @@ final class FetchCoachDashboardAction
     {
         $coachingCertificationIds = $coach->coachingCertificationIds();
 
+        // T-B-01：パフォーマンス・クエリ最適化：
+        // 1. with()により、各行で描画される受講生(user)と資格(certification)のN+1問題をEager Loadingで回避
+        // 2. withMax() を結合することで、ループを回すことなく、SQLのサブクエリ階層で
+        //    全受講生の最終活動日時（learning_sessions の started_at の MAX 値）を集約結合
         $assignedEnrollments = Enrollment::query()
             ->whereIn('certification_id', $coachingCertificationIds)
             ->whereIn('status', [EnrollmentStatus::Learning, EnrollmentStatus::Passed])
+            ->with(['user', 'certification'])
+            ->withMax('learningSessions', 'started_at')
             ->get();
 
+        // T-B-01：振る舞い不変の防衛線：
+        // 画面（Blade等）やViewModelは、既存の「$enrollment->last_activity_at」というプロパティ名を
+        // そのまま参照しているため、上記のwithMaxで一括取得した集約値（learning_sessions_max_started_at）を
+        // メモリ上で代入して辻褄を合わせる。ここでは SQL クエリは発行されない
         foreach ($assignedEnrollments as $enrollment) {
-            $enrollment->last_activity_at = $enrollment->learningSessions()->max('started_at');
+            $enrollment->last_activity_at = $enrollment->learning_sessions_max_started_at;
         }
 
         $todayAndTomorrowMeetings = Meeting::query()

@@ -131,4 +131,58 @@ class DashboardControllerTest extends TestCase
         $response->assertViewIs('dashboard.admin');
         $response->assertSee('まずはプランを作成してユーザーを招待してください');
     }
+    /**
+     * T-B-01 パフォーマンス改善・振る舞い不変テスト
+     * コーチダッシュボードの担当受講生クエリを最適化（with/withMaxによるN+1完全根絶）した前後において、
+     * 画面に渡される ViewModel 内の各行の関連情報（受講生氏名・担当資格名・最終活動日時）が
+     * 正確に抽出され、元の振る舞いが完全に維持されていることを検証
+     */
+    public function test_コーチダッシュボードの担当受講生一覧においてクエリ最適化後も受講生氏名と担当資格名と最終活動日時のデータ形状が完璧に維持されていること(): void
+    {
+        // 1. 各ロールのアカウント生成（管理スコープ用の管理者、コーチ、および担当受講生）
+        $admin = User::factory()->admin()->inProgress()->create();
+        $coach = User::factory()->coach()->inProgress()->create();
+        $student = User::factory()->student()->inProgress()->create(['name' => '最適化検証受講生']);
+
+        // 2. コーチが担当する公開資格マスタの生成
+        $certification = Certification::factory()->published()->create([
+            'name' => 'パフォーマンスチューニング資格',
+            'created_by_user_id' => $admin->id,
+            'updated_by_user_id' => $admin->id,
+        ]);
+
+        // 3. 多対多の結合テーブルモデルに、コーチと資格の割り当て関係をマウント
+        $coach->assignedCertifications()->attach($certification->id, [
+            'id' => (string) \Illuminate\Support\Str::ulid(),
+            'assigned_by_user_id' => $admin->id,
+            'assigned_at' => now(),
+        ]);
+
+        // 4. 受講生をその資格に受講登録（Enrollment）させる
+        $enrollment = Enrollment::factory()->for($student)->for($certification)->learning()->create();
+
+        // 5. N+1問題の引き金になっていた、最終学習セッション履歴を挿入
+        $targetTime = now()->subHours(2);
+        LearningSession::factory()->for($enrollment)->create([
+            'started_at' => $targetTime,
+        ]);
+
+        // 6. コーチとしてダッシュボードエンドポイントへ GET リクエストを発行
+        $response = $this->actingAs($coach)->get(route('dashboard.index'));
+
+        $response->assertOk();
+        $response->assertViewIs('dashboard.coach');
+
+        // 7. クエリをサブクエリ化したにもかかわらず、ViewModel の中の担当受講生データに、期待する結果である
+        // 「受講生氏名」「資格名」そして「最終活動日時」がパッキングされていることを検証
+        $response->assertViewHas('viewModel', function ($viewModel) use ($student, $certification, $targetTime) {
+            $enrollments = $viewModel->assignedEnrollments;
+            $first = $enrollments->first();
+
+            return $first !== null
+                && $first->user->name === $student->name
+                && $first->certification->name === $certification->name
+                && $first->last_activity_at === $targetTime->toDateTimeString();
+        });
+    }
 }
