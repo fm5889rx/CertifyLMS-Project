@@ -14,11 +14,17 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
-// 💡 ⭕【規約完全適合】：クラス名の末尾に「Command」を付加し大統一！
+/*
+ * 予約済み面談に対する自動リマインダー通知を一斉配信する Schedule Command。
+ *
+ * --window=eve（前日分） または --window=one_hour_before（1時間前分）の引数を動的に評価。
+ * 重複防止ログ（meeting_reminder_logs）を参照し、同一ウィンドウ内での多重配信を厳格にブロック（冪等）。
+ * 受信者（Student / Coach）の利用状態が InProgress（受講中）である場合のみ安全に配信をフックします。
+ */
 class SendMeetingRemindersCommand extends Command
 {
     /**
-     * 💡 ⭕【仕様要件完全同期】：コマンドのシグネチャを厳格に定義
+     * コマンドのシグネチャを定義
      * --window=eve（前日分） または --window=one_hour_before（1時間前分）
      */
     protected $signature = 'notifications:send-meeting-reminders {--window= : 配信タイミング (eve または one_hour_before)}';
