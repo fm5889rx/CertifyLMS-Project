@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * 目標受験日(exam_date) を過ぎても学習中の Enrollment を学習中止(failed) に自動遷移する Schedule Command。
+ * （T-B-02修正版）
  *
  * 日次 00:00 起動。exam_date IS NULL の Enrollment は対象外(目標受験日未設定は任意のため)。
  * 各遷移ごとに EnrollmentStatusLog(changed_by=null = システム自動 / reason='試験日超過による自動失敗') を記録し、
@@ -36,7 +37,8 @@ class FailExpiredEnrollmentsCommand extends Command
             ->whereNotNull('exam_date')
             ->whereDate('exam_date', '<', now()->toDateString())
             ->orderBy('id')
-            ->chunk(100, function ($enrollments) use ($statusChanger, $defaultEnrollmentService, &$count): void {
+            // T-B-02 日次 00:00 起動のため、学習中止対象件数が多くても chunkById で分割して処理する。
+            ->chunkById(100, function ($enrollments) use ($statusChanger, $defaultEnrollmentService, &$count): void {
                 foreach ($enrollments as $enrollment) {
                     DB::transaction(function () use ($enrollment, $statusChanger, $defaultEnrollmentService) {
                         $enrollment->update(['status' => EnrollmentStatus::Failed->value]);

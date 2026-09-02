@@ -11,6 +11,7 @@ use Illuminate\Console\Command;
 
 /**
  * プラン期間満了による自動卒業 Schedule Command。日次 00:45 起動。
+ * （T-B-02修正版）
  *
  * - in_progress + plan_expires_at < now() を抽出
  * - GraduateUserAction で User.status = graduated に遷移 + UserStatusLog / UserPlanLog 記録
@@ -34,7 +35,8 @@ class GraduateExpiredUsersCommand extends Command
             ->whereNotNull('plan_expires_at')
             ->where('plan_expires_at', '<', now())
             ->orderBy('id')
-            ->chunk(100, function ($users) use ($action, &$count): void {
+            // T-B-02 日次 00:45 起動のため、対象件数が多くても chunkByID で分割して処理する。
+            ->chunkByID(100, function ($users) use ($action, &$count): void {
                 foreach ($users as $user) {
                     $action($user);
                     $count++;
