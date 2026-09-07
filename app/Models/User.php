@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;          // S-A-01追加
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -373,5 +374,21 @@ class User extends Authenticatable
             ->where('user_id', $this->id)
             ->where('certification_id', $certificationId)
             ->exists();
+    }
+
+    /**
+     * ユーザーが Google Calendar と連携するためのリレーション(S-A-01追加)
+     */
+    public function googleCredential(): HasOne
+    {
+        return $this->hasOne(UserGoogleCalendar::class, 'user_id', 'id');
+    }
+
+    /**
+     * ユーザーが Google Calendar 連携をしているかどうかを判定するメソッド(S-A-01追加)
+     */
+    public function hasGoogleCalendarIntegration(): bool
+    {
+        return $this->calendarCredential()->exists();
     }
 }

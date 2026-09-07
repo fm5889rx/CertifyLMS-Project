@@ -12,6 +12,7 @@
         "laravel/fortify": "^1.36",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
+        "laravel/socialite": "^5.31",
         "laravel/tinker": "^2.8",
         "league/commonmark": "^2.8",
         "mpdf/mpdf": "^8.3",

@@ -33,4 +33,11 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    // Google Calendar 連携用の設定（S-A-01追加）
+    'google' => [
+        'client_id' => env('GOOGLE_CALENDAR_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CALENDAR_CLIENT_SECRET'),
+        'redirect' => env('GOOGLE_CALENDAR_REDIRECT_URI'),
+    ],
+
 ];

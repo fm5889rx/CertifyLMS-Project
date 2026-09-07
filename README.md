@@ -143,3 +143,23 @@ sail bin pint --test     # 整形漏れの確認（CI 相当のチェック）
 - `PUSHER_*` — チャットのリアルタイム配信に使用します。有効にする場合は Pusher のキーを取得して設定し、`BROADCAST_DRIVER=pusher` に変更してください。未設定（既定の `BROADCAST_DRIVER=log`）でもメッセージの送受信自体は動作し、相手画面へのリアルタイム反映のみ行われません
 
 新しい環境変数やセットアップ手順を追加した場合は、`.env.example` と本 README に追記し、チームの誰でも環境を再現できる状態を保ってください。
+
+
+## 追加パッケージの導入 (S-A-01：Google カレンダー API 連携用)
+
+本ステージの面談予約 Google カレンダー自動同期機能（OAuth認可）を稼働させるため、新たに `laravel/socialite` を導入しています。
+ローカル環境およびステージング環境をアップデートする際は、コンテナ内部で必ず以下のコマンドを実行し、依存関係を最新に更新してください。
+
+```bash
+# コンテナ内でパッケージを一括インストール
+sail composer require laravel/socialite
+sail artisan config:clear
+```
+
+
+## 環境変数の追加（S-A-01：Google カレンダー API　連携用）
+`.env` 及び `.env.example` に以下の環境変数を追加しました。
+
+GOOGLE_CALENDAR_CLIENT_ID=your_google_calendar_client_id
+GOOGLE_CALENDAR_CLIENT_SECRET=your_google_calendar_client_secret
+GOOGLE_CALENDAR_REDIRECT_URI=<http://localhost:8000/settings/google-calendar/callback>
