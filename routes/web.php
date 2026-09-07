@@ -616,6 +616,7 @@ Route::middleware(['web', 'auth'])->group(function () {
 
 // ============================================================
 // 管理者専用: お知らせ配信機能 (S-B-08)
+// ============================================================
 Route::middleware(['web', 'auth'])->group(function () {
     Route::get('/admin/announcements', [AnnouncementController::class, 'index'])->name('admin.announcements.index');
     Route::get('/admin/announcements/create', [AnnouncementController::class, 'create'])->name('admin.announcements.create');
@@ -623,4 +624,15 @@ Route::middleware(['web', 'auth'])->group(function () {
     Route::get('/admin/announcements/{announcement}', [AnnouncementController::class, 'show'])->name('admin.announcements.show');
 
     Route::get('/notifications/{notification}', [NotificationController::class, 'show'])->name('notifications.show');
+});
+
+// ============================================================
+// コーチ専用： Google カレンダー連携機能 (S-A-01)
+// ============================================================
+use App\Http\Controllers\GoogleCalendarController;
+Route::middleware(['web', 'auth', 'role:coach'])->group(function () {
+    Route::get('/settings/google-calendar', [GoogleCalendarController::class, 'redirect'])->name('settings.google-calendar.redirect');
+    Route::get('/settings/google-calendar/callback', [GoogleCalendarController::class, 'callback'])->name('settings.google-calendar.callback');
+    Route::get('/settings/google-calendar/connect', [GoogleCalendarController::class, 'connect'])->name('settings.google-calendar.connect');
+    Route::delete('/settings/google-calendar', [GoogleCalendarController::class, 'destroy'])->name('settings.google-calendar.destroy');
 });
