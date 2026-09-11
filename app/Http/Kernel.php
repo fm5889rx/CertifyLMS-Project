@@ -34,6 +34,8 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
+use App\Http\Middleware\CheckAiChatEnabled;         // 追加：S-A-02
+use App\Http\Middleware\EnsureConversationOwner;    // 追加：S-A-02
 
 /**
  * アプリケーションの HTTP Kernel。グローバル middleware / route middleware グループ / route middleware alias を集約する。
@@ -103,5 +105,8 @@ class Kernel extends HttpKernel
         'start-learning-session' => StartLearningSession::class,
         'throttle' => ThrottleRequests::class,
         'verified' => EnsureEmailIsVerified::class,
+        'ai_chat.enabled' => CheckAiChatEnabled::class,         // 追加：S-A-02
+        'ai_chat.owner'   => EnsureConversationOwner::class,    // 追加：S-A-02
+
     ];
 }

@@ -40,4 +40,11 @@ return [
         'redirect' => env('GOOGLE_CALENDAR_REDIRECT_URI'),
     ],
 
+    // Gemini API 連携用の設定（S-A-02追加）
+    'gemini' => [
+        'enabled' => env('AI_CHAT_ENABLED', true),
+        'api_key' => env('GEMINI_API_KEY'),
+        'model' => 'gemini-3.8-flash', // デフォルトのモデル名を指定
+        'daily_limit' => env('GEMINI_DAILY_LIMIT'), // 1人あたり1日の上限回数
+    ],
 ];
