@@ -391,4 +391,15 @@ class User extends Authenticatable
     {
         return $this->calendarCredential()->exists();
     }
+
+    /**
+     * 受講生が所有する AI 相談の会話履歴一覧 (S-A-02追加)
+     */
+    public function aiChatConversations(): HasMany
+    {
+        // 1人の受講生は、複数の会話（Conversations）を所有します
+        // 外部キーは 'user_id'、最新の相談が一番上に来るように更新日時順でソート
+        return $this->hasMany(\App\Models\AiChatConversation::class, 'user_id')
+            ->orderBy('updated_at', 'desc');
+    }
 }

@@ -163,3 +163,10 @@ sail artisan config:clear
 GOOGLE_CALENDAR_CLIENT_ID=your_google_calendar_client_id
 GOOGLE_CALENDAR_CLIENT_SECRET=your_google_calendar_client_secret
 GOOGLE_CALENDAR_REDIRECT_URI=<http://localhost:8000/settings/google-calendar/callback>
+
+## 環境変数の追加（S-A-02：Gemini AI チャットボット　連携用）
+`.env` 及び `.env.example` に以下の環境変数を追加しました。
+
+AI_CHAT_ENABLED=true
+GEMINI_DAILY_LIMIT=50
+GEMINI_API_KEY=your_gemini_api_key_here

@@ -119,6 +119,18 @@ class BrowseController extends Controller
             abort(403, 'この資格の教材を閲覧するには、有効な受講登録が必要です。');
         }
 
-        return view('learning.sections.show', $action($section, auth()->user()));
+        // S-A-02で追加：
+        $viewData = $action($section, auth()->user());
+
+        // AI フローティングウィジェットに渡す Section 情報を準備
+        $aiChatContext = [
+            'pageMeta' => [
+                'sectionId' => $section->id,
+                'sectionTitle' => $section->title,
+                'certificationName' => $certification?->name ?? auth()->user()->qualification_name,
+            ]
+        ];
+
+        return view('learning.sections.show', $viewData + $aiChatContext);
     }
 }
