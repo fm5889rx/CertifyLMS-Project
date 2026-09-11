@@ -653,3 +653,25 @@ Route::middleware(['auth', 'role:student', 'ai_chat.enabled'])->group(function (
         Route::delete('/ai-chat/conversations/{conversation}', [AiChatController::class, 'destroy'])->name('ai-chat.conversations.destroy');
     });
 });
+
+// ============================================================
+// 受講者専用： Stripe 連携・追加面談パック購入機能 (S-A-03)
+// ============================================================
+use App\Http\Controllers\MeetingQuotaCheckoutController;
+
+// 1. 受講生専用（学習中限定）のセキュアな決済購入導線グループ
+Route::middleware(['auth', 'role:student', 'active-learning'])->group(function () {
+        Route::get('/meeting-quota/checkout', [MeetingQuotaCheckoutController::class, 'index'])
+            ->name('meeting-quota.checkout.select');
+        Route::post('/meeting-quota/checkout', [MeetingQuotaCheckoutController::class, 'store'])
+            ->name('meeting-quota.checkout.create'); // ➡ select.bladeのform送信先と100%適合！
+        Route::get('/meeting-quota/success', [MeetingQuotaCheckoutController::class, 'success'])
+            ->name('meeting-quota.checkout.success');
+    });
+
+// 2. Stripe外部サーバーからの認可なし公開窓口（Webhook）
+use App\Http\Controllers\StripeWebhookController;
+
+// 仕様書規約「認証なし(署名検証のみ)」をカバーするため、authミドルウェアの外側に配置
+Route::post('/webhooks/stripe', [StripeWebhookController::class, 'handle'])
+    ->name('webhooks.stripe');
