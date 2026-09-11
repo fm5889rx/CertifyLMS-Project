@@ -163,3 +163,47 @@ sail artisan config:clear
 GOOGLE_CALENDAR_CLIENT_ID=your_google_calendar_client_id
 GOOGLE_CALENDAR_CLIENT_SECRET=your_google_calendar_client_secret
 GOOGLE_CALENDAR_REDIRECT_URI=<http://localhost:8000/settings/google-calendar/callback>
+
+## 環境変数の追加（S-A-02：Gemini AI チャットボット　連携用）
+`.env` 及び `.env.example` に以下の環境変数を追加しました。
+
+AI_CHAT_ENABLED=true
+GEMINI_DAILY_LIMIT=50
+GEMINI_API_KEY=your_gemini_api_key_here
+
+## Stripe を使用するのに必要な作業（SーA-03：Stripe 連携用）
+チケット S-A-03 の Stripe 連携を行うために、外部サービス stripe-cli を導入する必要があります。
+以下のコマンドで stripe-cli 環境をインストールして下さい。
+※動作確認はMacで行っています。Linux 環境の場合は考慮されていません。
+
+```bash
+mkdir /usr/local/share/man/man8
+chmod u+w /usr/local/share/man/man8
+sudo chown -R _____ /usr/local/share/man/man8
+brew install gcc
+brew postinstall gcc
+brew install stripe/stripe-cli/stripe
+```
+※ `_____`の部分は現在のログインユーザー名に置き換えて下さい。
+※ stripe-cli のインストール時にパスワードを求められた場合は、Mac のログインパスワードを入力してください
+
+```bash
+stripe login
+```
+※ stripe login を実行すると、ターミナルに「<https://stripe.com...」という専用の認証> URL が表示されます。そのリンクをブラウザで開いて stripe アカウント作成を画面に指示に従って行って下さい。
+なお、途中で利用環境の選択が出てきますが、本プロジェクトの開発中なので、「サンドボックス」を選択して下さい。
+
+```bash
+# Mac 側で受信した Stripe パケットを、Sail コンテナ（localhost:8000）へ転送
+stripe listen --forward-to localhost:8000/webhooks/stripe
+```
+※ 画面にstripeの秘密鍵（whsec_xxxxxxx...）と表示されるので、これをコピーして環境変数にセットして下さい。
+※ Stripe 連携を検証するときは上記コマンドを実行したままにしておいて下さい。
+
+### 環境変数の追加
+`.env` 及び `.env.example` に以下の環境変数を追加しました。
+
+STRIPE_KEY=pk_test_xxxxxxxxxxxxxxxxx
+STRIPE_SECRET=sk_test_xxxxxxxxxxxxxxxxx
+STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxxxxxxx
+
