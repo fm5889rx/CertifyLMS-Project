@@ -35,16 +35,23 @@ return [
 
     // Google Calendar 連携用の設定（S-A-01追加）
     'google' => [
-        'client_id' => env('GOOGLE_CALENDAR_CLIENT_ID'),
+        'client_id'     => env('GOOGLE_CALENDAR_CLIENT_ID'),
         'client_secret' => env('GOOGLE_CALENDAR_CLIENT_SECRET'),
-        'redirect' => env('GOOGLE_CALENDAR_REDIRECT_URI'),
+        'redirect'      => env('GOOGLE_CALENDAR_REDIRECT_URI'),
     ],
 
     // Gemini API 連携用の設定（S-A-02追加）
     'gemini' => [
-        'enabled' => env('AI_CHAT_ENABLED', true),
-        'api_key' => env('GEMINI_API_KEY'),
-        'model' => 'gemini-3.8-flash', // デフォルトのモデル名を指定
+        'enabled'     => env('AI_CHAT_ENABLED', true),
+        'api_key'     => env('GEMINI_API_KEY'),
+        'model'       => 'gemini-3.8-flash', // デフォルトのモデル名を指定
         'daily_limit' => env('GEMINI_DAILY_LIMIT'), // 1人あたり1日の上限回数
+    ],
+
+    // Stripe 連携用の設定（S-A-03追加）
+    'stripe' => [
+        'key'            => env('STRIPE_KEY', env('STRIPE_PUBLIC_KEY'. '')),
+        'secret'         => env('STRIPE_SECRET', env('STRIPE_SECRET_KEY', '')),
+        'webhook_secret' => env('STRIPE_WEBHOOK_SECRET', env('STRIPE_WEBHOOK_KEY', '')),
     ],
 ];
