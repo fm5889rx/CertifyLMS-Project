@@ -636,3 +636,20 @@ Route::middleware(['web', 'auth', 'role:coach'])->group(function () {
     Route::get('/settings/google-calendar/connect', [GoogleCalendarController::class, 'connect'])->name('settings.google-calendar.connect');
     Route::delete('/settings/google-calendar', [GoogleCalendarController::class, 'destroy'])->name('settings.google-calendar.destroy');
 });
+
+// ============================================================
+// 受講者専用： Gemini AI連携機能 (S-A-02)
+// ============================================================
+use App\Http\Controllers\AiChatController;
+
+// 学習中受講生限定 ＆ 機能有効化のグループ
+Route::middleware(['auth', 'role:student', 'ai_chat.enabled'])->group(function () {
+    Route::get('/ai-chat', [AiChatController::class, 'index'])->name('ai-chat.index');
+    Route::post('/ai-chat/conversations', [AiChatController::class, 'store'])->name('ai-chat.conversations.store');
+    Route::middleware(['ai_chat.owner'])->group(function () {
+        Route::post('/ai-chat/conversations/{conversation}/messages', [AiChatController::class, 'sendMessage'])->name('ai-chat.conversations.messages.store');
+        Route::get('/ai-chat/conversations/{conversation}', [AiChatController::class, 'show'])->name('ai-chat.conversations.show');
+        Route::patch('/ai-chat/conversations/{conversation}', [AiChatController::class, 'update'])->name('ai-chat.conversations.update');
+        Route::delete('/ai-chat/conversations/{conversation}', [AiChatController::class, 'destroy'])->name('ai-chat.conversations.destroy');
+    });
+});
