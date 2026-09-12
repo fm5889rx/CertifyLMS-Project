@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Models\Certificate;
 use App\Models\Certification;
 use App\Models\CertificationCategory;
 use App\Models\Chapter;
@@ -53,6 +54,7 @@ use App\Policies\SectionQuestionPolicy;
 use App\Policies\SectionQuizPolicy;
 use App\Policies\SectionViewPolicy;
 use App\Policies\UserPolicy;
+use App\Policies\UserCertificatePolicy;                     // S-A-04で追加
 use App\Policies\WeakDrillPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
@@ -87,6 +89,7 @@ class AuthServiceProvider extends ServiceProvider
         SectionQuestionAttempt::class => SectionQuestionAttemptPolicy::class,
         Meeting::class => MeetingPolicy::class,
         CoachAvailability::class => CoachAvailabilityPolicy::class,
+        Certificate::class => UserCertificatePolicy::class,             // S-A-04で追加
     ];
 
     /**
@@ -94,6 +97,9 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // S-A-04 で追加
+        $this->registerPolicies();
+
         // 面談回数履歴の閲覧は Model に直接紐づかない受講生 Ability として Gate 登録する
         Gate::define('view-meeting-quota-history', [MeetingQuotaPolicy::class, 'viewHistory']);
 
