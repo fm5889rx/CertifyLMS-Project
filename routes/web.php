@@ -675,3 +675,13 @@ use App\Http\Controllers\StripeWebhookController;
 // 仕様書規約「認証なし(署名検証のみ)」をカバーするため、authミドルウェアの外側に配置
 Route::post('/webhooks/stripe', [StripeWebhookController::class, 'handle'])
     ->name('webhooks.stripe');
+
+// ============================================================
+// 修了証 PDF ダウンロード機能 (S-A-04)
+// ============================================================
+use App\Http\Controllers\CertificateDownloadController;
+
+// 認証必須：受講生(本人) / コーチ(担当資格) / 管理者(全件) のマルチロール認可
+Route::middleware(['auth'])
+    ->get('/certificates/{certificate}/download', [CertificateDownloadController::class, 'download'])
+    ->name('certificates.download');
