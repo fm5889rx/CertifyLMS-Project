@@ -10,7 +10,7 @@ use App\Models\MockExamQuestionOption;
 use App\Models\MockExamSession;
 
 /**
- * 受験セッションを採点する内部ユースケース。
+ * 受験セッションを採点する内部ユースケース。（B-A-02修正版）
  *
  * 必ず SubmitAction 内の `DB::transaction()` から呼ばれる前提で、自前のトランザクションは持たない。
  * 採点ロジック: 各 MockExamAnswer の selected_option_id を引いて、対応する MockExamQuestionOption の is_correct で is_correct を確定する。
@@ -50,8 +50,11 @@ final class GradeAction
         }
 
         $totalQuestions = $session->total_questions;
+
+        // B-A-02にて修正
+        // 割合スケールから百分率スケール（0〜100）に変更（"* 100”を追記）
         $scorePercentage = $totalQuestions > 0
-            ? round($totalCorrect / $totalQuestions, 2)
+            ? round(($totalCorrect / $totalQuestions) * 100, 2)
             : 0.0;
         $pass = $scorePercentage >= (float) $session->passing_score_snapshot;
 
