@@ -7,7 +7,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * 1on1 面談予約テーブル。
+ * 1on1 面談予約テーブル。（B-A-01修正版）
  *
  * 受講生が時刻スロットを選んだ瞬間、過去 30 日の実施数が最少の担当コーチを自動割当し
  * `status=reserved` で即時確定する(コーチによる承認フローはない)。
@@ -37,6 +37,10 @@ return new class extends Migration
                 ->constrained('meeting_quota_transactions')
                 ->nullOnDelete();
             $table->timestamps();
+
+            // B-A-01で追加：
+            // このマイグレーションの表題コメントに記述があった UNIQUE 制約が漏れていたので追加
+            $table->unique(['coach_id', 'scheduled_at']);
 
             // 受講生別履歴一覧 / 自動完了 Schedule Command 高速化のための補助 INDEX
             $table->index(['student_id', 'scheduled_at']);
