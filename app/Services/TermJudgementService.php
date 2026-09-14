@@ -9,7 +9,7 @@ use App\Models\Enrollment;
 use App\Models\MockExamSession;
 
 /**
- * 受講生 × 資格の学習ターム(基礎ターム / 実践ターム) を判定する Service。
+ * 受講生 × 資格の学習ターム(基礎ターム / 実践ターム) を判定する Service。（B-A-03修正版）
  *
  * MockExamSession.status が in_progress / submitted / graded のいずれかであるレコードが 1 件でも存在すれば
  * 実践ターム(mock_practice)、そうでなければ基礎ターム(basic_learning)。
@@ -26,7 +26,7 @@ final class TermJudgementService
     {
         $hasActiveMock = MockExamSession::query()
             ->where('enrollment_id', $enrollment->id)
-            ->whereIn('status', ['in_progress', 'submitted', 'graded', 'canceled'])
+            ->whereIn('status', ['in_progress', 'submitted', 'graded']) // B-A-03：'cancel'を削除
             ->exists();
 
         $newTerm = $hasActiveMock ? TermType::MockPractice : TermType::BasicLearning;
