@@ -9,7 +9,10 @@ use App\Models\AiChatConversation;
 use App\Models\AiChatMessage;
 use App\Enums\AiChatMessageRole;
 use App\Enums\AiChatMessageStatus;
+use App\Enums\UserRole;
+use App\Enums\UserStatus;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
@@ -31,13 +34,15 @@ class AiChatIntegrationTest extends TestCase
     {
         parent::setUp();
 
-        // 💡 1. ドメインキャスト規約に則り、学習中の受講生（Student / InProgress）を生成
+        Http::preventStrayRequests();
+
+        // 1. ドメインキャスト規約に則り、学習中の受講生（Student / InProgress）を生成
         $this->student = User::factory()->create([
-            'role'   => \App\Enums\UserRole::Student,
-            'status' => \App\Enums\UserStatus::InProgress,
+            'role'   => UserRole::Student,
+            'status' => UserStatus::InProgress,
         ]);
 
-        // 💡 2. 認可監査用の会話スレッドを生成
+        // 2. 認可監査用の会話スレッドを生成
         $this->conversation = AiChatConversation::create([
             'user_id'            => $this->student->id,
             'title'              => '本番検証用テスト相談スレッド',
@@ -125,6 +130,7 @@ class AiChatIntegrationTest extends TestCase
             'ai_chat_conversation_id' => $this->conversation->id,
             'role'                    => AiChatMessageRole::Model,
             'status'                  => AiChatMessageStatus::Completed,
+            'model_name'              => config('services.gemini.model'),
             'content'                 => '過去のアドバイス履歴です。',
         ]);
 
@@ -172,6 +178,7 @@ class AiChatIntegrationTest extends TestCase
             'ai_chat_conversation_id' => $this->conversation->id,
             'role'                    => AiChatMessageRole::User,
             'status'                  => AiChatMessageStatus::Completed,
+            'model_name'              => config('services.gemini.model'),
             'content'                 => '消去されるセリフ',
         ]);
 
@@ -185,5 +192,37 @@ class AiChatIntegrationTest extends TestCase
 
         // 物理監査：ON DELETE CASCADE 規約により、配下の子メッセージも跡形もなく連動消滅しているか確認
         $this->assertDatabaseMissing('ai_chat_messages', ['id' => $message->id]);
+    }
+    /**
+     * @group external-api
+     */
+    public function test_環境変数で指定されたGeminiのモデル名がデータベースのmodel_nameカラムへ動的に同期して永続化されること(): void
+    {
+        // 1. 現在の config（または.env）に設定されているモデル名を動的に吸引
+        $configuredModel = config('services.gemini.model', 'gemini-2.5-flash');
+
+        Http::fake([
+            '://googleapis.com*' => Http::response([
+                'candidates' => [[
+                    'content' => ['parts' => [['text' => '環境変数連動テストの応答文']]]
+                ]],
+                'usageMetadata' => ['candidatesTokenCount' => 10]
+            ], 200)
+        ]);
+
+        // メッセージを送信
+        $this->actingAs($this->student)
+            ->postJson(route('ai-chat.conversations.messages.store', $this->conversation), [
+                'content' => 'モデル名の環境変数連動テストです。'
+            ]);
+
+        // 【運営要件の自動テスト証明アサーション】
+        // ハードコーディングされたモデル名ではなく、config/env で定義された本物のモデル名が、
+        // 寸分の歪みもなくデータベース物理層に刻まれているか確認
+        $this->assertDatabaseHas('ai_chat_messages', [
+            'ai_chat_conversation_id' => $this->conversation->id,
+            'role'                    => AiChatMessageRole::Assistant,
+            'model_name'              => $configuredModel,
+        ]);
     }
 }
