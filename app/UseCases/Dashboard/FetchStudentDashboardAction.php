@@ -16,6 +16,7 @@ use App\Models\MeetingPack;
 use App\Models\User;
 use App\Services\CompletionEligibilityService;
 use App\Services\Contracts\WeaknessAnalysisServiceContract;
+use App\Services\Learning\LearningProgressService;              // T-A-03で追加
 use App\Services\LearningCalendarService;
 use App\Services\LearningHourTargetService;
 use App\Services\MeetingQuotaService;
@@ -39,6 +40,9 @@ use Illuminate\Support\Facades\Route;
  * - 受講中の資格カードの進捗集計は 1 クエリで一括算出して N+1 回避
  * - 各セクション build は `safe()` で包み、Service 例外で画面全体が 500 化するのを防ぐ
  *
+ * 【T-A-03修正版】
+ * 重複クエリを LearningProgressService へ共通集約する。
+ *
  * @see DashboardController::index()
  */
 final class FetchStudentDashboardAction
@@ -53,6 +57,7 @@ final class FetchStudentDashboardAction
         private readonly CompletionEligibilityService $completion,
         private readonly MeetingQuotaService $meetingQuota,
         private readonly PlanExpirationService $planExpiration,
+        private readonly LearningProgressService $progressService,      // T-A-03で追加
     ) {}
 
     public function __invoke(User $student): StudentDashboardViewModel
@@ -99,7 +104,11 @@ final class FetchStudentDashboardAction
      */
     private function buildEnrollmentCards($learningEnrollments): Collection
     {
-        $progressMap = $this->safe(fn () => $this->batchCalculateProgress($learningEnrollments)) ?? [];
+        // T-A-03で変更
+        // LearningProgressService の追加
+//      $progressMap = $this->safe(fn() => $this->batchCalculateProgress
+//      ($learningEnrollments)) ?? [];
+        $progressMap = $this->safe(fn () => $this->progressService->batchCalculateProgress($learningEnrollments)) ?? [];
 
         return $learningEnrollments
             ->map(fn (Enrollment $enrollment) => $this->buildCard($enrollment, $progressMap[$enrollment->id] ?? null))
@@ -107,6 +116,9 @@ final class FetchStudentDashboardAction
     }
 
     /**
+     * 【T-A-03で変更】
+     * 集計処理を LearningProgressService に共通化したため、本メソッドは不要。（コメントアウト）
+     *
      * 受講中の各 Enrollment の Section 単位完了率を 1 クエリでまとめて算出する (N+1 回避)。
      * 戻り値のキーは Enrollment.id、値は Section 単位の完了率(0.0〜1.0、未集計時 0.0)。
      *
@@ -114,6 +126,7 @@ final class FetchStudentDashboardAction
      *
      * @return array<string, float>
      */
+/*
     private function batchCalculateProgress($enrollments): array
     {
         if ($enrollments->isEmpty()) {
@@ -153,6 +166,7 @@ final class FetchStudentDashboardAction
 
         return $result;
     }
+*/
 
     private function buildCard(Enrollment $enrollment, ?float $progressRatio): StudentEnrollmentCard
     {
