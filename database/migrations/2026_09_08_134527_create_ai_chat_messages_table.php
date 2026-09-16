@@ -19,7 +19,7 @@ return new class extends Migration
             $table->text('error_detail')->nullable();
             $table->unsignedInteger('response_time_ms')->nullable();
             $table->unsignedInteger('output_tokens')->nullable();
-            $table->string('model_name')->nullable();                   // Gemini 使用モデル
+            $table->string('model_name');                   // Gemini 使用モデル
             $table->timestamps();
 
             $table->index(['ai_chat_conversation_id', 'created_at']);
