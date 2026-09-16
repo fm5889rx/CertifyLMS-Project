@@ -13,6 +13,7 @@ use App\Models\Certification;
 use App\Models\Chapter;
 use App\Models\Enrollment;
 use App\Models\Part;
+use App\Services\Learning\LearningProgressService;      // T-A-03で追加
 use App\Services\Learning\ProgressSummary;
 use App\UseCases\Enrollment\DestroyAction;
 use App\UseCases\Enrollment\IndexAction;
@@ -26,7 +27,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 /**
- * 受講登録 Controller。3 ロール共通の閲覧導線(index / show)を提供する。(B-B-08修正->B-B-15修正）
+ * 受講登録 Controller。3 ロール共通の閲覧導線(index / show)を提供する。
+ * (B-B-08修正->B-B-15修正->T-A-03修正版）
  *
  * - student: 自分の受講登録 一覧 / 詳細 + 自己登録 / 受講解除 / failed からの再挑戦 + 目標受験日の設定
  * - coach: 担当資格に登録された受講生の一覧 / 詳細(進捗カード + コーチメモ + 個人目標閲覧)
@@ -34,6 +36,10 @@ use Illuminate\View\View;
  *
  * 表示要素のロール差は Blade の `@can` / `auth()->user()->role` 判定で出し分ける。
  * admin 専用の業務操作(試験日変更 / 学習中止)は `EnrollmentManagementController` に分離している。
+ *
+ * 【T-A-03修正版】
+ * 重複クエリを LearningProgressService へ共通集約する。
+ *
  */
 class EnrollmentController extends Controller
 {
@@ -57,7 +63,7 @@ class EnrollmentController extends Controller
 
         // B-B-15：コーチ担当スコープの確認
         // ログイン中のユーザーが「コーチ」である場合は、自身の担当資格（assignedCertifications）の
-        // ID一覧を配列で引っこ抜き、その資格に紐付く受講登録（Enrollment）レコードのみに制限する
+        // ID一覧を配列で取得し、その資格に紐付く受講登録（Enrollment）レコードのみに制限する
         if ($user->role === UserRole::Coach) {
             $assignedIds = $user->assignedCertifications()->pluck('certifications.id')->all();
             $query->whereIn('certification_id', $assignedIds);
@@ -107,6 +113,7 @@ class EnrollmentController extends Controller
     public function show(
         Enrollment $enrollment,
         ShowAction $action,
+        LearningProgressService $progressService,       // T-A-03で追加
     ): View {
         $this->authorize('view', $enrollment);
 
@@ -118,7 +125,7 @@ class EnrollmentController extends Controller
         // staff(admin / coach)時のみ進捗集計を行う
         if (in_array($user->role, [UserRole::Coach, UserRole::Admin], true)) {
             $enrollment->loadMissing(['user']);
-            $progress = $this->summarizeProgress($enrollment);
+            $progress = $progressService->summarizeProgress($enrollment);       // T-A-03で変更
         }
 
         // admin 時のみ状態遷移ログを eager-load(管理画面の監査ビュー)
@@ -183,9 +190,17 @@ class EnrollmentController extends Controller
             ->with('success', '目標受験日を更新しました。');
     }
 
-    /**
-     * 学習進捗 (Section→Chapter→Part→資格 完了率) の 4 階層サマリを算出する。
+    /*
+     * T-A-03による変更
+     *
+     * 以下、summarizeProgress()・fetchSectionTotal()・countCompletedChapters()・
+     * countCompletedParts() の内部メソッドは集計処理のサービス化により不要となるため、
+     * 全体をコメントアウトする。
      */
+/*
+    //
+    // 学習進捗 (Section→Chapter→Part→資格 完了率) の 4 階層サマリを算出する。
+    //
     private function summarizeProgress(Enrollment $enrollment): ProgressSummary
     {
         $totals = $this->fetchSectionTotals($enrollment);
@@ -304,4 +319,5 @@ class EnrollmentController extends Controller
 
         return $completed;
     }
+*/
 }

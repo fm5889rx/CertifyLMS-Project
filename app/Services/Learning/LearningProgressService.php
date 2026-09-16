@@ -2,96 +2,27 @@
 
 declare(strict_types=1);
 
-namespace App\UseCases\Learning;
+namespace App\Services\Learning;
 
 use App\Enums\ContentStatus;
-use App\Models\Chapter;
 use App\Models\Enrollment;
+use App\Models\Chapter;
 use App\Models\Part;
-use App\Services\Learning\LearningProgressService;          // T-A-03で追加
-use App\Services\Learning\ProgressSummary;
-use App\Services\LearningHourTargetService;
-use App\Services\SectionQuestionScoreService;
-use App\Services\StreakService;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 /**
- * /learning/enrollments/{enrollment} (2 階層目、教材 Part 一覧) のデータを準備する Action。
+ * 【T-A-03：学習進捗集計集約サービス】
  *
- * 共通サマリカード(進捗ゲージ / ストリーク / 学習時間目標)はタブの外で常に表示する。
- * タブは教材 / 演習問題の 2 タブで切替:
- * - contents (default): Part → Chapter → Section の階層一覧 + Section 読了状況
- * - quizzes: Section 別演習スコア一覧 + タブ内右上に 苦手分野ドリル / 解答履歴 / 問題別サマリへの動線
- *
- * 【T-A-03修正版】
- * 重複クエリを LearningProgressService へ共通集約する。
- *
+ * 受講登録（Enrollment）の進捗数・進捗率集計ロジックを一元管理し、
+ * コントローラーやアクションに散らばっていた生の DB::table ジョインを 1 箇所へ集約する。
  */
-final class ShowEnrollmentAction
+final class LearningProgressService
 {
-    public function __construct(
-        private readonly StreakService $streakService,
-        private readonly LearningHourTargetService $hourTargetService,
-        private readonly SectionQuestionScoreService $scoreService,
-        private readonly LearningProgressService $progressService,      // T-A-03で追加
-    ) {}
-
     /**
-     * @return array<string, mixed>
+     * 単一の受講登録の進捗サマリ（ProgressSummary）を算出する（EnrollmentController / ShowEnrollmentAction 用）。
      */
-    public function __invoke(Enrollment $enrollment, string $tab = 'contents'): array
-    {
-        $enrollment->loadMissing(['certification', 'user', 'learningHourTarget']);
-
-        $parts = $enrollment->certification
-            ?->parts()
-            ->where('status', ContentStatus::Published->value)
-            ->ordered()
-            ->with([
-                'chapters' => fn ($query) => $query
-                    ->where('status', ContentStatus::Published->value)
-                    ->ordered()
-                    ->with([
-                        'sections' => fn ($q) => $q
-                            ->where('status', ContentStatus::Published->value)
-                            ->ordered(),
-                    ]),
-            ])
-            ->get() ?? collect();
-
-        $sectionProgresses = $enrollment->sectionProgresses()
-            ->pluck('section_id')
-            ->all();
-
-        $quizScoreSummaries = $tab === 'quizzes'
-            ? $this->scoreService->batchSummarize($enrollment->user, $enrollment)
-            : collect();
-
-        return [
-            'enrollment' => $enrollment,
-            'parts' => $parts,
-            'tab' => $tab,
-            'completedSectionIds' => $sectionProgresses,
-    //      'progress' => $this->summarizeProgress($enrollment),                    // T-A-03で削除
-            'progress' => $this->progressService->summarizeProgress($enrollment),   // T-A-03で変更
-            'streak' => $this->streakService->calculate($enrollment->user),
-            'hourTargetSummary' => $this->hourTargetService->compute($enrollment),
-            'quizScoreSummaries' => $quizScoreSummaries,
-        ];
-    }
-
-    /*
-     * T-A-03による変更
-     *
-     * 以下、summarizeProgress()・fetchSectionTotal()・countCompletedChapters()・
-     * countCompletedParts() の内部メソッドは集計処理のサービス化により不要となるため、
-     * 全体をコメントアウトする。
-     */
-/*
-    //
-    // 学習進捗 (Section→Chapter→Part→資格 完了率) の 4 階層サマリを算出する。
-    //
-    private function summarizeProgress(Enrollment $enrollment): ProgressSummary
+    public function summarizeProgress(Enrollment $enrollment): ProgressSummary
     {
         $totals = $this->fetchSectionTotals($enrollment);
 
@@ -132,6 +63,53 @@ final class ShowEnrollmentAction
         );
     }
 
+    /**
+     * 受講中の複数 Enrollment の Section 単位完了率を 1 クエリで一括算出する。
+     * （FetchStudentDashboardAction 用 N+1 回避）
+     *
+     * @param Collection<int, Enrollment>|\Illuminate\Database\Eloquent\Collection<int, Enrollment> $enrollments
+     * @return array<string, float>
+     */
+    public function batchCalculateProgress($enrollments): array
+    {
+        if ($enrollments->isEmpty()) {
+            return [];
+        }
+
+        $enrollmentIds = $enrollments->pluck('id')->all();
+        $certificationIds = $enrollments->pluck('certification_id')->unique()->values()->all();
+
+        $rows = DB::table('sections')
+            ->join('chapters', 'chapters.id', '=', 'sections.chapter_id')
+            ->join('parts', 'parts.id', '=', 'chapters.part_id')
+            ->join('enrollments', 'enrollments.certification_id', '=', 'parts.certification_id')
+            ->leftJoin('section_progresses', function ($join): void {
+                $join->on('section_progresses.section_id', '=', 'sections.id')
+                    ->on('section_progresses.enrollment_id', '=', 'enrollments.id');
+            })
+            ->whereIn('enrollments.id', $enrollmentIds)
+            ->whereIn('parts.certification_id', $certificationIds)
+            ->where('parts.status', ContentStatus::Published->value)
+            ->where('chapters.status', ContentStatus::Published->value)
+            ->where('sections.status', ContentStatus::Published->value)
+            ->groupBy('enrollments.id')
+            ->selectRaw('enrollments.id AS enrollment_id, COUNT(sections.id) AS total, COUNT(section_progresses.id) AS done')
+            ->get();
+
+        $result = [];
+        foreach ($enrollmentIds as $id) {
+            $result[$id] = 0.0;
+        }
+
+        foreach ($rows as $row) {
+            $total = (int) $row->total;
+            $done = (int) $row->done;
+            $result[(string) $row->enrollment_id] = $total === 0 ? 0.0 : round($done / $total, 4);
+        }
+
+        return $result;
+    }
+
     private function fetchSectionTotals(Enrollment $enrollment): object
     {
         return DB::table('sections')
@@ -151,7 +129,6 @@ final class ShowEnrollmentAction
 
     private function countCompletedChapters(Enrollment $enrollment): int
     {
-        // 公開済 Chapter のうち、配下の公開済 Section が全て読了済かを Chapter 単位で判定。
         $rows = DB::table('chapters')
             ->join('parts', 'parts.id', '=', 'chapters.part_id')
             ->leftJoin('sections', function ($join) {
@@ -209,5 +186,4 @@ final class ShowEnrollmentAction
 
         return $completed;
     }
-*/
 }
