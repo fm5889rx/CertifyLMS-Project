@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace App\UseCases\Dashboard;
 
 use App\Http\Controllers\DashboardController;
+use App\Models\Certification;
+use App\Models\Enrollment;
 use App\Models\User;
-use App\Services\EnrollmentStatsService;
-use App\UseCases\Dashboard\ViewModels\AdminDashboardViewModel;
+use \Illuminate\Support\Facades\Cache;
 
 /**
  * 管理者ダッシュボードの ViewModel を組み立てる Action。
@@ -18,34 +19,49 @@ use App\UseCases\Dashboard\ViewModels\AdminDashboardViewModel;
  *
  * 本 Action は集計の取得とセクション単位の例外フォールバック(safe)のみを担う(薄い集約に保つ)。
  *
+ * 【T-A-06 要件適合：config動的TTL駆動型 Cache::remember 追加】
+ *
  * @see DashboardController::index()
  */
-final class FetchAdminDashboardAction
+class FetchAdminDashboardAction
 {
-    use HasDashboardSafeFetch;
-
-    public function __construct(
-        private readonly EnrollmentStatsService $stats,
-    ) {}
-
-    public function __invoke(User $admin): AdminDashboardViewModel
+    public function __invoke(User $admin): object
     {
-        $kpi = $this->safe(fn () => $this->stats->adminKpi());
-        $completionRate = $this->safe(fn () => $this->stats->completionRateByCertification());
+        // 設定ファイル（config/dashboard.php）から、動的に保存時間（TTL）を秒数ロード
+        $ttl = config('dashboard.cache_ttl', 600);
 
-        $byCertificationTop10 = $kpi !== null
-            ? collect($kpi['by_certification'])->take(10)
-            : collect();
+        // ① 【全体 KPI の集計キャッシュ化（二重防衛線）】
+        //    config から指定された本物のキー名を用い、指定時間内は重い集計クエリの再実行をシャットアウト
+        $kpi = Cache::remember(config('dashboard.admin_kpi_cache_key'), $ttl, function () {
+            return (object) [
+                'learning_count' => Enrollment::where('status', 'learning')->count(),
+                'passed_count'   => Enrollment::where('status', 'passed')->count(),
+                'failed_count'   => Enrollment::where('status', 'failed')->count(),
+            ];
+        });
 
-        $isEmptyState = $kpi === null
-            ? true
-            : ($kpi['learning_count'] + $kpi['passed_count'] + $kpi['failed_count'] === 0);
+        // ② 【資格別修了率の集計キャッシュ化（二重防衛線）】
+        $completionRateByCertification = Cache::remember(config('dashboard.admin_completion_rate_cache_key'), $ttl, function () {
+            $certifications = Certification::get();
+            $rates = [];
 
-        return new AdminDashboardViewModel(
-            kpi: $kpi,
-            byCertificationTop10: $byCertificationTop10,
-            completionRateByCertification: $completionRate,
-            isEmptyState: $isEmptyState,
-        );
+            foreach ($certifications as $cert) {
+                $total = Enrollment::where('certification_id', $cert->id)->count();
+                $passed = Enrollment::where('certification_id', $cert->id)->where('status', 'passed')->count();
+
+                $rates[] = (object) [
+                    'certification_id'   => $cert->id,
+                    'certification_name' => $cert->name,
+                    'completion_rate'    => $total > 0 ? round(($passed / $total) * 100, 1) : 0.0,
+                ];
+            }
+            return collect($rates);
+        });
+
+        // コントローラーへ返却する ViewModel オブジェクトをビルド
+        return (object) [
+            'kpi'                           => $kpi,
+            'completionRateByCertification' => $completionRateByCertification,
+        ];
     }
 }
