@@ -38,6 +38,9 @@ class AnnouncementControllerTest extends TestCase
     {
         parent::setUp();
 
+        // 【T-A-05：テスト空間キュー自動執行同期規約のマウント】
+        config(['queue.default' => 'sync']);
+
         // すべてのロールデータを準備
         $inProgressStatus = UserStatus::InProgress;
 

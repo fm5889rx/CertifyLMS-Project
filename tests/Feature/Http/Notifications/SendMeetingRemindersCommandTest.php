@@ -30,6 +30,9 @@ class SendMeetingRemindersCommandTest extends TestCase
     {
         parent::setUp();
 
+        //【T-A-05：テスト空間キュー自動執行同期規約のマウント】
+        config(['queue.default' => 'sync']);
+
         // Enumオブジェクトを使ってユーザーを生成
         $inProgressStatus = UserStatus::InProgress;
 

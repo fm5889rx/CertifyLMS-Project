@@ -103,9 +103,14 @@ class AnnouncementController extends Controller
             ]);
 
             // 通知基盤への一斉リレー
+            // 【T-A-05追加：データ確定（トランザクション commit）後キュー投入の完全執行】
+            // データベースへのインサートが commit されて確定した「直後」にのみ、
+            // 非同期通知ジョブを安全にキューへと投入する。
             $targetUsers = User::whereIn('id', $targetUserIds)->get();
             foreach ($targetUsers as $targetUser) {
-                $targetUser->notify(new \App\Notifications\AdminAnnouncementNotification(Announcement::find($announcementId)));
+                $targetUser->notify(new AdminAnnouncementNotification(Announcement::find($announcementId))
+                    ->afterCommit()
+                );
             }
         });
 
