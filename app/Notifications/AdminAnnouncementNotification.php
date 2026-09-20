@@ -6,12 +6,22 @@ namespace App\Notifications;
 
 use App\Models\Announcement;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;             // T-A-05で追加
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Queue\SerializesModels;
 
-class AdminAnnouncementNotification extends Notification
+// 👑 【T-A-05：ShouldQueue 契約の締結による非同期通知化大執行】
+// 💡 クラスに implements ShouldQueue を宣言することにより、
+//    Laravelの通知基盤は発火元リクエストを一切ブロックせず、database / mail 送信処理のすべてを
+//    バックグラウンドのキューへ瞬時に逃がして worker に非同期分散処理させます！！！
+class AdminAnnouncementNotification extends Notification implements ShouldQueue
 {
-    use Queueable;
+    use Queueable, SerializesModels;    // T-A-05：SerializesModels トレイル追加
+
+    // T-A-05：一時的な送信失敗時に30秒の段階的待機を挟んで自動リトライさせる鉄壁の動的プロパティ
+    public int $tries = 3;    // 最大3回リトライ
+    public int $backoff = 30; // 失敗時は30秒バックオフを挟んで安全に再試行
 
     private Announcement $announcement;
 

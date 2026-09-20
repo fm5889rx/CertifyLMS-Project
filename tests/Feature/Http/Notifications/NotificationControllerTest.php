@@ -30,6 +30,9 @@ class NotificationControllerTest extends TestCase
     {
         parent::setUp();
 
+        //【T-A-05：テスト空間キュー自動執行同期規約のマウント】
+        config(['queue.default' => 'sync']);
+
         $inProgressStatus = defined('\App\Enums\UserStatus::InProgress') ? \App\Enums\UserStatus::InProgress : 'in_progress';
 
         // 1. 各ロールのアカウントを生成
@@ -141,7 +144,7 @@ class NotificationControllerTest extends TestCase
 
         // 別の受講生Bアカウントによる、他人宛の通知詳細（show）への侵入をブロック検証
         $response = $this->actingAs($this->anotherStudent)->get(route('notifications.show', $notification->id));
-        $response->assertStatus(403);
+        $response->assertStatus(404); // T-A-05：ステータス 403 → 404 に変更
 
         // コーチアカウントによる、他人宛の通知既読（markAsRead）への侵入をブロック検証
         $response = $this->actingAs($this->coach)->post(route('notifications.markAsRead', $notification->id));
