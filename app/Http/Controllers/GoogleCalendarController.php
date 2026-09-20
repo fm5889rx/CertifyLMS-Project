@@ -43,8 +43,6 @@ class GoogleCalendarController extends Controller
         // Google Calendar APIのエンドポイントURL
         $url = 'https://www.googleapis.com/calendar/v3/freeBusy';
 
-        // 📄 app/Http/Controllers/GoogleCalendarController.php の 50行目〜121行目付近を完全置換！
-
         // 1回目の通信を執行
         Log::info('--- [ログ①] 1回目の freeBusy 通信を開始します ---');
         $apiResponse = Http::asJson()
@@ -60,14 +58,14 @@ class GoogleCalendarController extends Controller
         Log::info('--- [デバッグ] レスポンスの生データ: ' . $apiResponse->body());
         Log::info('--- [ログ②] 1回目のステータス結果: ' . $apiResponse->status() . ' ---');
 
-        // 👑 【T-A-04極限治療：400・403・401・500系 全外部例外パケット一元検閲エンジン】
-        // 💡 1回目のレスポンスステータスに応じて、本番環境の全域の死角をミリ単位で型安全に完全防衛！！！
+        // 【T-A-04極限治療：400・403・401・500系 全外部例外パケット一元検閲エンジン】
+        // 1回目のレスポンスステータスに応じて、本番環境の全域の死角をミリ単位で型安全に完全防衛！！！
         if (!$apiResponse->successful()) {
             $status = $apiResponse->status();
             $errorData = $apiResponse->json();
             $googleMessage = $errorData['error']['message'] ?? 'Google APIで予期せぬエラーが発生しました。';
 
-            // 🎯 Aパターン：401 Unauthorized（トークン期限切れ）の場合のみ、自動リフレッシュ回路をキック！
+            // Aパターン：401 Unauthorized（トークン期限切れ）の場合のみ、自動リフレッシュ回路をキック！
             if ($status === 401) {
                 Log::info('Google Calendar アクセストークンの期限切れを検知。リフレッシュトークンを用いて自動更新を執行します。');
 
@@ -93,7 +91,7 @@ class GoogleCalendarController extends Controller
                             'connected_at' => Carbon::now(),
                         ]);
 
-                        // 👑 【2回目の本通信（再試行リトライ）の執行】
+                        // 【2回目の本通信（再試行リトライ）の執行】
                         $apiResponse = Http::asJson()
                             ->withToken($newToken)
                             ->post($url, [

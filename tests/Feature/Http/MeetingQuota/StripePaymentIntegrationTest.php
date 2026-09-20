@@ -17,7 +17,7 @@ use Tests\TestCase;
 
 /**
  * Tests\Feature\StripePaymentIntegrationTest
- * 
+ *
  * 【S-A-03 最終監査テスト】Stripe外部決済連携・現行コード完全無傷突破統合Featureテスト。
  * 【T-A-04 最終監査テスト】本番コードの改修に合わせてテストコードを改修。
  */

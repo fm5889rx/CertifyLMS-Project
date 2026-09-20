@@ -122,7 +122,6 @@ class StripeWebhookController extends Controller
                 return response()->json(['error' => 'Database error'], 500);
             }
         }
-
         return response()->json(['status' => 'success'], 200);
     }
 }

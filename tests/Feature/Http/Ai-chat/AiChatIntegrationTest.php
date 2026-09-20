@@ -39,7 +39,7 @@ class AiChatIntegrationTest extends TestCase
         // テスト間での Carbon テスト時刻の汚染を防ぐ時空同期
         Carbon::setTestNow(Carbon::parse('2026-09-16 10:00:00', 'Asia/Tokyo'));
 
-        // ドメインキャスト規約に則り、学習中の受講生を生成
+        // 学習中の受講生を生成
         $this->student = User::factory()->create([
             'role'               => UserRole::Student,
             'status'             => UserStatus::InProgress,

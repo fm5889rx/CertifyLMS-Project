@@ -73,29 +73,29 @@ class GoogleCalendarControllerTest extends TestCase
             'connected_at'  => now()->subDays(1),
         ]);
 
-        // 🚀 URLマッチングを最も安全なクロージャ判定でマウント
+        // URLマッチングを最も安全なクロージャ判定でマウント
         $freeBusyCount = 0;
-        \Illuminate\Support\Facades\Http::fake(function (\Illuminate\Http\Client\Request $request) use (&$freeBusyCount) {
+        Http::fake(function (\Illuminate\Http\Client\Request $request) use (&$freeBusyCount) {
             $url = $request->url();
 
             if (str_contains($url, 'calendar/v3/freeBusy')) {
                 $freeBusyCount++;
                 if ($freeBusyCount === 1) {
-                    return \Illuminate\Support\Facades\Http::response(['error' => 'Unauthorized'], 401);
+                    return Http::response(['error' => 'Unauthorized'], 401);
                 }
-                return \Illuminate\Support\Facades\Http::response([
+                return Http::response([
                     'calendars' => ['primary' => ['busy' => []]]
                 ], 200);
             }
 
             if (str_contains($url, 'googleapis.com') && !str_contains($url, 'www.')) {
-                return \Illuminate\Support\Facades\Http::response([
+                return Http::response([
                     'access_token' => 'new-fresh-access-token-777',
                     'expires_in'   => 3600
                 ], 200);
             }
 
-            return \Illuminate\Support\Facades\Http::response(['error' => 'Unexpected URL'], 404);
+            return Http::response(['error' => 'Unexpected URL'], 404);
         });
 
         // 実行
