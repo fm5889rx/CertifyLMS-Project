@@ -18,16 +18,17 @@ use Stripe\Stripe;
 use Stripe\Webhook;
 use Exception;
 
+/**
+ * Stripe 決済完了通知 Webhook コントローラー
+ * 【T-A-04 要件適合：二重配信防止（冪等性）・不正署名検証・署名欠落防御ガードインジェクション仕様】
+ */
 class StripeWebhookController extends Controller
 {
-    // Webhookシークレットをクラスプロパティとして厳格に隔離保持します。
     private string $endpointSecret;
 
     public function __construct()
     {
-        // 💡 .env の生の値を直接見に行かず、Laravel の設定レイヤー（config）から取得
-        Stripe::setApiKey(config('services.stripe.secret', env('STRIPE_SECRET_KEY', '')));
-
+        Stripe::setApiKey((string) config('services.stripe.secret', env('STRIPE_SECRET_KEY', '')));
         $this->endpointSecret = (string) config('services.stripe.webhook_secret', env('STRIPE_WEBHOOK_SECRET', ''));
     }
 
@@ -36,21 +37,25 @@ class StripeWebhookController extends Controller
      */
     public function handle(Request $request): JsonResponse
     {
-        // API Key の取得
-        Stripe::setApiKey(config('services.stripe.secret', env('STRIPE_SECRET_KEY', '')));
-        $endpointSecret = config('services.stripe.webhook_secret', env('STRIPE_WEBHOOK_SECRET', ''));
-
         $payload = $request->getContent();
+
+        // 【ガード①：署名ヘッダーの完全欠落検閲早期リターン】
+        // 署名ヘッダー（Stripe-Signature）自体が空っぽ、あるいは存在しない悪意あるパケットが
+        // インターネット経由で届いた瞬間、Guzzleの奥深くへ突入させる前に 400 Bad Request で弾く
         $sigHeader = $request->header('Stripe-Signature');
+        if (empty($sigHeader)) {
+            Log::warning('Stripe Webhook 署名ヘッダー (Stripe-Signature) が完全に欠落したパケットを検知・遮断しました。');
+            return response()->json(['error' => 'Header Missing'], 400);
+        }
+
         $event = null;
 
         try {
-            // 1. 決済通知の改ざん防止
-            // 送信されてきた生のペイロードと、署名ヘッダー、そしてWebHookシークレットを突き合わせて
-            // パケットが改ざんされていないかを物理層で認証する
-            $event = Webhook::constructEvent($payload, $sigHeader, $endpointSecret);
+            // 【ガード②：改ざん防止・不正ハッシュパケットの物理認証】
+            // ペイロード、ヘッダー、秘密鍵を突き合わせ、1文字でも改ざんがあれば 400 エラーを返す
+            $event = Webhook::constructEvent($payload, $sigHeader, $this->endpointSecret);
         } catch (Exception $e) {
-            Log::error('Stripe Webhook 署名検証に失敗しました。不正パケットの可能性があります。', ['error' => $e->getMessage()]);
+            Log::error('Stripe Webhook 署名検証に失敗しました。不正な改ざんパケットの可能性があります。', ['error' => $e->getMessage()]);
             return response()->json(['error' => 'Invalid signature'], 400);
         }
 
@@ -58,7 +63,6 @@ class StripeWebhookController extends Controller
         if ($event->type === 'checkout.session.completed') {
             $session = $event->data->object;
 
-            // Metadata に仕込んでおいたバトン（user_id / meeting_pack_id）を安全にパース
             $userId = $session->metadata->user_id ?? null;
             $packId = $session->metadata->meeting_pack_id ?? null;
 
@@ -67,16 +71,17 @@ class StripeWebhookController extends Controller
                 return response()->json(['error' => 'Missing metadata'], 400);
             }
 
-            // 3. 冪等性ガードによる二重加算の防御
-            // Stripeの再送等で同じセッションIDの通知が二重で届いても、残数の会計が絶対に崩れないよう、
-            // データベースにすでに同じ stripe_checkout_session_id の控え（Payment）があるかチェック
+            // 【ガード③：冪等性（Idempotency）保証エンジンによる二重加算の防御】
+            // Stripe側のネットワークリトライ等で全く同じセッションIDの決済通知が複数回重複して届いたとしても、
+            // 受講生の面談残数が 2 重に増殖して会計が崩れるのを防ぐため、すでに控えがある場合は
+            // 重複ログを刻んで、処理を安全にスキップして「200 OK (duplicated_ignored)」を返却する
             $existingPayment = Payment::where('stripe_checkout_session_id', $session->id)->first();
             if ($existingPayment) {
-                Log::info('Stripe Webhook 重複した決済通知を検知しました。処理をスキップして安全に 200 OK を返します。', ['session_id' => $session->id]);
+                Log::info('Stripe Webhook 重複した決済通知を検知しました。二重計上を防御し、安全に 200 OK を返します。', ['session_id' => $session->id]);
                 return response()->json(['status' => 'duplicated_ignored'], 200);
             }
 
-            // マスタデータの安全な最終確認
+            // マスタデータの存在確認
             $pack = MeetingPack::find($packId);
             $user = User::find($userId);
 
@@ -85,23 +90,21 @@ class StripeWebhookController extends Controller
                 return response()->json(['error' => 'Entity not found'], 404);
             }
 
-            // 4. データベースの原子性を保証するトランザクション処理の開始
+            // 3. データベースの原子性（Atomicity）を保証するトランザクション処理の開始
             DB::beginTransaction();
             try {
-                // ① 決済の歴史改ざん防止
-                //    購入確定時点のマスタの生の値（価格、付与回数）をここに独立して永続化
+                // ① 決済履歴の永続化
                 $payment = Payment::create([
                     'user_id'                     => $user->id,
                     'meeting_pack_id'             => $pack->id,
-                    'amount'                      => $pack->price, // 購入時点の価格
-                    'quantity'                    => $pack->meeting_count, // 購入時点の付与回数
+                    'amount'                      => $pack->price,
+                    'quantity'                    => $pack->meeting_count,
                     'status'                      => PaymentStatus::Completed,
                     'stripe_checkout_session_id' => $session->id,
                     'stripe_payment_intent_id'   => $session->payment_intent ?? null,
                 ]);
 
-                // ② 銀行口座方式（元帳方式）による残数加算の執行
-                // カラムのインクリメントではなく、取引履歴テーブルへプラス（+）のレコードを1行追加
+                // ② 元帳方式（銀行口座方式）による面談残数加算の安全な執行
                 MeetingQuotaTransaction::create([
                     'user_id'            => $user->id,
                     'type'               => MeetingQuotaTransactionType::Purchased,
@@ -119,8 +122,6 @@ class StripeWebhookController extends Controller
                 return response()->json(['error' => 'Database error'], 500);
             }
         }
-
-        // 想定外の通知イベントが届いても処理を破綻させず、安全に 200 OK で受け流す
         return response()->json(['status' => 'success'], 200);
     }
 }

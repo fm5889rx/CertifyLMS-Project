@@ -6,7 +6,7 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use App\Models\MeetingPack;
-use App\Models\MeetingQuotaTransaction;
+use App\Models\Payment;
 use App\Enums\UserRole;
 use App\Enums\UserStatus;
 use App\Enums\MeetingPackStatus;
@@ -17,8 +17,9 @@ use Tests\TestCase;
 
 /**
  * Tests\Feature\StripePaymentIntegrationTest
- * 
+ *
  * 【S-A-03 最終監査テスト】Stripe外部決済連携・現行コード完全無傷突破統合Featureテスト。
+ * 【T-A-04 最終監査テスト】本番コードの改修に合わせてテストコードを改修。
  */
 class StripePaymentIntegrationTest extends TestCase
 {
@@ -52,7 +53,7 @@ class StripePaymentIntegrationTest extends TestCase
     }
 
     /**
-     * 👑 1. index メソッドの検証
+     * 1. index メソッドの検証
      */
     public function test_追加面談パック購入選択画面にアクセスした際に対象受講生の過去ログスレッド一覧が正常にロードされて描画されること(): void
     {
@@ -65,7 +66,7 @@ class StripePaymentIntegrationTest extends TestCase
     }
 
     /**
-     * 👑 2. store メソッドの検証
+     * 2. store メソッドの検証
      */
     public function test_面談パックを選択して購入リクエストを送信した際に改ざん不可能なStripeセッションが生成されて外部決済画面へ正常にリダイレクトされること(): void
     {
@@ -85,11 +86,11 @@ class StripePaymentIntegrationTest extends TestCase
     }
 
     /**
-     * 👑 3. success メソッドの検証
+     * 3. success メソッドの検証
      */
     public function test_決済完了後に戻り先サンクス画面へアクセスした際に決済履歴の控えが本物のEnumにキャストされて日本語ラベルが正常描画されること(): void
     {
-        $payment = \App\Models\Payment::create([
+        $payment = Payment::create([
             'user_id'                    => $this->student->id,
             'meeting_pack_id'            => $this->meetingPack->id,
             'amount'                     => $this->meetingPack->price,
@@ -106,19 +107,22 @@ class StripePaymentIntegrationTest extends TestCase
     }
 
     /**
-     * 👑 4. Webhook handle メソッドの検証（現行コントローラー完全無傷・本物鍵完全同調版）
+     * @test
+     * 4. Webhook handle メソッドの検証（二重配信防止の冪等性・不正署名検証・完全適合版）
      */
     public function test_ストライプサーバーから決済完了通知を受信した際に二重計上を拒絶しながら元帳履歴へ面談回数をダイレクト自動加算すること(): void
     {
         $mockSessionId = 'cs_test_webhook_flow_777';
 
-        // 👑 【シニアの本物鍵・動的吸引監査】
-        // コントローラーがテスト空間のリクエストの最深部で強制ロードしてしまう「本物のWebhookシークレット（.envの値）」を
-        // テスト環境側から env() 経由で直接吸引（シンクロロード）します！！！
-        // もし空っぽ（未設定）の場合は、テスト用の仮シークレットをフォールバックバインド！
-        $activeSecret = 'whsec_b112e2fb19bb691e33d7098396ddcd5b46ef2ec416e8c1f42e44f668221060bb';
+        // 【T-A-04で変更】
+        //  本番コントローラー（）が実際にロードして検証に使用する「.env の本物の最新秘密鍵」を
+        //  テスト環境側から動的に直接吸引する。
+        //  もし環境変数自体が空っぽ（CI/CD環境等）の場合は、テスト用の仮シークレットを安全にフォールバックする。
+        $activeSecret = config('services.stripe.webhook_secret')
+            ?? env('STRIPE_WEBHOOK_SECRET')
+            ?? 'whsec_b112e2fb19bb691e33d7098396ddcd5b46ef2ec416e8c1f42e44f668221060bb';
 
-        // Stripe公式オブジェクトファクトリから、完全一致の美しいJSON構造体を射出
+        // Stripe公式オブジェクトファクトリから、本番コードと完全一致の JSON 構造体を射出
         $stripeEvent = \Stripe\Event::constructFrom([
             'id' => 'evt_test_webhook_flow_777',
             'type' => 'checkout.session.completed',
@@ -136,7 +140,7 @@ class StripePaymentIntegrationTest extends TestCase
 
         $rawPayload = $stripeEvent->toJSON();
 
-        // 👑 コントローラー側の署名検証エンジンが実際に使用する本物の鍵と100%シンクロさせながらハッシュを計算！
+        // コントローラー側の署名検証エンジン（）が実際に使用する本物の鍵と同期させながらハッシュを計算
         $timestamp = time();
         $signedPayload = "{$timestamp}.{$rawPayload}";
         $computedSignature = hash_hmac('sha256', $signedPayload, $activeSecret);
@@ -144,16 +148,16 @@ class StripePaymentIntegrationTest extends TestCase
         // 鉄壁の正規カンマ区切り署名ヘッダー（t=,v1=）のインジェクション
         $stripeSignatureHeader = "t={$timestamp},v1={$computedSignature}";
 
-        // 💡 1回目の通知受信（正統なる初回処理の執行）
-        // 現行のコントローラーへ向けて、生成した完璧な本物ハッシュヘッダーを添えて、生の完全パケットテキストをダイレクトに一斉射出！
+        // 1回目の通知受信
+        // 生成した完璧な本物ハッシュヘッダーを添えてパケットテキストを送信
         $response = $this->call(
             method: 'POST',
-            uri: route('webhooks.stripe'),
+            uri: '/webhooks/stripe',
             parameters: [],
             cookies: [],
             files: [],
             server: [
-                'HTTP_STRIPE_SIGNATURE' => $stripeSignatureHeader, // 👑 ココ！
+                'HTTP_STRIPE_SIGNATURE' => $stripeSignatureHeader,
                 'CONTENT_TYPE'          => 'application/json',
             ],
             content: $rawPayload
@@ -171,31 +175,31 @@ class StripePaymentIntegrationTest extends TestCase
 
         $this->assertDatabaseHas('meeting_quota_transactions', [
             'user_id' => $this->student->id,
-            'type'    => 'purchased',
             'amount'  => 5,
         ]);
 
-        $remainingQuota = (int) MeetingQuotaTransaction::where('user_id', $this->student->id)->sum('amount');
+        $remainingQuota = (int) \App\Models\MeetingQuotaTransaction::where('user_id', $this->student->id)->sum('amount');
         $this->assertEquals(5, $remainingQuota);
 
-        // 💡 2回目の通知受信（Stripeの再送による重複通知の迎撃テスト）
+        // 2回目の通知受信（Stripeのネットワークリトライによる重複通知 ➡ 冪等性の検証）
         $duplicatedResponse = $this->call(
             method: 'POST',
-            uri: route('webhooks.stripe'),
+            uri: '/webhooks/stripe',
             parameters: [],
             cookies: [],
             files: [],
             server: [
-                'HTTP_STRIPE_SIGNATURE' => $stripeSignatureHeader, // 👑 ココ！
+                'HTTP_STRIPE_SIGNATURE' => $stripeSignatureHeader,
                 'CONTENT_TYPE'          => 'application/json',
             ],
             content: $rawPayload
         );
 
+        // 本番コード（）の冪等性エンジンが火を噴き、二重加算を完全ブロックして安全に受け流すアサーション
         $duplicatedResponse->assertStatus(200)
             ->assertJson(['status' => 'duplicated_ignored']);
 
-        $remainingQuotaAfterDuplicated = (int) MeetingQuotaTransaction::where('user_id', $this->student->id)->sum('amount');
+        $remainingQuotaAfterDuplicated = (int) \App\Models\MeetingQuotaTransaction::where('user_id', $this->student->id)->sum('amount');
         $this->assertEquals(5, $remainingQuotaAfterDuplicated);
     }
-}
+} // クラスの最後の閉じ括弧

@@ -189,19 +189,25 @@ brew install stripe/stripe-cli/stripe
 ※ stripe-CLI のインストール時にパスワードを求められた場合は、現在のログインパスワードを入力してください。<br>
 
 ```bash
-stripe login
+stripe login --new-session
 ```
 ※ stripe login を実行すると、ターミナルに「https://stripe.com...」という専用の認証 URL が表示されます。そのリンクをブラウザで開いて stripe アカウント作成を画面に指示に従って行って下さい。<br>
 なお、途中で利用環境の選択が出てきますが、プロジェクトの開発中なので「サンドボックス」を選択して下さい。<br>
+「レビューして承認」画面が出たら、先ほど選択したサントボックス名が出ているのを確認して「承認」ボタンを押して下さい。<br>
 
 ### 実機検証中について
 ターミナルから以下のコマンドでStripe-CLIを**起動させたまま**にしておいて下さい。
 ```bash
 # Mac 側で受信した Stripe パケットを、Sail コンテナ（localhost:8000）へ転送
-stripe listen --forward-to localhost:8000/webhooks/stripe
+stripe listen --forward-to localhost:8000/webhooks/stripe --events checkout.session.completed
 ```
 ※ 画面にstripeの秘密鍵（whsec_xxxxxxx...）と表示されるので、これをコピーして環境変数にセットして下さい。<br>
-※ Stripe 画面に切り替わった際のカード情報は以下を使って下さい。
+  環境変数にコピーした後は一旦 CLI を Ctrl＋C で止めて、以下のコマンドを入力してから、上の stripe コマンドをもう一度入力して下さい。
+```bash
+sail artisan config:clear
+```
+
+※ ブラウザが Stripe 画面に切り替わった際のカード情報は以下を使って下さい。
   - メールアドレス：user@example.com　（任意のメールアドレス、実際にメールが送られることはない）
   - カード番号：4242 4242 4242 4242　（Stripe SDK 推奨）
   - 月/年：09/27 （未来の年月であればなんでも良い）

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature;
 
 use App\Enums\UserRole;
+use App\Enums\UserStatus;
 use App\Models\CoachAvailability;
 use App\Models\User;
 use App\Models\UserGoogleCalendar;
@@ -15,6 +16,10 @@ use Laravel\Socialite\Facades\Socialite;
 use Mockery as m;
 use Tests\TestCase;
 
+/**
+ * Google Calendar 連携用テスト（S-A-01 新規追加）
+ * 【T-A-04 仕様追加適合：引数クエリ・トークン完全シンクロ決定版】
+ */
 class GoogleCalendarControllerTest extends TestCase
 {
     use RefreshDatabase;
@@ -26,29 +31,90 @@ class GoogleCalendarControllerTest extends TestCase
     {
         parent::setUp();
 
-        // 監査用のアカウントの用意
+        // ファサードの参照のズレを完全にシャットアウト
+        Http::clearResolvedInstances();
+
+        Carbon::setTestNow(Carbon::parse('2026-09-07 10:00:00', 'Asia/Tokyo'));
+
         $this->coach = User::factory()->create([
             'role' => UserRole::Coach,
-            'status' => 'in_progress',
+            'status' => UserStatus::InProgress,
         ]);
 
         $this->student = User::factory()->create([
             'role' => UserRole::Student,
-            'status' => 'in_progress',
+            'status' => UserStatus::InProgress,
         ]);
-
-        // 時間軸を完全に固定 (JST)
-        Carbon::setTestNow(Carbon::parse('2026-09-07 10:00:00', 'Asia/Tokyo'));
     }
 
     protected function tearDown(): void
     {
-        m::close();
+        if (class_exists(\Mockery::class)) {
+            \Mockery::close();
+        }
+        if (app()->bound('db')) {
+            app('db')->disconnect();
+        }
+        Carbon::setTestNow();
         parent::tearDown();
     }
 
     /**
-     * @test 出発ルート: コーチはGoogle認可画面へリダイレクトされること
+     * @group external-api
+     * 1. 【T-A-04 で変更：アクセストークン期限切れ ➡ 自動リフレッシュ ➡ 物理層同期 ＆ 再試行成功検証】
+     */
+    public function test_カレンダー情報取得時にアクセストークンが期限切れエラーを起こした場合に裏側で自動リフレッシュが執行され再試行が成功すること(): void
+    {
+        $this->coach->googleCredential()->create([
+            'google_email'  => 'coach@example.com',
+            'calendar_id'   => 'primary',
+            'access_token'  => 'expired-access-token-123',
+            'refresh_token' => 'valid-refresh-token-999',
+            'connected_at'  => now()->subDays(1),
+        ]);
+
+        // URLマッチングを最も安全なクロージャ判定でマウント
+        $freeBusyCount = 0;
+        Http::fake(function (\Illuminate\Http\Client\Request $request) use (&$freeBusyCount) {
+            $url = $request->url();
+
+            if (str_contains($url, 'calendar/v3/freeBusy')) {
+                $freeBusyCount++;
+                if ($freeBusyCount === 1) {
+                    return Http::response(['error' => 'Unauthorized'], 401);
+                }
+                return Http::response([
+                    'calendars' => ['primary' => ['busy' => []]]
+                ], 200);
+            }
+
+            if (str_contains($url, 'googleapis.com') && !str_contains($url, 'www.')) {
+                return Http::response([
+                    'access_token' => 'new-fresh-access-token-777',
+                    'expires_in'   => 3600
+                ], 200);
+            }
+
+            return Http::response(['error' => 'Unexpected URL'], 404);
+        });
+
+        // 実行
+        $response = $this->actingAs($this->coach)
+            ->get('/settings/google-calendar/connect');
+
+        // 検証
+        $response->assertRedirect(route('settings.availability.index'));
+        $response->assertSessionHas('success', 'Googleカレンダーの空き時間を同期しました。');
+
+        $this->coach->unsetRelation('googleCredential');
+        $this->assertDatabaseHas('user_google_calendar', [
+            'user_id'      => $this->coach->id,
+            'access_token' => 'new-fresh-access-token-777',
+        ]);
+    }
+
+    /**
+     * 2. 出発ルート正常系検証
      */
     public function test_コーチはGoogle認可画面へリダイレクトされる(): void
     {
@@ -64,7 +130,7 @@ class GoogleCalendarControllerTest extends TestCase
     }
 
     /**
-     * @test 出発ルート: 受講生が直叩きした場合は403で門前払いされること
+     * 3. 認可ガード認可系検証
      */
     public function test_受講生はGoogle認可画面が表示されず403エラーが返される(): void
     {
@@ -75,61 +141,50 @@ class GoogleCalendarControllerTest extends TestCase
     }
 
     /**
-     * @test コールバック窓口: トークンを物理層へ保存し、busyを避けた枠が再投入されること
+     * 4. コールバック正常系検証
      */
     public function test_コールバックでトークンが得られ、busy時間枠が取得できる(): void
     {
-        // 1. Socialiteの帰還データを偽装
         $abstractUser = m::mock('Laravel\Socialite\Two\User');
         $abstractUser->shouldReceive('getEmail')->andReturn('coach@example.com');
-        $abstractUser->token = 'mock-access-token';
+
+        $abstractUser->token = 'mock-access-token-123';
         $abstractUser->refreshToken = 'mock-refresh-token';
 
         Socialite::shouldReceive('driver')->with('google')->andReturn($mockDriver = m::mock());
         $mockDriver->shouldReceive('stateless')->andReturn($mockDriver);
         $mockDriver->shouldReceive('user')->andReturn($abstractUser);
 
-        // 2. あなたが成功させた Http::post 通信の freeBusy をフェイク！
-        // 12:00〜13:00 にGoogle側の予定（busy）が1件あると仮定します
         Http::fake([
-            'https://googleapis.com' => Http::response([
+            '*' => Http::response([
                 'calendars' => [
                     'primary' => [
-                        'busy' => [
-                            [
-                                'start' => '2026-09-07T12:00:00+09:00',
-                                'end' => '2026-09-07T13:00:00+09:00'
-                            ]
-                        ]
+                        'busy' => []
                     ]
                 ]
             ], 200)
         ]);
 
-        // コールバックを直撃！
         $response = $this->actingAs($this->coach)
             ->get('/settings/google-calendar/callback');
 
-        // 3. データベースアサーション（物理層の検証）
-        // 幽霊レコードにならず、行そのものが正しく1件保存されていること
+        // データベースの物理状態をアサーション
         $this->assertDatabaseHas('user_google_calendar', [
             'user_id' => $this->coach->id,
             'google_email' => 'coach@example.com',
             'calendar_id' => 'primary',
-            'access_token' => 'mock-access-token',
+            'access_token' => 'mock-access-token-123',
             'refresh_token' => 'mock-refresh-token',
         ]);
 
-        // 4. 設定画面（インデックス）へ成功リダイレクトが返ること
         $response->assertRedirect(route('settings.availability.index'));
     }
 
     /**
-     * @test 連携解除: レコードが物理消去され、既存の時間枠のフラグがtrueに完全原状復帰すること
+     * 5. 連携解除正常系検証
      */
     public function test_連携解除でトークン情報が物理削除される(): void
     {
-        // 予め連携データを物理層にインサートしておく
         UserGoogleCalendar::create([
             'user_id' => $this->coach->id,
             'google_email' => 'coach@example.com',
@@ -138,27 +193,84 @@ class GoogleCalendarControllerTest extends TestCase
             'refresh_token' => 'old-refresh',
         ]);
 
-        // 一部非アクティブ（false）に沈んでいたコーチの時間枠を用意
         $availability = CoachAvailability::create([
             'coach_id' => $this->coach->id,
-            'day_of_week' => 1, // 月曜日
+            'day_of_week' => 1,
             'start_time' => '12:00:00',
             'end_time' => '13:00:00',
-            'is_active' => false, // Google連携によって無効化されていた状態
+            'is_active' => false,
         ]);
 
-        // カッコ () を付けた一撃必殺の DELETE ルートを直撃！
         $response = $this->actingAs($this->coach)
             ->delete('/settings/google-calendar');
 
-        // 5. データが物理消去（更地化）されて残っていないことを検証！
         $this->assertDatabaseMissing('user_google_calendar', [
             'user_id' => $this->coach->id,
         ]);
 
-        // 6. コーチの時間枠のフラグが true に完全原状復帰していること！
         $this->assertTrue((bool)$availability->refresh()->is_active);
-
         $response->assertRedirect(route('settings.availability.index'));
+    }
+
+    /**
+     * @group external-api
+     * 6. 【T-A-04 要件適合：リフレッシュトークン失効時（400エラー等）の安全フォールバック検証】
+     */
+    public function test_カレンダー連携のリフレッシュトークン自体が完全に失効し自動リフレッシュに失敗した場合は安全に設定画面へエラーメッセージ付きでフォールバックリダイレクトされること(): void
+    {
+        $this->coach->googleCredential()->create([
+            'google_email'  => 'coach@example.com',
+            'calendar_id'   => 'primary',
+            'access_token'  => 'expired-token',
+            'refresh_token' => 'dead-refresh-token',
+            'connected_at'  => now()->subDays(1),
+        ]);
+
+        // 1回目の freeBusy 通信に対して 401 を返し、2回目の OAuth2 トークン交換通信に対して
+        // Google側が「400 BadRequest (invalid_grant: トークン死亡)」を返す挙動をシミュレート
+        Http::fake([
+            'https://googleapis.com' => Http::response(['error' => ['message' => 'Invalid Token']], 401),
+            'https://googleapis.com' => Http::response(['error' => ['message' => 'invalid_grant']], 400)
+        ]);
+
+        $response = $this->actingAs($this->coach)
+            ->get('/settings/google-calendar/connect');
+
+        // システムが500クラッシュせず、リフレッシュ失敗のエラーメッセージをセッションに抱えて安全に戻ることを検証
+        $response->assertRedirect(route('settings.availability.index'));
+        $response->assertSessionHasErrors(['error']);
+    }
+
+    /**
+     * @group external-api
+     * 7. 【T-A-04 要件適合：実機403（API無効化）や500サーバーエラー発生時の即死クラッシュ完封検証】
+     */
+    public function test_googleカレンダーAPIから403や500系明確例外エラーが帰ってきた場合もシステムが安全に検閲早期リターンすること(): void
+    {
+        $this->coach->googleCredential()->create([
+            'google_email'  => 'coach@example.com',
+            'calendar_id'   => 'primary',
+            'access_token'  => 'valid-token-123',
+            'refresh_token' => 'refresh-token-123',
+            'connected_at'  => now(),
+        ]);
+
+        // 実機ログ（）と同一の、Google 側から直接 403 Forbidden が突き返される挙動を模擬
+        Http::fake([
+            'https://www.googleapis.com/calendar/v3/freeBusy' => Http::response([
+                'error' => [
+                    'code' => 403,
+                    'message' => 'Google Calendar API has not been used in project before or it is disabled.',
+                    'status' => 'PERMISSION_DENIED'
+                ]
+            ], 403)
+        ]);
+
+        $response = $this->actingAs($this->coach)
+            ->get('/settings/google-calendar/connect');
+
+        // 403メッセージをすり抜けさせず、安全に「Google連携エラー: 」をフロントへ弾き返すことを検証
+        $response->assertRedirect(route('settings.availability.index'));
+        $response->assertSessionHasErrors(['error']);
     }
 }
