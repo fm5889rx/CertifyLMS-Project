@@ -16,13 +16,13 @@ return [
 
     // Gemini API に関する固有のパッキング構造
     'gemini' => [
-        'api_key'    => env('GEMINI_API_KEY', ''),
+        'api_key'     => env('GEMINI_API_KEY', ''),
 
         // component/ai-chat/floating-widget.blade.php が求めている「使用モデル名」
-        'model'      => env('GEMINI_MODEL', 'gemini-3.8-flash'),
+        'model'       => env('GEMINI_MODEL', 'gemini-2.5-flash'),
 
         // 1日の使用回数
-        'dailyLimit' => env('GEMINI_DAILY_LIMIT', 50),
+        'daily_limit' => env('GEMINI_DAILY_LIMIT', 50),
     ],
 
 ];

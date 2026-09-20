@@ -44,7 +44,7 @@ return [
     'gemini' => [
         'enabled'     => env('AI_CHAT_ENABLED', true),
         'api_key'     => env('GEMINI_API_KEY'),
-        'model'       => 'gemini-3.8-flash', // デフォルトのモデル名を指定
+        'model'       => env('GEMINI_MODEL'),       // 使用モデル名を指定
         'daily_limit' => env('GEMINI_DAILY_LIMIT'), // 1人あたり1日の上限回数
     ],
 

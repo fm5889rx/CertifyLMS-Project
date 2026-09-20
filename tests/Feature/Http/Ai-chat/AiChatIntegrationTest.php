@@ -317,14 +317,18 @@ class AiChatIntegrationTest extends TestCase
             ], 200)
         ]);
 
+        // メッセージを送信
         $this->actingAs($this->student)
             ->postJson(route('ai-chat.conversations.messages.store', $this->conversation), [
                 'content' => 'モデル名の環境変数連動テストです。'
             ]);
 
+        // 【運営要件の自動テスト証明アサーション】
+        // ハードコーディングされたモデル名ではなく、config/env で定義された本物のモデル名が、
+        // 寸分の歪みもなくデータベース物理層に刻まれているか確認
         $this->assertDatabaseHas('ai_chat_messages', [
             'ai_chat_conversation_id' => $this->conversation->id,
-            'role'                    => AiChatMessageRole::Assistant->value,
+            'role'                    => AiChatMessageRole::Assistant,
             'model_name'              => $configuredModel,
         ]);
     }

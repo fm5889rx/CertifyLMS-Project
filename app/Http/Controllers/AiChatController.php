@@ -36,9 +36,9 @@ class AiChatController extends Controller
 
     public function __construct()
     {
-        $this->apiKey = config('ai-chat.gemini.api_key', '');
-        $this->model  = config('ai-chat.gemini.model', 'gemini-2.5-flash');
-        $this->dailyLimit = (int)config('ai-chat.gemini.dailyLimit');
+        $this->apiKey = config('services.gemini.api_key', '');
+        $this->model  = config('services.gemini.model');
+        $this->dailyLimit = (int)config('services.gemini.daily_limit');
     }
 
     /**
@@ -209,7 +209,6 @@ class AiChatController extends Controller
      */
     public function sendMessage(Request $request, AiChatConversation $conversation): JsonResponse | RedirectResponse
     {
-//        dd($request->all(), $conversation);
         $user = auth()->user();
 
         // 1. 非機能要件: 受講生1人あたりの日次レート制限チェック
@@ -242,10 +241,11 @@ class AiChatController extends Controller
             'ai_chat_conversation_id' => $conversation->id,
             'role'                    => AiChatMessageRole::User,
             'status'                  => AiChatMessageStatus::Completed,
+            'model_name'              => $this->model,
             'content'                 => $userContent,
         ]);
 
-        // 🔐 3. コンテキスト自動付与の組み立て (システムプロンプトのパッキング)
+        // 3. コンテキスト自動付与の組み立て (システムプロンプトのパッキング)
         $systemInstruction = "あなたは優秀な学習伴走AIアシスタントです。受講生の疑問を即座に解消し、学習継続率を高めてください。\n";
         if (!empty($user->qualification_name)) {
             $systemInstruction .= "【受講生情報】現在、この受講生は資格「{$user->qualification_name}」の合格を目指して勉強しています。この資格の文脈に沿った的確なアドバイスを行ってください。\n";
@@ -323,6 +323,7 @@ class AiChatController extends Controller
                 'role'                    => AiChatMessageRole::Assistant,
                 'status'                  => AiChatMessageStatus::Error,
                 'content'                 => '', // エラー時は本文を空文字にする
+                'model_name'              => $this->model,
                 'error_detail'            => $e->getMessage(), // 429や502のエラー文字を注入
                 'response_time_ms'        => $responseTimeMs,
             ]);
@@ -369,7 +370,7 @@ class AiChatController extends Controller
             'status'                  => $apiStatus->value,
             'content'                 => $aiResponseText,
             'error_detail'            => $apiStatus === AiChatMessageStatus::Error ? 'API通信失敗' : null,
-            'model_name'              => 'gemini-3.8-flash',
+            'model_name'              => $this->model,
             'output_tokens'           => $candidatesTokens,
             'response_time_ms'        => $responseTimeMs,
         ]);
