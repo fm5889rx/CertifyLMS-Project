@@ -44,10 +44,10 @@ class AdminDashboardCacheTest extends TestCase
         $second = app(FetchAdminDashboardAction::class)($admin);
 
         // Assert: 2 回目はキャッシュヒットで重い集計クエリが 1 本も走らず、値も 1 回目のまま(直接 INSERT は反映されない)
-        $this->assertSame(2, $first->kpi['learning_count']);
+        $this->assertSame(2, $first->kpi->learning_count);
         $this->assertSame(
             2,
-            $second->kpi['learning_count'],
+            $second->kpi->learning_count,
             'TTL 内で無効化イベントが無ければ集計はキャッシュから返るはず(直接 INSERT は反映されない)',
         );
         $this->assertSame(
@@ -80,8 +80,8 @@ class AdminDashboardCacheTest extends TestCase
         $second = app(FetchAdminDashboardAction::class)($admin);
 
         // Assert: 2 回目はキャッシュヒットで集計クエリが走らず、修了率も 1 回目のまま(直接 INSERT は反映されない)
-        $firstRate = $first->completionRateByCertification->firstWhere('certification_id', $cert->id)['completion_rate'];
-        $secondRate = $second->completionRateByCertification->firstWhere('certification_id', $cert->id)['completion_rate'];
+        $firstRate = $first->completionRateByCertification->firstWhere('certification_id', $cert->id)->completion_rate;
+        $secondRate = $second->completionRateByCertification->firstWhere('certification_id', $cert->id)->completion_rate;
 
         $this->assertSame(0.0, $firstRate);
         $this->assertSame(
@@ -123,10 +123,10 @@ class AdminDashboardCacheTest extends TestCase
         // Assert: KPI キャッシュが無効化され、最新の集計(learning 1 / passed 1)が返る
         $this->assertSame(
             1,
-            $after->kpi['learning_count'],
+            $after->kpi->learning_count,
             '状態遷移後は KPI キャッシュが無効化され、最新の受講中件数が返るはず',
         );
-        $this->assertSame(1, $after->kpi['passed_count']);
+        $this->assertSame(1, $after->kpi->passed_count);
     }
 
     public function test_completion_rate_cache_is_invalidated_on_enrollment_status_change(): void
@@ -149,12 +149,12 @@ class AdminDashboardCacheTest extends TestCase
         );
         $after = app(FetchAdminDashboardAction::class)($admin);
 
-        // Assert: 修了率キャッシュも無効化され、最新の修了率(合格 1 / 全 2 = 0.5)が返る
-        $afterRate = $after->completionRateByCertification->firstWhere('certification_id', $cert->id)['completion_rate'];
+        // Assert: 修了率キャッシュも無効化され、最新の修了率(合格 100.00 / 2 件 = 50.0 )が返る
+        $afterRate = $after->completionRateByCertification->firstWhere('certification_id', $cert->id)->completion_rate;
         $this->assertSame(
-            0.5,
+            50.00,
             $afterRate,
-            '状態遷移後は修了率キャッシュも無効化され、最新の修了率(1/2)が返るはず',
+            '状態遷移後は修了率キャッシュも無効化され、最新の修了率が返るはず',
         );
     }
 }
