@@ -16,7 +16,7 @@
 
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/notification/notification-popover.js'])
 </head>
 <body class="min-h-screen bg-surface-canvas text-ink-900">
     <div class="lg:grid lg:grid-cols-[256px_1fr] min-h-screen">
