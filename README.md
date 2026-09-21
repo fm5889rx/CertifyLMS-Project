@@ -274,3 +274,8 @@ sail artisan queue:retry all
 # failed_jobs テーブルの中に溜まった古いデバッグ済みのゴミレコードを、物理層から安全に一括削除します
 sail artisan queue:flush
 ```
+
+### ダッシュボード集計キャッシュの環境変数設定【チケットID：T-A-06】
+
+管理者ダッシュボードの全体 KPI と資格別修了率のキャッシュ保存時間（TTL）は、以下の環境変数によって秒単位で動的に制御・調整が可能です。設定を変更した場合は必ず `sail artisan config:clear` を執行してください。
+- **`DASHBOARD_CACHE_TTL`**: キャッシュの有効期限（秒数）。デフォルトは `600`（10分）。

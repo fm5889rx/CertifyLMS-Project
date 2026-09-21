@@ -16,6 +16,7 @@ export default defineConfig({
                 'resources/js/chat/realtime.js',
                 'resources/js/settings-profile/availability-calendar.js',
                 'resources/js/ai-chat/index.js',
+                'resources/js/notification/notification-popover.js',        // S-A-05で追加
             ],
             refresh: true,
         }),
