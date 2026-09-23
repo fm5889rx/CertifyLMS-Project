@@ -4,17 +4,16 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Mentoring;
 
-use App\Models\User;
-use App\Models\Enrollment;
-use App\Models\EnrollmentNote;
-use App\Models\Certification;
-use App\Models\CertificationCategory;
-use App\Enums\UserRole;
-use App\Enums\UserStatus;
 use App\Enums\CertificationDifficulty;
 use App\Enums\CertificationStatus;
 use App\Enums\EnrollmentStatus;
 use App\Enums\TermType;
+use App\Enums\UserStatus;
+use App\Models\Certification;
+use App\Models\CertificationCategory;
+use App\Models\Enrollment;
+use App\Models\EnrollmentNote;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 use Tests\TestCase;
@@ -24,9 +23,13 @@ class EnrollmentNoteControllerTest extends TestCase
     use RefreshDatabase;
 
     private User $student;
+
     private User $coachA;
+
     private User $coachB;
+
     private User $adminUser;
+
     private Enrollment $enrollment;
 
     /**
@@ -36,38 +39,38 @@ class EnrollmentNoteControllerTest extends TestCase
     {
         parent::setUp();
 
-        $inProgressStatus = UserStatus::InProgress->value ?? 'in_progress';
+        $inProgressStatus = UserStatus::InProgress;
 
         // 1. 各ユーザーの生成
-        $this->student = User::factory()->create(['role' => UserRole::Student->value ?? 'student', 'status' => $inProgressStatus]);
-        $this->coachA = User::factory()->create(['role' => UserRole::Coach->value ?? 'coach', 'status' => $inProgressStatus]);
-        $this->coachB = User::factory()->create(['role' => UserRole::Coach->value ?? 'coach', 'status' => $inProgressStatus]);
-        $this->adminUser = User::factory()->create(['role' => UserRole::Admin->value ?? 'admin', 'status' => $inProgressStatus]);
+        $this->student = User::factory()->student()->create(['status' => $inProgressStatus]);
+        $this->coachA = User::factory()->coach()->create(['status' => $inProgressStatus]);
+        $this->coachB = User::factory()->coach()->create(['status' => $inProgressStatus]);
+        $this->adminUser = User::factory()->admin()->create(['status' => $inProgressStatus]);
 
         // 2. 多重外部キー制約をマウント
         $category = CertificationCategory::create([
-            'id'   => (string) Str::ulid(),
-            'slug' => 'test-memo-category-' . Str::random(5),
+            'id' => (string) Str::ulid(),
+            'slug' => 'test-memo-category-'.Str::random(5),
             'name' => 'メモ検証用カテゴリ',
         ]);
 
         $certification = Certification::create([
-            'id'                  => (string) Str::ulid(),
-            'category_id'         => $category->id,
-            'name'                => 'メモ対象IT資格',
-            'difficulty'          => CertificationDifficulty::Intermediate->value,
-            'status'              => CertificationStatus::Published->value,
-            'created_by_user_id'  => $this->adminUser->id,
-            'updated_by_user_id'  => $this->adminUser->id,
+            'id' => (string) Str::ulid(),
+            'category_id' => $category->id,
+            'name' => 'メモ対象IT資格',
+            'difficulty' => CertificationDifficulty::Intermediate,
+            'status' => CertificationStatus::Published,
+            'created_by_user_id' => $this->adminUser->id,
+            'updated_by_user_id' => $this->adminUser->id,
         ]);
 
         $this->enrollment = Enrollment::create([
-            'id'               => (string) Str::ulid(),
-            'user_id'          => $this->student->id,
+            'id' => (string) Str::ulid(),
+            'user_id' => $this->student->id,
             'certification_id' => $certification->id,
-            'status'           => EnrollmentStatus::Learning->value,
-            'current_term'     => TermType::BasicLearning->value,
-            'exam_date'        => now()->addMonths(3)->toDateString(),
+            'status' => EnrollmentStatus::Learning,
+            'current_term' => TermType::BasicLearning,
+            'exam_date' => now()->addMonths(3)->toDateString(),
         ]);
     }
 
@@ -87,8 +90,8 @@ class EnrollmentNoteControllerTest extends TestCase
         // データベースに執筆者ID付きで正しく実在することを証明
         $this->assertDatabaseHas('enrollment_notes', [
             'enrollment_id' => $this->enrollment->id,
-            'user_id'       => $this->coachA->id,
-            'body'          => '最近Slackの反応が24時間以上遅れている。次回面談で体調を確認する。',
+            'user_id' => $this->coachA->id,
+            'body' => '最近Slackの反応が24時間以上遅れている。次回面談で体調を確認する。',
         ]);
     }
 
@@ -99,10 +102,10 @@ class EnrollmentNoteControllerTest extends TestCase
     {
         // コーチAがメモを執筆
         $note = EnrollmentNote::create([
-            'id'            => (string) Str::ulid(),
+            'id' => (string) Str::ulid(),
             'enrollment_id' => $this->enrollment->id,
-            'user_id'       => $this->coachA->id,
-            'body'          => 'コーチAが書いた秘密のメモ',
+            'user_id' => $this->coachA->id,
+            'body' => 'コーチAが書いた秘密のメモ',
         ]);
 
         // 1. 作成者本人は正常に編集ページを表示できる（200OK）
@@ -124,10 +127,10 @@ class EnrollmentNoteControllerTest extends TestCase
     public function test_管理者は他人が作成した任意の受講生メモを越境して編集および削除できること(): void
     {
         $note = EnrollmentNote::create([
-            'id'            => (string) Str::ulid(),
+            'id' => (string) Str::ulid(),
             'enrollment_id' => $this->enrollment->id,
-            'user_id'       => $this->coachA->id,
-            'body'          => 'コーチAの生データ',
+            'user_id' => $this->coachA->id,
+            'body' => 'コーチAの生データ',
         ]);
 
         // 1. 管理者は他人のメモでも安全に更新可能
@@ -156,10 +159,10 @@ class EnrollmentNoteControllerTest extends TestCase
         $response->assertStatus(403);
 
         $note = EnrollmentNote::create([
-            'id'            => (string) Str::ulid(),
+            'id' => (string) Str::ulid(),
             'enrollment_id' => $this->enrollment->id,
-            'user_id'       => $this->coachA->id,
-            'body'          => '社外秘の観察ログ',
+            'user_id' => $this->coachA->id,
+            'body' => '社外秘の観察ログ',
         ]);
 
         // 2. 受講生による勝手な編集画面への侵入も403直撃拒否！

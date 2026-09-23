@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Models\Answer;
 use Illuminate\Database\Eloquent\Concerns\HasUlids; // ULIDを使用するためのトレイトをインポート
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -17,5 +16,6 @@ class QaReply extends Answer
     protected $table = 'answers';
 
     protected $keyType = 'string';
+
     public $incrementing = false;
 }

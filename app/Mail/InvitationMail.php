@@ -23,6 +23,7 @@ class InvitationMail extends Mailable implements ShouldQueue
     // 【T-A-05で追加】
     // 一時的な障害（メールサーバーの瞬断等）を想定した、自動リトライと段階的待機（バックオフ）のマウント
     public int $tries = 3;    // 最大3回リトライ
+
     public int $backoff = 30; // 失敗時は30秒待機してからリトライ
 
     public function __construct(public Invitation $invitation) {}

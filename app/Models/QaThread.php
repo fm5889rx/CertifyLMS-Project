@@ -15,5 +15,6 @@ class QaThread extends Question
     protected $table = 'questions';
 
     protected $keyType = 'string';
+
     public $incrementing = false;
 }

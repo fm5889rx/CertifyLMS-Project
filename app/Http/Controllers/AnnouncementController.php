@@ -4,19 +4,18 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Enums\AnnouncementTargetType;
+use App\Enums\UserRole;
 use App\Http\Requests\Announcement\AnnouncementStoreRequest;
 use App\Models\Announcement;
-use App\Models\User;
 use App\Models\Enrollment;
-use App\Enums\UserRole;
-use App\Enums\AnnouncementTargetType;
+use App\Models\User;
 use App\Notifications\AdminAnnouncementNotification;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\View\View;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Illuminate\View\View;
 
 class AnnouncementController extends Controller
 {
@@ -25,11 +24,11 @@ class AnnouncementController extends Controller
      */
     private function checkAdmin(): void
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
         // 管理者以外は403エラーでブロック
-        if (!$user || $user->role !== UserRole::Admin) {
+        if (! $user || $user->role !== UserRole::Admin) {
             abort(403, 'この操作は管理者のみに許可されています。');
         }
     }
@@ -92,14 +91,14 @@ class AnnouncementController extends Controller
         DB::transaction(function () use ($announcementId, $title, $body, $targetType, $targetId, $sentCount, $targetUserIds, $adminId) {
 
             Announcement::create([
-                'id'                 => $announcementId,
-                'title'              => $title,
-                'body'               => $body,
-                'target_type'        => $targetType,
-                'target_id'          => $targetId, // 統合された正しい物理IDが格納される
-                'dispatched_count'   => $sentCount,
+                'id' => $announcementId,
+                'title' => $title,
+                'body' => $body,
+                'target_type' => $targetType,
+                'target_id' => $targetId, // 統合された正しい物理IDが格納される
+                'dispatched_count' => $sentCount,
                 'created_by_user_id' => $adminId,
-                'dispatched_at'      => now(),
+                'dispatched_at' => now(),
             ]);
 
             // 通知基盤への一斉リレー

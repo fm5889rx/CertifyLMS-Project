@@ -7,9 +7,9 @@ namespace App\Http\Controllers;
 use App\Models\Announcement;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 class NotificationController extends Controller
 {
@@ -68,7 +68,7 @@ class NotificationController extends Controller
     {
         $notification = DatabaseNotification::where('id', $id)->firstOrFail();
 
-        if ((string)$notification->notifiable_id !== (string)Auth::id()) {
+        if ((string) $notification->notifiable_id !== (string) Auth::id()) {
             abort(403, 'この通知を操作する権限がありません。');
         }
 
@@ -95,7 +95,7 @@ class NotificationController extends Controller
             ->whereNull('read_at')
             ->update([
                 'read_at' => now(),
-                'updated_at' => now()
+                'updated_at' => now(),
             ]);
 
         return redirect()->route('notifications.index')

@@ -31,14 +31,16 @@ use Illuminate\View\View;
 class AiChatController extends Controller
 {
     private string $apiKey;
+
     private string $model;
+
     private int $dailyLimit = 50;
 
     public function __construct()
     {
         $this->apiKey = config('services.gemini.api_key', '');
-        $this->model  = config('services.gemini.model');
-        $this->dailyLimit = (int)config('services.gemini.daily_limit');
+        $this->model = config('services.gemini.model');
+        $this->dailyLimit = (int) config('services.gemini.daily_limit');
     }
 
     /**
@@ -63,7 +65,7 @@ class AiChatController extends Controller
     /**
      * 会話の新規作成 (ウィジェットからの非同期作成にも対応)
      */
-    public function store(Request $request): View | RedirectResponse | JsonResponse
+    public function store(Request $request): View|RedirectResponse|JsonResponse
     {
         $user = auth()->user();
         $sectionId = $request->json('section_id') ?? $request->input('section_id');
@@ -78,28 +80,30 @@ class AiChatController extends Controller
                 // 他メンバーのモーダルが使う可能性のあるすべてのキー名（content, first_message, message）から初回入力を取り込み
                 $userContent = $request->input('content') ?? ($request->json('content') ?? ($request->input('first_message') ?? $request->input('message')));
 
-                if (!empty($userContent)) {
+                if (! empty($userContent)) {
                     $request->merge(['content' => $userContent]);
+
                     return $this->sendMessage($request, $existing);
                 }
 
                 if ($request->ajax() || $request->wantsJson() || $request->isJson()) {
                     return response()->json(['status' => 'success', 'conversation' => $existing], 200);
                 }
+
                 return redirect()->route('ai-chat.conversations.show', $existing->id);
             }
         }
 
         $section = $sectionId ? Section::find($sectionId) : null;
-        $title = $section ? "【教材相談】" . $section->title : "新しい学習相談";
+        $title = $section ? '【教材相談】'.$section->title : '新しい学習相談';
 
         // 1. 完璧な新規会話スレッドの永続化
         $conversation = AiChatConversation::create([
-            'user_id'            => $user->id,
-            'section_id'         => $sectionId,
-            'title'              => Str::limit($title, 50, ''),
-            'auto_title_enabled' => (bool)($request->json('auto_title_enabled') ?? $request->input('auto_title_enabled', true)),
-            'last_message_at'    => Carbon::now(),
+            'user_id' => $user->id,
+            'section_id' => $sectionId,
+            'title' => Str::limit($title, 50, ''),
+            'auto_title_enabled' => (bool) ($request->json('auto_title_enabled') ?? $request->input('auto_title_enabled', true)),
+            'last_message_at' => Carbon::now(),
         ]);
 
         // 飛び込んでくる可能性のあるすべてのキー名を抱き合わせでGrepする
@@ -109,8 +113,9 @@ class AiChatController extends Controller
                     ?? $request->input('message')));
 
         // 2. もし文字が実在していれば、リクエスト空間を正しい 'content' 型に統一して本丸へ射出
-        if (!empty($userContent)) {
+        if (! empty($userContent)) {
             $request->merge(['content' => $userContent]);
+
             return $this->sendMessage($request, $conversation);
         }
 
@@ -121,6 +126,7 @@ class AiChatController extends Controller
                 : "こんにちは！資格「{$user->qualification_name}」の効率の良い学習方法についてアドバイスをお願いします！";
 
             $request->merge(['content' => $fallbackPrompt]);
+
             return $this->sendMessage($request, $conversation);
         }
 
@@ -134,11 +140,11 @@ class AiChatController extends Controller
     /**
      * 会話の詳細（過去ログ）表示 / ウィジェットからの過去履歴復元(245行目付近)
      */
-    public function show(Request $request, string $id): View | RedirectResponse | JsonResponse
+    public function show(Request $request, string $id): View|RedirectResponse|JsonResponse
     {
         $conversation = AiChatConversation::findOrFail($id);
 
-        if ($request->has('content') && !empty($request->input('content'))) {
+        if ($request->has('content') && ! empty($request->input('content'))) {
             return $this->sendMessage($request, $conversation);
         }
 
@@ -150,13 +156,13 @@ class AiChatController extends Controller
         // データベース上の「model」という文字列を、フロントの期待値である「assistant」へ動的変換して返却
         $messages = $conversation->messages->map(function ($msg) {
             return [
-                'id'               => $msg->id,
-                'role'             => $msg->role->value === 'model' ? 'assistant' : 'user',
-                'status'           => $msg->status->value,
-                'content'          => $msg->content,
+                'id' => $msg->id,
+                'role' => $msg->role->value === 'model' ? 'assistant' : 'user',
+                'status' => $msg->status->value,
+                'content' => $msg->content,
                 'response_time_ms' => $msg->response_time_ms,
-                'output_tokens'    => $msg->output_tokens,
-                'created_at'       => $msg->created_at->toISOString(),
+                'output_tokens' => $msg->output_tokens,
+                'created_at' => $msg->created_at->toISOString(),
             ];
         });
 
@@ -166,6 +172,7 @@ class AiChatController extends Controller
         }
 
         $messagesOriginal = $conversation->messages;
+
         return view('ai-chat.show', compact('conversation', 'conversations', 'messagesOriginal'));
     }
 
@@ -191,7 +198,7 @@ class AiChatController extends Controller
     /**
      * 会話の削除
      */
-    public function destroy(Request $request, string $id): JsonResponse | RedirectResponse
+    public function destroy(Request $request, string $id): JsonResponse|RedirectResponse
     {
         $conversation = AiChatConversation::findOrFail($id);
         $conversation->delete();
@@ -207,14 +214,14 @@ class AiChatController extends Controller
     /**
      * メッセージの送信 ＆ Gemini API 同期通信
      */
-    public function sendMessage(Request $request, AiChatConversation $conversation): JsonResponse | RedirectResponse
+    public function sendMessage(Request $request, AiChatConversation $conversation): JsonResponse|RedirectResponse
     {
         $user = auth()->user();
 
         // 1. 非機能要件: 受講生1人あたりの日次レート制限チェック
         $todayMessageCount = AiChatMessage::whereHas('conversation', function ($query) use ($user) {
-                $query->where('user_id', $user->id);
-            })
+            $query->where('user_id', $user->id);
+        })
             ->where('role', AiChatMessageRole::User)
             ->where('created_at', '>=', Carbon::today())
             ->count();
@@ -223,6 +230,7 @@ class AiChatController extends Controller
             if ($request->ajax() || $request->wantsJson() || $request->isJson()) {
                 return response()->json(['error' => "本日のAI相談回数の上限（{$this->dailyLimit}回）に達しました。明日再度お試しください。"], 429);
             }
+
             return redirect()->back()->withErrors(['error' => "本日のAI相談回数の上限（{$this->dailyLimit}回）に達しました。明日再度お試しください。"]);
         }
 
@@ -233,21 +241,22 @@ class AiChatController extends Controller
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json(['error' => '内容が空です。'], 422);
             }
+
             return redirect()->route('ai-chat.conversations.show', $conversation->id);
         }
 
         // 2. 受講生の質問メッセージを先行保存 (失敗時も残す防衛線)
         $userMessage = AiChatMessage::create([
             'ai_chat_conversation_id' => $conversation->id,
-            'role'                    => AiChatMessageRole::User,
-            'status'                  => AiChatMessageStatus::Completed,
-            'model_name'              => $this->model,
-            'content'                 => $userContent,
+            'role' => AiChatMessageRole::User,
+            'status' => AiChatMessageStatus::Completed,
+            'model_name' => $this->model,
+            'content' => $userContent,
         ]);
 
         // 3. コンテキスト自動付与の組み立て (システムプロンプトのパッキング)
         $systemInstruction = "あなたは優秀な学習伴走AIアシスタントです。受講生の疑問を即座に解消し、学習継続率を高めてください。\n";
-        if (!empty($user->qualification_name)) {
+        if (! empty($user->qualification_name)) {
             $systemInstruction .= "【受講生情報】現在、この受講生は資格「{$user->qualification_name}」の合格を目指して勉強しています。この資格の文脈に沿った的確なアドバイスを行ってください。\n";
         }
         if ($conversation->section_id && $conversation->section) {
@@ -266,14 +275,14 @@ class AiChatController extends Controller
         foreach ($historyMessages as $msg) {
             $contents[] = [
                 'role' => $msg->role === AiChatMessageRole::User ? 'user' : 'model',
-                'parts' => [['text' => $msg->content]]
+                'parts' => [['text' => $msg->content]],
             ];
         }
 
         // 最後の質問を配列に追加
         $contents[] = [
             'role' => AiChatMessageRole::User->value,
-            'parts' => [['text' => $userMessage->content]]
+            'parts' => [['text' => $userMessage->content]],
         ];
 
         // 4. 【本番環境直撃】Gemini API エンドポイントへの同期通信リクエストを発射
@@ -285,21 +294,21 @@ class AiChatController extends Controller
             // 💡 外部へのパケット発射とその成否チェック「だけ」をこのブロックで行います
             $response = Http::asJson()->post($url, [
                 'systemInstruction' => [
-                    'parts' => [['text' => $systemInstruction]]
+                    'parts' => [['text' => $systemInstruction]],
                 ],
                 'contents' => $contents,
                 'generationConfig' => [
                     'maxOutputTokens' => 1000,
                     'temperature' => 0.7,
-                ]
+                ],
             ]);
 
-            Log::info('$response', ['status' => $response->status(),'body' => $response->json()]);
+            Log::info('$response', ['status' => $response->status(), 'body' => $response->json()]);
 
-            $responseTimeMs = (int)round((microtime(true) - $startTime) * 1000);
+            $responseTimeMs = (int) round((microtime(true) - $startTime) * 1000);
 
             if ($response->failed()) {
-                throw new \Exception("Gemini API HTTP Error Status: " . $response->status());
+                throw new \Exception('Gemini API HTTP Error Status: '.$response->status());
             }
 
             // 通信成功時は、生のレスポンス配列を変数に受け止めて、速やかに try を脱出！
@@ -314,18 +323,18 @@ class AiChatController extends Controller
         } catch (\Exception $e) {
             Log::error('Gemini APIの本番同期通信に失敗しました。', ['error' => $e->getMessage()]);
 
-            $responseTimeMs = isset($startTime) ? (int)round((microtime(true) - $startTime) * 1000) : 0;
+            $responseTimeMs = isset($startTime) ? (int) round((microtime(true) - $startTime) * 1000) : 0;
             $statusCode = $e->getCode() > 0 ? $e->getCode() : 500;
 
             // 8. 【物理層エラーロールの完全アジャスト】
             $aiMessage = AiChatMessage::create([
                 'ai_chat_conversation_id' => $conversation->id,
-                'role'                    => AiChatMessageRole::Assistant,
-                'status'                  => AiChatMessageStatus::Error,
-                'content'                 => '', // エラー時は本文を空文字にする
-                'model_name'              => $this->model,
-                'error_detail'            => $e->getMessage(), // 429や502のエラー文字を注入
-                'response_time_ms'        => $responseTimeMs,
+                'role' => AiChatMessageRole::Assistant,
+                'status' => AiChatMessageStatus::Error,
+                'content' => '', // エラー時は本文を空文字にする
+                'model_name' => $this->model,
+                'error_detail' => $e->getMessage(), // 429や502のエラー文字を注入
+                'response_time_ms' => $responseTimeMs,
             ]);
 
             $conversation->update(['last_message_at' => Carbon::now()]);
@@ -333,26 +342,26 @@ class AiChatController extends Controller
             // chat-client.js の要求インターフェース（502 / upstream_status）への完全適合返却
             if ($request->ajax() || $request->wantsJson() || $request->isJson()) {
 
-                $userRoleValue      = $userMessage->role->value;
-                $userStatusValue    = $userMessage->status->value;
+                $userRoleValue = $userMessage->role->value;
+                $userStatusValue = $userMessage->status->value;
                 $assistantRoleValue = $aiMessage->role->value;
-                $aiStatusValue      = $aiMessage->status->value;
+                $aiStatusValue = $aiMessage->status->value;
 
                 return response()->json([
-                    'status'           => 'error',
-                    'upstream_status'  => $statusCode,
-                    'user_message'     => [
-                        'id'         => $userMessage->id,
-                        'role'       => $userRoleValue,
-                        'content'    => $userMessage->content,
-                        'status'     => $userStatusValue,
+                    'status' => 'error',
+                    'upstream_status' => $statusCode,
+                    'user_message' => [
+                        'id' => $userMessage->id,
+                        'role' => $userRoleValue,
+                        'content' => $userMessage->content,
+                        'status' => $userStatusValue,
                         'created_at' => $userMessage->created_at->toISOString(),
                     ],
                     'assistant_message' => [
-                        'id'         => $aiMessage->id,
-                        'role'       => $assistantRoleValue,
-                        'content'    => 'AIからの応答取得に失敗しました。',
-                        'status'     => $aiStatusValue,
+                        'id' => $aiMessage->id,
+                        'role' => $assistantRoleValue,
+                        'content' => 'AIからの応答取得に失敗しました。',
+                        'status' => $aiStatusValue,
                         'created_at' => $aiMessage->created_at->toISOString(),
                     ],
                 ], 502);
@@ -366,13 +375,13 @@ class AiChatController extends Controller
         // ============================================================
         $aiMessage = AiChatMessage::create([
             'ai_chat_conversation_id' => $conversation->id,
-            'role'                    => AiChatMessageRole::Assistant->value,
-            'status'                  => $apiStatus->value,
-            'content'                 => $aiResponseText,
-            'error_detail'            => $apiStatus === AiChatMessageStatus::Error ? 'API通信失敗' : null,
-            'model_name'              => $this->model,
-            'output_tokens'           => $candidatesTokens,
-            'response_time_ms'        => $responseTimeMs,
+            'role' => AiChatMessageRole::Assistant->value,
+            'status' => $apiStatus->value,
+            'content' => $aiResponseText,
+            'error_detail' => $apiStatus === AiChatMessageStatus::Error ? 'API通信失敗' : null,
+            'model_name' => $this->model,
+            'output_tokens' => $candidatesTokens,
+            'response_time_ms' => $responseTimeMs,
         ]);
 
         // 6. 最終メッセージ時刻(last_message_at)の更新 ＆ タイトル自動要約生成
@@ -386,34 +395,34 @@ class AiChatController extends Controller
         if ($request->ajax() || $request->wantsJson() || $request->isJson()) {
 
             // アロー演算子（->value）を用いて、確実に生の文字列を抽出してシリアライズエラーを完全防止！
-            $userRoleValue      = $userMessage->role->value;
-            $userStatusValue    = $userMessage->status->value;
+            $userRoleValue = $userMessage->role->value;
+            $userStatusValue = $userMessage->status->value;
             $assistantRoleValue = $aiMessage->role->value;
-            $aiStatusValue      = $aiMessage->status->value;
+            $aiStatusValue = $aiMessage->status->value;
 
             return response()->json([
-                'status'            => 'success',
-                'user_message'      => [
-                    'id'         => $userMessage->id,
-                    'role'       => $userRoleValue,
-                    'content'    => $userMessage->content,
-                    'status'     => $userStatusValue,
+                'status' => 'success',
+                'user_message' => [
+                    'id' => $userMessage->id,
+                    'role' => $userRoleValue,
+                    'content' => $userMessage->content,
+                    'status' => $userStatusValue,
                     'created_at' => $userMessage->created_at->toISOString(),
                 ],
                 'assistant_message' => [
-                    'id'               => $aiMessage->id,
-                    'role'             => $assistantRoleValue,
-                    'content'          => $aiMessage->content,
-                    'status'           => $aiStatusValue,
+                    'id' => $aiMessage->id,
+                    'role' => $assistantRoleValue,
+                    'content' => $aiMessage->content,
+                    'status' => $aiStatusValue,
                     'response_time_ms' => $aiMessage->response_time_ms,
-                    'output_tokens'    => $aiMessage->output_tokens,
-                    'created_at'       => $aiMessage->created_at->toISOString(),
+                    'output_tokens' => $aiMessage->output_tokens,
+                    'created_at' => $aiMessage->created_at->toISOString(),
                 ],
-                'conversation'      => [
-                    'id'                 => $conversation->id,
-                    'title'              => $conversation->title,
+                'conversation' => [
+                    'id' => $conversation->id,
+                    'title' => $conversation->title,
                     'auto_title_enabled' => $conversation->auto_title_enabled,
-                    'last_message_at'    => $conversation->last_message_at->toISOString(),
+                    'last_message_at' => $conversation->last_message_at->toISOString(),
                 ],
             ]);
         }

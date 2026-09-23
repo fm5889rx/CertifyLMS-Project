@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Models\MeetingPack;
-use App\Models\Payment;
-use App\Models\MeetingQuotaTransaction;
 use App\Enums\MeetingQuotaTransactionType;
 use App\Enums\PaymentStatus;
-use Illuminate\Http\Request;
+use App\Models\MeetingPack;
+use App\Models\MeetingQuotaTransaction;
+use App\Models\Payment;
+use App\Models\User;
+use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Stripe\Stripe;
 use Stripe\Webhook;
-use Exception;
 
 /**
  * Stripe 決済完了通知 Webhook コントローラー
@@ -45,6 +45,7 @@ class StripeWebhookController extends Controller
         $sigHeader = $request->header('Stripe-Signature');
         if (empty($sigHeader)) {
             Log::warning('Stripe Webhook 署名ヘッダー (Stripe-Signature) が完全に欠落したパケットを検知・遮断しました。');
+
             return response()->json(['error' => 'Header Missing'], 400);
         }
 
@@ -56,6 +57,7 @@ class StripeWebhookController extends Controller
             $event = Webhook::constructEvent($payload, $sigHeader, $this->endpointSecret);
         } catch (Exception $e) {
             Log::error('Stripe Webhook 署名検証に失敗しました。不正な改ざんパケットの可能性があります。', ['error' => $e->getMessage()]);
+
             return response()->json(['error' => 'Invalid signature'], 400);
         }
 
@@ -66,8 +68,9 @@ class StripeWebhookController extends Controller
             $userId = $session->metadata->user_id ?? null;
             $packId = $session->metadata->meeting_pack_id ?? null;
 
-            if (!$userId || !$packId) {
+            if (! $userId || ! $packId) {
                 Log::error('Stripe Webhook 必要なメタデータが欠落しています。', ['session_id' => $session->id]);
+
                 return response()->json(['error' => 'Missing metadata'], 400);
             }
 
@@ -78,6 +81,7 @@ class StripeWebhookController extends Controller
             $existingPayment = Payment::where('stripe_checkout_session_id', $session->id)->first();
             if ($existingPayment) {
                 Log::info('Stripe Webhook 重複した決済通知を検知しました。二重計上を防御し、安全に 200 OK を返します。', ['session_id' => $session->id]);
+
                 return response()->json(['status' => 'duplicated_ignored'], 200);
             }
 
@@ -85,8 +89,9 @@ class StripeWebhookController extends Controller
             $pack = MeetingPack::find($packId);
             $user = User::find($userId);
 
-            if (!$pack || !$user) {
+            if (! $pack || ! $user) {
                 Log::error('Stripe Webhook ユーザーまたは面談パックがデータベースに見つかりません。', ['user_id' => $userId, 'pack_id' => $packId]);
+
                 return response()->json(['error' => 'Entity not found'], 404);
             }
 
@@ -95,23 +100,23 @@ class StripeWebhookController extends Controller
             try {
                 // ① 決済履歴の永続化
                 $payment = Payment::create([
-                    'user_id'                     => $user->id,
-                    'meeting_pack_id'             => $pack->id,
-                    'amount'                      => $pack->price,
-                    'quantity'                    => $pack->meeting_count,
-                    'status'                      => PaymentStatus::Completed,
+                    'user_id' => $user->id,
+                    'meeting_pack_id' => $pack->id,
+                    'amount' => $pack->price,
+                    'quantity' => $pack->meeting_count,
+                    'status' => PaymentStatus::Completed,
                     'stripe_checkout_session_id' => $session->id,
-                    'stripe_payment_intent_id'   => $session->payment_intent ?? null,
+                    'stripe_payment_intent_id' => $session->payment_intent ?? null,
                 ]);
 
                 // ② 元帳方式（銀行口座方式）による面談残数加算の安全な執行
                 MeetingQuotaTransaction::create([
-                    'user_id'            => $user->id,
-                    'type'               => MeetingQuotaTransactionType::Purchased,
-                    'amount'             => (int) $pack->meeting_count,
+                    'user_id' => $user->id,
+                    'type' => MeetingQuotaTransactionType::Purchased,
+                    'amount' => (int) $pack->meeting_count,
                     'related_payment_id' => $payment->id,
-                    'note'               => "追加面談パック「{$pack->name}」の購入による付与",
-                    'occurred_at'        => now(),
+                    'note' => "追加面談パック「{$pack->name}」の購入による付与",
+                    'occurred_at' => now(),
                 ]);
 
                 DB::commit();
@@ -119,9 +124,11 @@ class StripeWebhookController extends Controller
             } catch (Exception $e) {
                 DB::rollBack();
                 Log::error('Stripe Webhook データベース永続化中に致命的なエラーが発生しました。', ['error' => $e->getMessage()]);
+
                 return response()->json(['error' => 'Database error'], 500);
             }
         }
+
         return response()->json(['status' => 'success'], 200);
     }
 }

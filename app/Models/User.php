@@ -315,6 +315,7 @@ class User extends Authenticatable
 
     /**
      * 1人のユーザーは複数の質問を持つ
+     *
      * @return HasMany<Question, $this>
      */
     public function questions(): HasMany
@@ -324,6 +325,7 @@ class User extends Authenticatable
 
     /**
      * 1人のユーザーは複数の回答を持つ
+     *
      * @return HasMany<Answer, $this>
      */
     public function answers(): HasMany
@@ -399,7 +401,7 @@ class User extends Authenticatable
     {
         // 1人の受講生は、複数の会話（Conversations）を所有します
         // 外部キーは 'user_id'、最新の相談が一番上に来るように更新日時順でソート
-        return $this->hasMany(\App\Models\AiChatConversation::class, 'user_id')
+        return $this->hasMany(AiChatConversation::class, 'user_id')
             ->orderBy('updated_at', 'desc');
     }
 }

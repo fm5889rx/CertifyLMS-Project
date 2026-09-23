@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\MeetingPack;
 
-use App\Models\User;
-use App\Models\MeetingPack;
-use App\Enums\UserRole;
 use App\Enums\MeetingPackStatus;
+use App\Enums\UserRole;
+use App\Enums\UserStatus;
+use App\Models\MeetingPack;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 use Tests\TestCase;
@@ -17,7 +18,9 @@ class AdminMeetingPackControllerTest extends TestCase
     use RefreshDatabase;
 
     private User $adminUser;
+
     private User $student;
+
     private User $coach;
 
     /**
@@ -28,23 +31,23 @@ class AdminMeetingPackControllerTest extends TestCase
         parent::setUp();
 
         $inProgressStatus = defined('\App\Enums\UserStatus::InProgress')
-            ? \App\Enums\UserStatus::InProgress
+            ? UserStatus::InProgress
             : 'in_progress';
 
         // 1. 本物の管理者（Admin）アカウントを生成
         $this->adminUser = User::factory()->create([
-            'role'   => UserRole::Admin ?? 'admin',
+            'role' => UserRole::Admin,
             'status' => $inProgressStatus,
         ]);
 
         // 2. アクセス拒否検証用の 受講生 と コーチ を生成
         $this->student = User::factory()->create([
-            'role'   => UserRole::Student,
+            'role' => UserRole::Student,
             'status' => $inProgressStatus,
         ]);
 
         $this->coach = User::factory()->create([
-            'role'   => UserRole::Coach,
+            'role' => UserRole::Coach,
             'status' => $inProgressStatus,
         ]);
     }
@@ -56,32 +59,32 @@ class AdminMeetingPackControllerTest extends TestCase
     {
         // ターゲットとなるパックを生成
         MeetingPack::create([
-            'id'                  => (string) Str::ulid(),
-            'name'                => '注目ターゲットパック',
-            'meeting_count'       => 5,
-            'price'               => 5000,
-            'status'              => MeetingPackStatus::Published->value,
-            'created_by_user_id'  => $this->adminUser->id,
-            'updated_by_user_id'  => $this->adminUser->id,
-            'sort_order'          => 1,
+            'id' => (string) Str::ulid(),
+            'name' => '注目ターゲットパック',
+            'meeting_count' => 5,
+            'price' => 5000,
+            'status' => MeetingPackStatus::Published->value,
+            'created_by_user_id' => $this->adminUser->id,
+            'updated_by_user_id' => $this->adminUser->id,
+            'sort_order' => 1,
         ]);
 
         // ノイズとなる下書きパックを生成
         MeetingPack::create([
-            'id'                  => (string) Str::ulid(),
-            'name'                => '無関係なダミーパック',
-            'meeting_count'       => 3,
-            'price'               => 3000,
-            'status'              => MeetingPackStatus::Draft->value,
-            'created_by_user_id'  => $this->adminUser->id,
-            'updated_by_user_id'  => $this->adminUser->id,
-            'sort_order'          => 2,
+            'id' => (string) Str::ulid(),
+            'name' => '無関係なダミーパック',
+            'meeting_count' => 3,
+            'price' => 3000,
+            'status' => MeetingPackStatus::Draft->value,
+            'created_by_user_id' => $this->adminUser->id,
+            'updated_by_user_id' => $this->adminUser->id,
+            'sort_order' => 2,
         ]);
 
         // 検索とフィルタを指定してGETリクエスト（大文字小文字の罠を排除したクエリ送信）
         $response = $this->actingAs($this->adminUser)->get(route('admin.meeting-packs.index', [
             'keyword' => '注目',
-            'status'  => 'published',
+            'status' => 'published',
         ]));
 
         $response->assertStatus(200);
@@ -95,12 +98,12 @@ class AdminMeetingPackControllerTest extends TestCase
     public function test_管理者は新しい面談パックを初期状態下書きとして正常に作成できること(): void
     {
         $postData = [
-            'name'            => '新規面談10回パック',
-            'description'     => '贅沢なパックです。',
-            'meeting_count'   => 10,
-            'price'           => 30000,
+            'name' => '新規面談10回パック',
+            'description' => '贅沢なパックです。',
+            'meeting_count' => 10,
+            'price' => 30000,
             'stripe_price_id' => 'price_12345',
-            'sort_order'      => 5,
+            'sort_order' => 5,
         ];
 
         $response = $this->actingAs($this->adminUser)->post(route('admin.meeting-packs.store'), $postData);
@@ -111,10 +114,10 @@ class AdminMeetingPackControllerTest extends TestCase
 
         // データベースに初期ステータス 'draft' で作成者・更新者IDが自動マウントされて保存されていること
         $this->assertDatabaseHas('meeting_packs', [
-            'name'                => '新規面談10回パック',
-            'status'              => MeetingPackStatus::Draft->value,
-            'created_by_user_id'  => $this->adminUser->id,
-            'updated_by_user_id'  => $this->adminUser->id,
+            'name' => '新規面談10回パック',
+            'status' => MeetingPackStatus::Draft->value,
+            'created_by_user_id' => $this->adminUser->id,
+            'updated_by_user_id' => $this->adminUser->id,
         ]);
     }
 
@@ -124,9 +127,9 @@ class AdminMeetingPackControllerTest extends TestCase
     public function test_面談パック新設時に必須項目や文字数上限を満たさない場合はバリデーションエラーになること(): void
     {
         $invalidData = [
-            'name'            => str_repeat('A', 101), //  マイグレーション制限の100文字をオーバー
-            'meeting_count'   => -5,                   // 不正な範囲の整数
-            'price'           => -1000,                // 負の価格
+            'name' => str_repeat('A', 101), //  マイグレーション制限の100文字をオーバー
+            'meeting_count' => -5,                   // 不正な範囲の整数
+            'price' => -1000,                // 負の価格
         ];
 
         $response = $this->actingAs($this->adminUser)
@@ -143,13 +146,13 @@ class AdminMeetingPackControllerTest extends TestCase
     public function test_管理者は面談パックの詳細表示およびステータスを維持したままの基本情報更新ができること(): void
     {
         $pack = MeetingPack::create([
-            'id'                  => (string) Str::ulid(),
-            'name'                => '更新前のパック名',
-            'meeting_count'       => 1,
-            'price'               => 1000,
-            'status'              => MeetingPackStatus::Draft->value,
-            'created_by_user_id'  => $this->adminUser->id,
-            'updated_by_user_id'  => $this->adminUser->id,
+            'id' => (string) Str::ulid(),
+            'name' => '更新前のパック名',
+            'meeting_count' => 1,
+            'price' => 1000,
+            'status' => MeetingPackStatus::Draft->value,
+            'created_by_user_id' => $this->adminUser->id,
+            'updated_by_user_id' => $this->adminUser->id,
         ]);
 
         // 詳細画面の表示検証
@@ -158,9 +161,9 @@ class AdminMeetingPackControllerTest extends TestCase
 
         // 基本情報のパッチ更新
         $updateData = [
-            'name'          => '完全に新しく直したパック名',
+            'name' => '完全に新しく直したパック名',
             'meeting_count' => 1,
-            'price'         => 1500,
+            'price' => 1500,
         ];
 
         $response = $this->actingAs($this->adminUser)->patch(route('admin.meeting-packs.update', $pack->id), $updateData);
@@ -168,8 +171,8 @@ class AdminMeetingPackControllerTest extends TestCase
 
         // ステータスは「draft」のまま維持され、名前と価格が更新されていること
         $this->assertDatabaseHas('meeting_packs', [
-            'id'    => $pack->id,
-            'name'  => '完全に新しく直したパック名',
+            'id' => $pack->id,
+            'name' => '完全に新しく直したパック名',
             'price' => 1500,
             'status' => MeetingPackStatus::Draft->value,
         ]);
@@ -182,13 +185,13 @@ class AdminMeetingPackControllerTest extends TestCase
     {
         // 1. 削除可能な下書きパックの検証
         $draftPack = MeetingPack::create([
-            'id'                  => (string) Str::ulid(),
-            'name'                => '消去していい下書きパック',
-            'meeting_count'       => 2,
-            'price'               => 2000,
-            'status'              => MeetingPackStatus::Draft->value,
-            'created_by_user_id'  => $this->adminUser->id,
-            'updated_by_user_id'  => $this->adminUser->id,
+            'id' => (string) Str::ulid(),
+            'name' => '消去していい下書きパック',
+            'meeting_count' => 2,
+            'price' => 2000,
+            'status' => MeetingPackStatus::Draft->value,
+            'created_by_user_id' => $this->adminUser->id,
+            'updated_by_user_id' => $this->adminUser->id,
         ]);
 
         $response = $this->actingAs($this->adminUser)->delete(route('admin.meeting-packs.destroy', $draftPack->id));
@@ -196,13 +199,13 @@ class AdminMeetingPackControllerTest extends TestCase
 
         // 2. 削除不可能な公開中パックのガード検証
         $publishedPack = MeetingPack::create([
-            'id'                  => (string) Str::ulid(),
-            'name'                => '絶対に消してはいけない公開中パック',
-            'meeting_count'       => 2,
-            'price'               => 2000,
-            'status'              => MeetingPackStatus::Published->value,
-            'created_by_user_id'  => $this->adminUser->id,
-            'updated_by_user_id'  => $this->adminUser->id,
+            'id' => (string) Str::ulid(),
+            'name' => '絶対に消してはいけない公開中パック',
+            'meeting_count' => 2,
+            'price' => 2000,
+            'status' => MeetingPackStatus::Published->value,
+            'created_by_user_id' => $this->adminUser->id,
+            'updated_by_user_id' => $this->adminUser->id,
         ]);
 
         $response = $this->actingAs($this->adminUser)->delete(route('admin.meeting-packs.destroy', $publishedPack->id));
@@ -219,13 +222,13 @@ class AdminMeetingPackControllerTest extends TestCase
     public function test_面談パックのライフサイクルに沿ってステータスが正しく更新されること(): void
     {
         $pack = MeetingPack::create([
-            'id'                  => (string) Str::ulid(),
-            'name'                => '状態遷移テスト用SKU',
-            'meeting_count'       => 1,
-            'price'               => 1000,
-            'status'              => MeetingPackStatus::Draft->value,
-            'created_by_user_id'  => $this->adminUser->id,
-            'updated_by_user_id'  => $this->adminUser->id,
+            'id' => (string) Str::ulid(),
+            'name' => '状態遷移テスト用SKU',
+            'meeting_count' => 1,
+            'price' => 1000,
+            'status' => MeetingPackStatus::Draft->value,
+            'created_by_user_id' => $this->adminUser->id,
+            'updated_by_user_id' => $this->adminUser->id,
         ]);
 
         // 1. 公開にする (publish)

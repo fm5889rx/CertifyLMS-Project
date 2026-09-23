@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Meeting;
 
-use App\Models\User;
+use App\Enums\CertificationDifficulty;
+use App\Enums\CertificationStatus;
+use App\Enums\MeetingStatus;
+use App\Enums\UserRole;
+use App\Enums\UserStatus;
 use App\Models\Certification;
 use App\Models\CertificationCategory;
 use App\Models\Enrollment;
 use App\Models\Meeting;
 use App\Models\Plan;
-use App\Enums\UserRole;
-use App\Enums\UserStatus;
-use App\Enums\MeetingStatus;
-use App\Enums\CertificationDifficulty;
-use App\Enums\CertificationStatus;
+use App\Models\User;
 use App\Services\MeetingQuotaService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
@@ -25,8 +25,11 @@ class MeetingCancelQuotaTest extends TestCase
     use RefreshDatabase;
 
     private User $student;
+
     private User $coach;
+
     private Meeting $meeting;
+
     private MeetingQuotaService $quotaService;
 
     /**
@@ -45,55 +48,55 @@ class MeetingCancelQuotaTest extends TestCase
 
         // プランを作成者履歴付きでインサート
         $plan = Plan::create([
-            'id'                    => (string) Str::ulid(),
-            'name'                  => 'テスト受講プラン',
-            'duration_days'         => 30,
+            'id' => (string) Str::ulid(),
+            'name' => 'テスト受講プラン',
+            'duration_days' => 30,
             'default_meeting_quota' => 4,
-            'status'                => 'published',
-            'sort_order'            => 0,
-            'created_by_user_id'    => $admin->id,
-            'updated_by_user_id'    => $admin->id,
+            'status' => 'published',
+            'sort_order' => 0,
+            'created_by_user_id' => $admin->id,
+            'updated_by_user_id' => $admin->id,
         ]);
 
         $this->student = User::factory()->create([
-            'role'    => UserRole::Student,
-            'status'  => $inProgressStatus,
+            'role' => UserRole::Student,
+            'status' => $inProgressStatus,
             'plan_id' => $plan->id,
         ]);
 
         // 外部キー制約を満たすため、本物の資格カテゴリと資格マスタをインサート
         $category = CertificationCategory::create([
-            'id'   => (string) Str::ulid(),
-            'slug' => 'test-meeting-cancel-cat-' . Str::random(5),
+            'id' => (string) Str::ulid(),
+            'slug' => 'test-meeting-cancel-cat-'.Str::random(5),
             'name' => 'テスト面談カテゴリ',
         ]);
 
         $certification = Certification::create([
-            'id'                  => (string) Str::ulid(),
-            'category_id'         => $category->id,
-            'name'                => 'テスト面談資格マスタ',
-            'difficulty'          => CertificationDifficulty::Intermediate,
-            'status'              => CertificationStatus::Published,
-            'created_by_user_id'  => $admin->id,
-            'updated_by_user_id'  => $admin->id,
+            'id' => (string) Str::ulid(),
+            'category_id' => $category->id,
+            'name' => 'テスト面談資格マスタ',
+            'difficulty' => CertificationDifficulty::Intermediate,
+            'status' => CertificationStatus::Published,
+            'created_by_user_id' => $admin->id,
+            'updated_by_user_id' => $admin->id,
         ]);
 
         // 2. 受講登録マウント
         $enrollment = Enrollment::create([
-            'id'               => (string) Str::ulid(),
-            'user_id'          => $this->student->id,
+            'id' => (string) Str::ulid(),
+            'user_id' => $this->student->id,
             'certification_id' => $certification->id,
         ]);
 
         // 3. 予約済み（Reserved）の面談データをインサート（開始前を表現するため2日後を設定）
         $this->meeting = Meeting::create([
-            'id'                   => (string) Str::ulid(),
-            'enrollment_id'        => $enrollment->id,
-            'coach_id'             => $this->coach->id,
-            'student_id'           => $this->student->id,
-            'scheduled_at'         => now()->addDays(2),
-            'status'               => MeetingStatus::Reserved->value,
-            'topic'                => 'バグ検証用面談',
+            'id' => (string) Str::ulid(),
+            'enrollment_id' => $enrollment->id,
+            'coach_id' => $this->coach->id,
+            'student_id' => $this->student->id,
+            'scheduled_at' => now()->addDays(2),
+            'status' => MeetingStatus::Reserved->value,
+            'topic' => 'バグ検証用面談',
             'meeting_url_snapshot' => $this->coach->meeting_url,
         ]);
     }
@@ -117,8 +120,8 @@ class MeetingCancelQuotaTest extends TestCase
 
         // 2. データベース側の面談ステータスが Canceled に遷移していることを証明
         $this->assertDatabaseHas('meetings', [
-            'id'                  => $this->meeting->id,
-            'status'              => MeetingStatus::Canceled->value,
+            'id' => $this->meeting->id,
+            'status' => MeetingStatus::Canceled->value,
             'canceled_by_user_id' => $this->student->id,
         ]);
 

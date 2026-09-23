@@ -27,6 +27,7 @@ class MeetingQuotaTransaction extends Model
     use HasFactory, HasUlids;
 
     protected $keyType = 'string';      // S-A-03で追加
+
     public $incrementing = false;       // S-A-03で追加
 
     protected $fillable = [

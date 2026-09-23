@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Notifications;
 
-use App\Models\User;
-use App\Models\Meeting;
-use App\Models\Enrollment;
-use App\Models\MeetingReminderLog;
+use App\Enums\MeetingStatus;
 use App\Enums\UserRole;
 use App\Enums\UserStatus;
-use App\Enums\MeetingStatus;
+use App\Models\Enrollment;
+use App\Models\Meeting;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 
@@ -20,7 +20,9 @@ class SendMeetingRemindersCommandTest extends TestCase
     use RefreshDatabase;
 
     private User $student;
+
     private User $coach;
+
     private Enrollment $enrollment;
 
     /**
@@ -30,14 +32,14 @@ class SendMeetingRemindersCommandTest extends TestCase
     {
         parent::setUp();
 
-        //【T-A-05：テスト空間キュー自動執行同期規約のマウント】
+        // 【T-A-05：テスト空間キュー自動執行同期規約のマウント】
         config(['queue.default' => 'sync']);
 
         // Enumオブジェクトを使ってユーザーを生成
         $inProgressStatus = UserStatus::InProgress;
 
         $this->student = User::factory()->create(['role' => UserRole::Student, 'status' => $inProgressStatus, 'name' => 'テスト受講生']);
-        $this->coach   = User::factory()->create(['role' => UserRole::Coach, 'status' => $inProgressStatus, 'name' => 'テストコーチ']);
+        $this->coach = User::factory()->create(['role' => UserRole::Coach, 'status' => $inProgressStatus, 'name' => 'テストコーチ']);
 
         // 親となる受講登録の生成
         $this->enrollment = Enrollment::factory()->create(['user_id' => $this->student->id]);
@@ -50,13 +52,13 @@ class SendMeetingRemindersCommandTest extends TestCase
     {
         // 明日の昼12:00で予約済み面談を生成
         $meeting = Meeting::create([
-            'id'            => (string) Str::ulid(),
+            'id' => (string) Str::ulid(),
             'enrollment_id' => $this->enrollment->id,
-            'student_id'    => $this->student->id,
-            'coach_id'      => $this->coach->id,
-            'status'        => MeetingStatus::Reserved,
-            'scheduled_at'  => now()->addDay()->setHour(12)->setMinute(0)->setSecond(0),
-            'topic'         => '明日の模擬面談',
+            'student_id' => $this->student->id,
+            'coach_id' => $this->coach->id,
+            'status' => MeetingStatus::Reserved,
+            'scheduled_at' => now()->addDay()->setHour(12)->setMinute(0)->setSecond(0),
+            'topic' => '明日の模擬面談',
         ]);
 
         // --window=eve 引数を投げてArtisanコマンドを実行！
@@ -66,17 +68,17 @@ class SendMeetingRemindersCommandTest extends TestCase
         // 1. 重複防止履歴ログテーブルに「eve」として物理保存されていることを検証
         $this->assertDatabaseHas('meeting_reminder_logs', [
             'meeting_id' => $meeting->id,
-            'window'     => 'eve',
+            'window' => 'eve',
         ]);
 
         // 2. 受講生とコーチの双方の通知テーブルへ新着リマインドが刻まれていることを検証
         $this->assertDatabaseHas('notifications', [
             'notifiable_id' => $this->student->id,
-            'type'          => 'App\Notifications\MeetingReminderNotification',
+            'type' => 'App\Notifications\MeetingReminderNotification',
         ]);
         $this->assertDatabaseHas('notifications', [
             'notifiable_id' => $this->coach->id,
-            'type'          => 'App\Notifications\MeetingReminderNotification',
+            'type' => 'App\Notifications\MeetingReminderNotification',
         ]);
     }
 
@@ -87,13 +89,13 @@ class SendMeetingRemindersCommandTest extends TestCase
     {
         // 今から30分後で予約済み面談を生成
         $meeting = Meeting::create([
-            'id'            => (string) Str::ulid(),
+            'id' => (string) Str::ulid(),
             'enrollment_id' => $this->enrollment->id,
-            'student_id'    => $this->student->id,
-            'coach_id'      => $this->coach->id,
-            'status'        => MeetingStatus::Reserved,
-            'scheduled_at'  => now()->addMinutes(30),
-            'topic'         => '直前の成果発表会',
+            'student_id' => $this->student->id,
+            'coach_id' => $this->coach->id,
+            'status' => MeetingStatus::Reserved,
+            'scheduled_at' => now()->addMinutes(30),
+            'topic' => '直前の成果発表会',
         ]);
 
         // --window=one_hour_before 引数を投げてコマンド実行
@@ -103,7 +105,7 @@ class SendMeetingRemindersCommandTest extends TestCase
         // 1. 重複防止履歴ログテーブルに「eve」として物理保存されていることを検証
         $this->assertDatabaseHas('meeting_reminder_logs', [
             'meeting_id' => $meeting->id,
-            'window'     => 'one_hour_before',
+            'window' => 'one_hour_before',
         ]);
 
         // 2. 受講生の通知テーブルへ新着リマインドが刻まれていることを検証
@@ -116,20 +118,20 @@ class SendMeetingRemindersCommandTest extends TestCase
     public function test_コマンドが重複して再実行されても二重配信ログへの記録や通知の連発が鉄壁にブロックされること(): void
     {
         $meeting = Meeting::create([
-            'id'            => (string) Str::ulid(),
+            'id' => (string) Str::ulid(),
             'enrollment_id' => $this->enrollment->id,
-            'student_id'    => $this->student->id,
-            'coach_id'      => $this->coach->id,
-            'status'        => MeetingStatus::Reserved,
-            'scheduled_at'  => now()->addMinutes(30),
-            'topic'         => '重複検証面談',
+            'student_id' => $this->student->id,
+            'coach_id' => $this->coach->id,
+            'status' => MeetingStatus::Reserved,
+            'scheduled_at' => now()->addMinutes(30),
+            'topic' => '重複検証面談',
         ]);
 
         // 1回目の実行（通常配信）
         $this->artisan('notifications:send-meeting-reminders', ['--window' => 'one_hour_before']);
 
         // 通知が受講生宛てに「1件」あることを確認
-        $firstCount = \Illuminate\Support\Facades\DB::table('notifications')->where('notifiable_id', $this->student->id)->count();
+        $firstCount = DB::table('notifications')->where('notifiable_id', $this->student->id)->count();
         $this->assertEquals(1, $firstCount);
 
         // 2回目の実行（重複起動・再実行のシミュレート）
@@ -137,26 +139,26 @@ class SendMeetingRemindersCommandTest extends TestCase
             ->assertExitCode(0);
 
         // 2回目の実行後も通知の総数が「1件」のまま増えていない（二重配信が100%防止された）ことを検証
-        $secondCount = \Illuminate\Support\Facades\DB::table('notifications')->where('notifiable_id', $this->student->id)->count();
+        $secondCount = DB::table('notifications')->where('notifiable_id', $this->student->id)->count();
         $this->assertEquals(1, $secondCount);
     }
 
     /**
      * ④ 要件「受信者の利用状態による配信スキップガード」のテスト
      */
-    public function test_受講生またはコーチが休会や退会などでInProgress状態ではない場合はリマインダー配信が安全にスキップされること(): void
+    public function test_受講生またはコーチが休会や退会などで_in_progress状態ではない場合はリマインダー配信が安全にスキップされること(): void
     {
         // 🚨 受講生を「退会済（withdrawn）」などの非活性状態へ上書き設定！
         $this->student->update(['status' => UserStatus::Withdrawn ?? 'withdrawn']);
 
         $meeting = Meeting::create([
-            'id'            => (string) Str::ulid(),
+            'id' => (string) Str::ulid(),
             'enrollment_id' => $this->enrollment->id,
-            'student_id'    => $this->student->id,
-            'coach_id'      => $this->coach->id,
-            'status'        => MeetingStatus::Reserved,
-            'scheduled_at'  => now()->addMinutes(30),
-            'topic'         => 'スキップ対象面談',
+            'student_id' => $this->student->id,
+            'coach_id' => $this->coach->id,
+            'status' => MeetingStatus::Reserved,
+            'scheduled_at' => now()->addMinutes(30),
+            'topic' => 'スキップ対象面談',
         ]);
 
         $this->artisan('notifications:send-meeting-reminders', ['--window' => 'one_hour_before']);

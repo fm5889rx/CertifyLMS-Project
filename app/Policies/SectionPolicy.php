@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Policies;
 
-use App\Enums\ContentStatus;
-use App\Enums\CertificationStatus;      // 追加：B-B-03
+use App\Enums\CertificationStatus;
+use App\Enums\ContentStatus;      // 追加：B-B-03
 use App\Enums\UserRole;
 use App\Models\Certification;
 use App\Models\Chapter;
@@ -69,6 +69,16 @@ class SectionPolicy
      * 【引数・階層適合】：編集画面（edit/update）へのアクセス解放
      */
     public function update(User $auth, Section $section): bool
+    {
+        return $section->chapter && $section->chapter->part && $section->chapter->part->certification
+            ? $this->canManage($auth, $section->chapter->part->certification)
+            : false;
+    }
+
+    /**
+     * 教材（Section）のプレビュー画面へのアクセス認可
+     */
+    public function preview(User $auth, Section $section): bool
     {
         return $section->chapter && $section->chapter->part && $section->chapter->part->certification
             ? $this->canManage($auth, $section->chapter->part->certification)

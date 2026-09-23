@@ -1,16 +1,14 @@
-// 📄 resources/js/notification/notification-popover.js の中身を以下で完全置換！
-
 export function initNotificationPopover() {
     var bellButton = document.querySelector('[data-notification-popover-trigger]');
     var popoverPanel = document.getElementById('notification-popover-panel');
     var topBarBadge = document.querySelector('[data-notification-popover-badge]');
-    
+
     var popoverUnreadCount = document.querySelector('[data-notification-popover-unread-count]');
     var markAllButton = document.querySelector('[data-notification-popover-mark-all]');
     var listContainer = document.querySelector('[data-notification-popover-items]');
     var loadingSpinner = document.querySelector('[data-notification-popover-loading]');
     var emptyState = document.querySelector('[data-notification-popover-empty]');
-    
+
     var tabAllButton = document.querySelector('[data-notification-popover-tab="all"]');
     var tabUnreadButton = document.querySelector('[data-notification-popover-tab="unread"]');
     var rowTemplate = document.querySelector('[data-notification-popover-row-template]');
@@ -39,12 +37,12 @@ export function initNotificationPopover() {
             popoverPanel.style.display = 'flex';
             bellButton.setAttribute('aria-expanded', 'true');
 
-            // 👑 【S-A-05核心適合：透明化クラス opacity-0 の物理強制剥ぎ取り消去！！！】
-            // 💡 HTML側に焼き付いている opacity-0（透明度0%）と -translate-y-1 を一瞬で剥ぎ取り、
-            //    不透明度100%（opacity-100）と元の位置（translate-y-0）へと動的にハメ換えて大出現させます！！！
+            // 【S-A-05核心適合：透明化クラス opacity-0 の物理強制剥ぎ取り消去！！！】
+            //  HTML側に焼き付いている opacity-0（透明度0%）と -translate-y-1 を一瞬で剥ぎ取り、
+            //  不透明度100%（opacity-100）と元の位置（translate-y-0）へと動的にハメ換えて大出現させます！！！
             popoverPanel.classList.remove('opacity-0', '-translate-y-1');
             popoverPanel.classList.add('opacity-100', 'translate-y-0');
-            
+
             fetchNotifications();
         } else {
             closePopover();

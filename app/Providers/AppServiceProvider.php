@@ -67,6 +67,7 @@ class AppServiceProvider extends ServiceProvider
                         return false;
                     }
                 }
+
                 // 強制削除（delete）など、上記以外の管理権限はこれまで通り無条件で通過（true）させる
                 return true;
             }

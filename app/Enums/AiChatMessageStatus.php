@@ -10,6 +10,6 @@ namespace App\Enums;
 enum AiChatMessageStatus: string
 {
     case Completed = 'completed'; // 正常完了
-    case Pending   = 'pending';   // 応答生成中
-    case Error     = 'error';     // エラー発生
+    case Pending = 'pending';   // 応答生成中
+    case Error = 'error';     // エラー発生
 }

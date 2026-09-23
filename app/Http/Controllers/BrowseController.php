@@ -40,7 +40,7 @@ class BrowseController extends Controller
         // B-B-03で追加：
         // 受講登録（Enrollment）画面自体でも、紐づく資格が「公開中（Published）」ではない場合、
         // 受講生には目次すら見せず、期待値通り「404 Not Found」にする
-        if (!$enrollment->certification || $enrollment->certification->status !== CertificationStatus::Published) {
+        if (! $enrollment->certification || $enrollment->certification->status !== CertificationStatus::Published) {
             abort(404);
         }
 
@@ -54,7 +54,7 @@ class BrowseController extends Controller
         // B-B-03で追加：
         // 親である資格（certification）が、「公開中（Published）」ではない場合は
         // 受講生には1文字も教材を読ませず404でシャットアウトする
-        if (!$part->certification || $part->certification->status !== CertificationStatus::Published) {
+        if (! $part->certification || $part->certification->status !== CertificationStatus::Published) {
             abort(404);
         }
 
@@ -67,7 +67,7 @@ class BrowseController extends Controller
             ->whereIn('status', [EnrollmentStatus::Learning->value, EnrollmentStatus::Passed->value])
             ->exists();
 
-        if (!$hasValidEnrollment) {
+        if (! $hasValidEnrollment) {
             abort(403, 'この資格の教材を閲覧するには、有効な受講登録が必要です。');
         }
 
@@ -79,7 +79,7 @@ class BrowseController extends Controller
         // B-B-03で追加：
         // Chapter ➡ Part ➡ Certificationへとリレーションの鎖を遡り、公開停止時は404でガード
         $certification = $chapter->part?->certification;
-        if (!$certification || $certification->status !== CertificationStatus::Published) {
+        if (! $certification || $certification->status !== CertificationStatus::Published) {
             abort(404);
         }
 
@@ -91,7 +91,7 @@ class BrowseController extends Controller
             ->whereIn('status', [EnrollmentStatus::Learning->value, EnrollmentStatus::Passed->value])
             ->exists();
 
-        if (!$hasValidEnrollment) {
+        if (! $hasValidEnrollment) {
             abort(403, 'この資格の教材を閲覧するには、有効な受講登録が必要です。');
         }
 
@@ -103,7 +103,7 @@ class BrowseController extends Controller
         // B-B-03で追加：
         // Section ➡ Chapter ➡ Part ➡ Certificationへと3階層を遡り、公開停止時は404でガード
         $certification = $section->chapter?->part?->certification;
-        if (!$certification || $certification->status !== CertificationStatus::Published) {
+        if (! $certification || $certification->status !== CertificationStatus::Published) {
             abort(404);
         }
 
@@ -115,7 +115,7 @@ class BrowseController extends Controller
             ->whereIn('status', [EnrollmentStatus::Learning->value, EnrollmentStatus::Passed->value])
             ->exists();
 
-        if (!$hasValidEnrollment) {
+        if (! $hasValidEnrollment) {
             abort(403, 'この資格の教材を閲覧するには、有効な受講登録が必要です。');
         }
 
@@ -128,7 +128,7 @@ class BrowseController extends Controller
                 'sectionId' => $section->id,
                 'sectionTitle' => $section->title,
                 'certificationName' => $certification?->name ?? auth()->user()->qualification_name,
-            ]
+            ],
         ];
 
         return view('learning.sections.show', $viewData + $aiChatContext);

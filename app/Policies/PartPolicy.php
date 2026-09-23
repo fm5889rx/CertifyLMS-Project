@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Policies;
 
+use App\Enums\CertificationStatus;
 use App\Enums\ContentStatus;
 use App\Enums\UserRole;
 use App\Models\Certification;
@@ -35,7 +36,6 @@ class PartPolicy
 
     /**
      * 【B-B-01修正】：担当資格配下の各教材詳細（Part詳細等）へのアクセス解放
-     * 
      */
     public function view(User $auth, Part $part): bool
     {
@@ -48,7 +48,7 @@ class PartPolicy
             // B-B-03修正後：教材自体が Published であり、かつ親資格のステータスも Publishedである場合のみ閲覧を許可
             default => $part->status === ContentStatus::Published
                 && $part->certification
-                && $part->certification->status === \App\Enums\CertificationStatus::Published,
+                && $part->certification->status === CertificationStatus::Published,
         };
     }
 

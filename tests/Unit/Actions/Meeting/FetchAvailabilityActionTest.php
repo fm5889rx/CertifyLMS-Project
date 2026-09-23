@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Tests\Unit\Actions\Meeting;
 
 use App\Actions\Meeting\FetchAvailabilityAction;
-use App\Models\User;
-use App\Models\Enrollment;
-use App\Models\Certification;
-use App\Models\CertificationCategory;
-use App\Enums\UserRole;
 use App\Enums\CertificationDifficulty;
 use App\Enums\EnrollmentStatus;
+use App\Enums\UserRole;
+use App\Models\Certification;
+use App\Models\CertificationCategory;
+use App\Models\Enrollment;
+use App\Models\User;
 use App\Services\MeetingAvailabilityService;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -25,7 +25,7 @@ class FetchAvailabilityActionTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_FetchAvailabilityActionが空き枠計算サービスへと正しくバトンをリレーしてコレクションを返すこと(): void
+    public function test_fetch_availability_actionが空き枠計算サービスへと正しくバトンをリレーしてコレクションを返すこと(): void
     {
         $student = User::factory()->create(['role' => UserRole::Student]);
 
@@ -35,18 +35,18 @@ class FetchAvailabilityActionTest extends TestCase
         ]);
 
         $certification = Certification::create([
-            'name'               => 'Unitテスト資格',
-            'category_id'        => $category->id,
-            'difficulty'         => CertificationDifficulty::Intermediate,
-            'status'             => 'published',
+            'name' => 'Unitテスト資格',
+            'category_id' => $category->id,
+            'difficulty' => CertificationDifficulty::Intermediate,
+            'status' => 'published',
             'created_by_user_id' => $student->id,
             'updated_by_user_id' => $student->id,
         ]);
 
         $enrollment = Enrollment::create([
-            'user_id'          => $student->id,
+            'user_id' => $student->id,
             'certification_id' => $certification->id,
-            'status'           => EnrollmentStatus::Learning->value,
+            'status' => EnrollmentStatus::Learning->value,
         ]);
 
         $date = Carbon::tomorrow();

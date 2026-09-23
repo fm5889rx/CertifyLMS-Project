@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Models\User;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Google Calendar 連携用モデル（S-A-01追加）
@@ -32,6 +31,7 @@ class UserGoogleCalendar extends Model
      * @var string
      */
     protected $primaryKey = 'id';
+
     protected $fillable = [
         'user_id',
         'google_email',
@@ -82,7 +82,7 @@ class UserGoogleCalendar extends Model
      */
     public function isConnected(): bool
     {
-        return !is_null($this->connected_at);
+        return ! is_null($this->connected_at);
     }
 
     /**

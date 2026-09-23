@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
-use App\Models\User;
-use App\Models\Certification;
-use App\Models\Enrollment;
-use App\Models\Certificate;
-use App\Models\CertificationCategory;
-use App\Enums\UserRole;
-use App\Enums\UserStatus;
 use App\Enums\CertificationDifficulty;
 use App\Enums\CertificationStatus;
 use App\Enums\EnrollmentStatus;
 use App\Enums\TermType;
+use App\Enums\UserRole;
+use App\Enums\UserStatus;
+use App\Models\Certificate;
+use App\Models\Certification;
+use App\Models\CertificationCategory;
+use App\Models\Enrollment;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -30,9 +30,13 @@ class CertificateDownloadIntegrationTest extends TestCase
     use RefreshDatabase;
 
     private User $student;
+
     private User $assignedCoach;
+
     private User $otherCoach;
+
     private User $admin;
+
     private Certificate $certificate;
 
     protected function setUp(): void
@@ -45,26 +49,26 @@ class CertificateDownloadIntegrationTest extends TestCase
 
         // 2. ロールマトリクス検証用の全アクターを生成（他メンバーのモデルファクトリ）
         $this->student = User::factory()->create([
-            'role'   => UserRole::Student,
+            'role' => UserRole::Student,
             'status' => UserStatus::InProgress,
         ]);
 
         $this->assignedCoach = User::factory()->create(['role' => UserRole::Coach]);
-        $this->otherCoach    = User::factory()->create(['role' => UserRole::Coach]);
-        $this->admin         = User::factory()->create(['role' => UserRole::Admin]);
+        $this->otherCoach = User::factory()->create(['role' => UserRole::Coach]);
+        $this->admin = User::factory()->create(['role' => UserRole::Admin]);
 
         // 3. 親カテゴリモデル（CertificationCategory）を新規生成
         $category = CertificationCategory::create([
             'name' => 'テスト対象カテゴリ区分',
-            'slug' => 'test-certification-category-slug-' . Str::ulid(),
+            'slug' => 'test-certification-category-slug-'.Str::ulid(),
         ]);
 
         // 4. 資格マスタを Eloquent で新規生成
         $certification = Certification::create([
-            'name'               => 'テスト対象資格マスタ',
-            'category_id'        => $category->id, // 👑 生成した本物の親マスタモデルのIDを美しく結合！！！
-            'difficulty'         => CertificationDifficulty::Intermediate, // 👑 の本物Enumオブジェクトをダイレクト注入！
-            'status'             => CertificationStatus::Published->value,
+            'name' => 'テスト対象資格マスタ',
+            'category_id' => $category->id, // 👑 生成した本物の親マスタモデルのIDを美しく結合！！！
+            'difficulty' => CertificationDifficulty::Intermediate, // 👑 の本物Enumオブジェクトをダイレクト注入！
+            'status' => CertificationStatus::Published->value,
             'created_by_user_id' => $this->admin->id,
             'updated_by_user_id' => $this->admin->id,
         ]);
@@ -72,32 +76,32 @@ class CertificateDownloadIntegrationTest extends TestCase
         // 5. 資格情報に担当コーチをバインド
         $certification->coaches()->attach($this->assignedCoach->id, [
             'assigned_by_user_id' => $this->admin->id,
-            'assigned_at'         => now(),
+            'assigned_at' => now(),
         ]);
 
         // 受講登録（Enrollment）を Eloquent で生成
         $enrollment = Enrollment::create([
-            'user_id'          => $this->student->id,
+            'user_id' => $this->student->id,
             'certification_id' => $certification->id,
-            'status'           => EnrollmentStatus::Passed->value,  // 修了済
-            'current_term'     => TermType::BasicLearning->value,   // 基礎ターム
-            'passed_at'        => now(),
+            'status' => EnrollmentStatus::Passed->value,  // 修了済
+            'current_term' => TermType::BasicLearning->value,   // 基礎ターム
+            'passed_at' => now(),
         ]);
 
         // . 他メンバーの実在する修了証（Certificate）モデルのレコードを生成
         $this->certificate = Certificate::create([
-            'user_id'          => $this->student->id,
-            'enrollment_id'    => $enrollment->id,
+            'user_id' => $this->student->id,
+            'enrollment_id' => $enrollment->id,
             'certification_id' => $certification->id,
-            'pdf_path'         => '',
-            'issued_at'        => now(),
+            'pdf_path' => '',
+            'issued_at' => now(),
         ]);
     }
 
     /**
      * 1. 受講生本人の認可検証
      */
-    public function test_受講生本人が自分の修了証ダウンロード要求を送信した際にPolicyをノーエラー通過してファイル添付形式で受信できること(): void
+    public function test_受講生本人が自分の修了証ダウンロード要求を送信した際に_policyをノーエラー通過してファイル添付形式で受信できること(): void
     {
         $response = $this->actingAs($this->student)
             ->get(route('certificates.download', $this->certificate->id));
@@ -116,7 +120,7 @@ class CertificateDownloadIntegrationTest extends TestCase
     /**
      * 2. 担当外の受講生によるハッキング拒絶検証
      */
-    public function test_他人の修了証をダウンロードしようとした不正な受講生アカウントからの要求はPolicyによって403認可拒絶されること(): void
+    public function test_他人の修了証をダウンロードしようとした不正な受講生アカウントからの要求は_policyによって403認可拒絶されること(): void
     {
         $maliciousStudent = User::factory()->create(['role' => UserRole::Student]);
 

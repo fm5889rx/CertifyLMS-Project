@@ -24,7 +24,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 use App\Http\Controllers\Api\v1\NotificationApiController;
 
 Route::prefix('v1')->group(function () {
-// auth:sanctum ミドルウェアの鎖で縛ることで、ログインしていない不正アクセスを401でシャットアウト
+    // auth:sanctum ミドルウェアの鎖で縛ることで、ログインしていない不正アクセスを401でシャットアウト
     Route::middleware(['auth:sanctum'])->group(function () {
         // 1. 通知一覧の非同期取得
         Route::get('/notifications', [NotificationApiController::class, 'index'])

@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Http;
 
 use App\Http\Middleware\Authenticate;
+use App\Http\Middleware\CheckAiChatEnabled;
 use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\EnsureActiveLearning;
+use App\Http\Middleware\EnsureConversationOwner;
 use App\Http\Middleware\EnsureUserRole;
 use App\Http\Middleware\ForceJsonResponse;
 use App\Http\Middleware\PreventRequestsDuringMaintenance;
@@ -32,10 +34,8 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
-use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
-use App\Http\Middleware\CheckAiChatEnabled;         // 追加：S-A-02
-use App\Http\Middleware\EnsureConversationOwner;    // 追加：S-A-02
+use Illuminate\View\Middleware\ShareErrorsFromSession;         // 追加：S-A-02
+use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;    // 追加：S-A-02
 
 /**
  * アプリケーションの HTTP Kernel。グローバル middleware / route middleware グループ / route middleware alias を集約する。
@@ -106,7 +106,7 @@ class Kernel extends HttpKernel
         'throttle' => ThrottleRequests::class,
         'verified' => EnsureEmailIsVerified::class,
         'ai_chat.enabled' => CheckAiChatEnabled::class,         // 追加：S-A-02
-        'ai_chat.owner'   => EnsureConversationOwner::class,    // 追加：S-A-02
+        'ai_chat.owner' => EnsureConversationOwner::class,    // 追加：S-A-02
 
     ];
 }

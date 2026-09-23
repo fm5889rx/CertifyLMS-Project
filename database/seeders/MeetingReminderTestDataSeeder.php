@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use App\Models\Meeting;
-use App\Models\Enrollment;
+use App\Enums\MeetingStatus;
 use App\Enums\UserRole;
 use App\Enums\UserStatus;
-use App\Enums\MeetingStatus;
+use App\Models\Enrollment;
+use App\Models\Meeting;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
@@ -35,24 +35,24 @@ class MeetingReminderTestDataSeeder extends Seeder
         // 3. 物理マイグレーションでレコード作成
         // ① 前日（eve）配信対象：明日の「お昼12時00分」の予約済み面談
         Meeting::create([
-            'id'            => (string) Str::ulid(),
+            'id' => (string) Str::ulid(),
             'enrollment_id' => $enrollment->id,
-            'student_id'    => $student->id,
-            'coach_id'      => $coach->id,
-            'status'        => MeetingStatus::Reserved,
-            'scheduled_at'  => now()->addDay()->setHour(12)->setMinute(0)->setSecond(0),
-            'topic'         => '前日リマインダー検証用面談',
+            'student_id' => $student->id,
+            'coach_id' => $coach->id,
+            'status' => MeetingStatus::Reserved,
+            'scheduled_at' => now()->addDay()->setHour(12)->setMinute(0)->setSecond(0),
+            'topic' => '前日リマインダー検証用面談',
         ]);
 
         // ② 1時間前（one_hour_before）配信対象：今日の「今から30分後」の予約済み面談
         Meeting::create([
-            'id'            => (string) Str::ulid(),
+            'id' => (string) Str::ulid(),
             'enrollment_id' => $enrollment->id,
-            'student_id'    => $student->id,
-            'coach_id'      => $coach->id,
-            'status'        => MeetingStatus::Reserved,
-            'scheduled_at'  => now()->addMinutes(30),
-            'topic'         => '1時間前リマインダー検証用面談',
+            'student_id' => $student->id,
+            'coach_id' => $coach->id,
+            'status' => MeetingStatus::Reserved,
+            'scheduled_at' => now()->addMinutes(30),
+            'topic' => '1時間前リマインダー検証用面談',
         ]);
     }
 }

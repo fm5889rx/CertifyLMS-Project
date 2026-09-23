@@ -29,6 +29,7 @@ class EnrollmentNote extends Model
      * 主キーが自動増分の数値（INT）ではなく「文字列（ULID）」であることを明示
      */
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     /**

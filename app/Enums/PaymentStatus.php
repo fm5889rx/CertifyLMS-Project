@@ -11,8 +11,8 @@ namespace App\Enums;
 enum PaymentStatus: string
 {
     case Completed = 'completed';
-    case Pending   = 'pending';
-    case Failed    = 'failed';
+    case Pending = 'pending';
+    case Failed = 'failed';
 
     /**
      * 各ステータスに対応する日本語の表示ラベルを返却
@@ -21,8 +21,8 @@ enum PaymentStatus: string
     {
         return match ($this) {
             self::Completed => '決済完了',
-            self::Pending   => '保留中',
-            self::Failed    => '決済失敗',
+            self::Pending => '保留中',
+            self::Failed => '決済失敗',
         };
     }
 }

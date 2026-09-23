@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
-use App\Models\Meeting;
-use App\Models\MeetingReminderLog;
-use App\Models\User;
 use App\Enums\MeetingStatus;
 use App\Enums\UserStatus;
+use App\Models\Meeting;
+use App\Models\MeetingReminderLog;
 use App\Notifications\MeetingReminderNotification;
 use Illuminate\Console\Command;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 /*
  * 予約済み面談に対する自動リマインダー通知を一斉配信する Schedule Command。
@@ -44,6 +43,7 @@ class SendMeetingRemindersCommand extends Command
         // 指定されたウィンドウ引数が不適切ならエラーを出して即時終了
         if ($window !== 'eve' && $window !== 'one_hour_before') {
             $this->error('エラー: --window オプションには "eve" または "one_hour_before" を指定してください。');
+
             return Command::FAILURE;
         }
 
@@ -55,12 +55,12 @@ class SendMeetingRemindersCommand extends Command
         if ($window === 'eve') {
             // 「前日」範囲：面談開始時刻（scheduled_at）が「明日（24時間後〜48時間後）」の範囲にある面談を抽出
             $startRange = $now->copy()->addDay()->startOfDay()->toDateTimeString();
-            $endRange   = $now->copy()->addDay()->endOfDay()->toDateTimeString();
+            $endRange = $now->copy()->addDay()->endOfDay()->toDateTimeString();
             $query->whereBetween('scheduled_at', [$startRange, $endRange]);
         } else {
             // 「1時間前」範囲：面談開始時刻が「今から1時間以内（現在時刻〜1時間後）」の範囲にある面談を抽出
             $startRange = $now->copy()->toDateTimeString();
-            $endRange   = $now->copy()->addHour()->toDateTimeString();
+            $endRange = $now->copy()->addHour()->toDateTimeString();
             $query->whereBetween('scheduled_at', [$startRange, $endRange]);
         }
 
@@ -80,7 +80,7 @@ class SendMeetingRemindersCommand extends Command
             $student = $meeting->student;
             $coach = $meeting->coach;
 
-            if (!$student || !$coach) {
+            if (! $student || ! $coach) {
                 continue;
             }
 
@@ -94,9 +94,9 @@ class SendMeetingRemindersCommand extends Command
 
                 // ① 重複防止ログの記録
                 MeetingReminderLog::create([
-                    'id'         => (string) Str::ulid(),
+                    'id' => (string) Str::ulid(),
                     'meeting_id' => $meeting->id,
-                    'window'     => $window,
+                    'window' => $window,
                 ]);
 
                 // ② リマインダー通知を発火
@@ -110,6 +110,7 @@ class SendMeetingRemindersCommand extends Command
         }
 
         $this->info("面談リマインダー処理が正常に完了しました。（配信確定面談数: {$processedCount} 件）");
+
         return Command::SUCCESS;
     }
 }

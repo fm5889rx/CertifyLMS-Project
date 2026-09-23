@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Models\UserGoogleCalendar;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use Laravel\Socialite\Facades\Socialite;
 use Mockery as m;
@@ -25,6 +26,7 @@ class GoogleCalendarControllerTest extends TestCase
     use RefreshDatabase;
 
     private User $coach;
+
     private User $student;
 
     protected function setUp(): void
@@ -49,8 +51,8 @@ class GoogleCalendarControllerTest extends TestCase
 
     protected function tearDown(): void
     {
-        if (class_exists(\Mockery::class)) {
-            \Mockery::close();
+        if (class_exists(m::class)) {
+            m::close();
         }
         if (app()->bound('db')) {
             app('db')->disconnect();
@@ -66,16 +68,16 @@ class GoogleCalendarControllerTest extends TestCase
     public function test_カレンダー情報取得時にアクセストークンが期限切れエラーを起こした場合に裏側で自動リフレッシュが執行され再試行が成功すること(): void
     {
         $this->coach->googleCredential()->create([
-            'google_email'  => 'coach@example.com',
-            'calendar_id'   => 'primary',
-            'access_token'  => 'expired-access-token-123',
+            'google_email' => 'coach@example.com',
+            'calendar_id' => 'primary',
+            'access_token' => 'expired-access-token-123',
             'refresh_token' => 'valid-refresh-token-999',
-            'connected_at'  => now()->subDays(1),
+            'connected_at' => now()->subDays(1),
         ]);
 
         // URLマッチングを最も安全なクロージャ判定でマウント
         $freeBusyCount = 0;
-        Http::fake(function (\Illuminate\Http\Client\Request $request) use (&$freeBusyCount) {
+        Http::fake(function (Request $request) use (&$freeBusyCount) {
             $url = $request->url();
 
             if (str_contains($url, 'calendar/v3/freeBusy')) {
@@ -83,15 +85,16 @@ class GoogleCalendarControllerTest extends TestCase
                 if ($freeBusyCount === 1) {
                     return Http::response(['error' => 'Unauthorized'], 401);
                 }
+
                 return Http::response([
-                    'calendars' => ['primary' => ['busy' => []]]
+                    'calendars' => ['primary' => ['busy' => []]],
                 ], 200);
             }
 
-            if (str_contains($url, 'googleapis.com') && !str_contains($url, 'www.')) {
+            if (str_contains($url, 'googleapis.com') && ! str_contains($url, 'www.')) {
                 return Http::response([
                     'access_token' => 'new-fresh-access-token-777',
-                    'expires_in'   => 3600
+                    'expires_in' => 3600,
                 ], 200);
             }
 
@@ -108,7 +111,7 @@ class GoogleCalendarControllerTest extends TestCase
 
         $this->coach->unsetRelation('googleCredential');
         $this->assertDatabaseHas('user_google_calendar', [
-            'user_id'      => $this->coach->id,
+            'user_id' => $this->coach->id,
             'access_token' => 'new-fresh-access-token-777',
         ]);
     }
@@ -116,7 +119,7 @@ class GoogleCalendarControllerTest extends TestCase
     /**
      * 2. 出発ルート正常系検証
      */
-    public function test_コーチはGoogle認可画面へリダイレクトされる(): void
+    public function test_コーチは_google認可画面へリダイレクトされる(): void
     {
         Socialite::shouldReceive('driver')->with('google')->andReturn($mockDriver = m::mock());
         $mockDriver->shouldReceive('scopes')->andReturn($mockDriver);
@@ -132,7 +135,7 @@ class GoogleCalendarControllerTest extends TestCase
     /**
      * 3. 認可ガード認可系検証
      */
-    public function test_受講生はGoogle認可画面が表示されず403エラーが返される(): void
+    public function test_受講生は_google認可画面が表示されず403エラーが返される(): void
     {
         $response = $this->actingAs($this->student)
             ->get('/settings/google-calendar');
@@ -159,10 +162,10 @@ class GoogleCalendarControllerTest extends TestCase
             '*' => Http::response([
                 'calendars' => [
                     'primary' => [
-                        'busy' => []
-                    ]
-                ]
-            ], 200)
+                        'busy' => [],
+                    ],
+                ],
+            ], 200),
         ]);
 
         $response = $this->actingAs($this->coach)
@@ -208,7 +211,7 @@ class GoogleCalendarControllerTest extends TestCase
             'user_id' => $this->coach->id,
         ]);
 
-        $this->assertTrue((bool)$availability->refresh()->is_active);
+        $this->assertTrue((bool) $availability->refresh()->is_active);
         $response->assertRedirect(route('settings.availability.index'));
     }
 
@@ -219,18 +222,18 @@ class GoogleCalendarControllerTest extends TestCase
     public function test_カレンダー連携のリフレッシュトークン自体が完全に失効し自動リフレッシュに失敗した場合は安全に設定画面へエラーメッセージ付きでフォールバックリダイレクトされること(): void
     {
         $this->coach->googleCredential()->create([
-            'google_email'  => 'coach@example.com',
-            'calendar_id'   => 'primary',
-            'access_token'  => 'expired-token',
+            'google_email' => 'coach@example.com',
+            'calendar_id' => 'primary',
+            'access_token' => 'expired-token',
             'refresh_token' => 'dead-refresh-token',
-            'connected_at'  => now()->subDays(1),
+            'connected_at' => now()->subDays(1),
         ]);
 
         // 1回目の freeBusy 通信に対して 401 を返し、2回目の OAuth2 トークン交換通信に対して
         // Google側が「400 BadRequest (invalid_grant: トークン死亡)」を返す挙動をシミュレート
         Http::fake([
             'https://googleapis.com' => Http::response(['error' => ['message' => 'Invalid Token']], 401),
-            'https://googleapis.com' => Http::response(['error' => ['message' => 'invalid_grant']], 400)
+            'https://googleapis.com' => Http::response(['error' => ['message' => 'invalid_grant']], 400),
         ]);
 
         $response = $this->actingAs($this->coach)
@@ -245,14 +248,14 @@ class GoogleCalendarControllerTest extends TestCase
      * @group external-api
      * 7. 【T-A-04 要件適合：実機403（API無効化）や500サーバーエラー発生時の即死クラッシュ完封検証】
      */
-    public function test_googleカレンダーAPIから403や500系明確例外エラーが帰ってきた場合もシステムが安全に検閲早期リターンすること(): void
+    public function test_googleカレンダー_ap_iから403や500系明確例外エラーが帰ってきた場合もシステムが安全に検閲早期リターンすること(): void
     {
         $this->coach->googleCredential()->create([
-            'google_email'  => 'coach@example.com',
-            'calendar_id'   => 'primary',
-            'access_token'  => 'valid-token-123',
+            'google_email' => 'coach@example.com',
+            'calendar_id' => 'primary',
+            'access_token' => 'valid-token-123',
             'refresh_token' => 'refresh-token-123',
-            'connected_at'  => now(),
+            'connected_at' => now(),
         ]);
 
         // 実機ログ（）と同一の、Google 側から直接 403 Forbidden が突き返される挙動を模擬
@@ -261,9 +264,9 @@ class GoogleCalendarControllerTest extends TestCase
                 'error' => [
                     'code' => 403,
                     'message' => 'Google Calendar API has not been used in project before or it is disabled.',
-                    'status' => 'PERMISSION_DENIED'
-                ]
-            ], 403)
+                    'status' => 'PERMISSION_DENIED',
+                ],
+            ], 403),
         ]);
 
         $response = $this->actingAs($this->coach)

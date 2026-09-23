@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Models\User;
 use Illuminate\Database\Eloquent\Concerns\HasUlids; // ULIDを使用するためのトレイトをインポート
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Answer extends Model
 {
@@ -16,6 +15,7 @@ class Answer extends Model
     use HasUlids;  // ULIDを使用するためのトレイトを追加
 
     protected $keyType = 'string'; // 主キーの型を文字列に設定
+
     public $incrementing = false;  // 主キーの自動増分を無効化
 
     protected $fillable = [

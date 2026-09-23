@@ -21,20 +21,20 @@ class AnnouncementStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title'                   => ['required', 'string', 'max:100'],
-            'body'                    => ['required', 'string', 'max:10000'],
-            'target_type'             => ['required', 'string', Rule::in(['all', 'certification', 'user'])],
+            'title' => ['required', 'string', 'max:100'],
+            'body' => ['required', 'string', 'max:10000'],
+            'target_type' => ['required', 'string', Rule::in(['all', 'certification', 'user'])],
 
             'target_certification_id' => [
                 'nullable',
-                Rule::requiredIf(fn() => $this->input('target_type') === AnnouncementTargetType::Certification->value),
+                Rule::requiredIf(fn () => $this->input('target_type') === AnnouncementTargetType::Certification->value),
                 'string',
                 'max:26',
             ],
 
-            'target_user_id'          => [
+            'target_user_id' => [
                 'nullable',
-                Rule::requiredIf(fn() => $this->input('target_type') === AnnouncementTargetType::User->value),
+                Rule::requiredIf(fn () => $this->input('target_type') === AnnouncementTargetType::User->value),
                 'string',
                 'max:26',
             ],

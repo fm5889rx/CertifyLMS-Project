@@ -26,16 +26,16 @@ class GoogleCalendarController extends Controller
     public function connect(?string $accessToken = null): RedirectResponse
     {
         // コーチ以外なら 403 エラーにする
-        if (!auth()->user()->isCoach()) {
+        if (! auth()->user()->isCoach()) {
             abort(403, 'コーチ専用の機能です。');
         }
 
         // アクセストークンが渡されていない場合は、ユーザーのカレンダー連携情報から取得する
         $token = $accessToken ?? auth()->user()->googleCredential?->access_token;
-        Log::info('引数トークン：' . $accessToken . 'トークンレコード：' . auth()->user()->googleCredential?->access_token . '解析トークン：' . $token);
+        Log::info('引数トークン：'.$accessToken.'トークンレコード：'.auth()->user()->googleCredential?->access_token.'解析トークン：'.$token);
 
         // アクセストークンが取得できない場合は、エラーを返す
-        if (!$token) {
+        if (! $token) {
             return redirect(route('settings.availability.index'))
                 ->withErrors(['error' => 'Google Calendar アクセストークンが見つかりません。']);
         }
@@ -49,18 +49,18 @@ class GoogleCalendarController extends Controller
             ->withToken($token)
             ->post($url, [
                 'timeZone' => 'Asia/Tokyo',
-                'timeMin'  => Carbon::now()->startOfDay()->toIso8601String(),
-                'timeMax'  => Carbon::now()->addDays(7)->endOfDay()->toIso8601String(),
-                'items'    => [
+                'timeMin' => Carbon::now()->startOfDay()->toIso8601String(),
+                'timeMax' => Carbon::now()->addDays(7)->endOfDay()->toIso8601String(),
+                'items' => [
                     ['id' => 'primary'],
                 ],
             ]);
-        Log::info('--- [デバッグ] レスポンスの生データ: ' . $apiResponse->body());
-        Log::info('--- [ログ②] 1回目のステータス結果: ' . $apiResponse->status() . ' ---');
+        Log::info('--- [デバッグ] レスポンスの生データ: '.$apiResponse->body());
+        Log::info('--- [ログ②] 1回目のステータス結果: '.$apiResponse->status().' ---');
 
         // 【T-A-04極限治療：400・403・401・500系 全外部例外パケット一元検閲エンジン】
         // 1回目のレスポンスステータスに応じて、本番環境の全域の死角をミリ単位で型安全に完全防衛！！！
-        if (!$apiResponse->successful()) {
+        if (! $apiResponse->successful()) {
             $status = $apiResponse->status();
             $errorData = $apiResponse->json();
             $googleMessage = $errorData['error']['message'] ?? 'Google APIで予期せぬエラーが発生しました。';
@@ -75,10 +75,10 @@ class GoogleCalendarController extends Controller
                     Log::info('--- [ログ③] トークン更新APIを発行します。送信先: https://googleapis.com ---');
 
                     $tokenResponse = Http::asJson()->post('https://googleapis.com', [
-                        'client_id'     => config('services.google.client_id'),
+                        'client_id' => config('services.google.client_id'),
                         'client_secret' => config('services.google.client_secret'),
                         'refresh_token' => $credential->refresh_token,
-                        'grant_type'    => 'refresh_token',
+                        'grant_type' => 'refresh_token',
                     ]);
 
                     if ($tokenResponse->successful()) {
@@ -96,27 +96,30 @@ class GoogleCalendarController extends Controller
                             ->withToken($newToken)
                             ->post($url, [
                                 'timeZone' => 'Asia/Tokyo',
-                                'timeMin'  => Carbon::now()->startOfDay()->toIso8601String(),
-                                'timeMax'  => Carbon::now()->addDays(7)->endOfDay()->toIso8601String(),
-                                'items'    => [['id' => 'primary']],
+                                'timeMin' => Carbon::now()->startOfDay()->toIso8601String(),
+                                'timeMax' => Carbon::now()->addDays(7)->endOfDay()->toIso8601String(),
+                                'items' => [['id' => 'primary']],
                             ]);
 
                         // リトライの結果を再ロード
                         $responseData = $apiResponse->json();
 
                         // リトライ通信すら失敗した場合は、安全に例外ガードへフォールバック
-                        if (!$apiResponse->successful()) {
+                        if (! $apiResponse->successful()) {
                             $retryMessage = $responseData['error']['message'] ?? '再試行通信に失敗しました。';
+
                             return redirect(route('settings.availability.index'))
-                                ->withErrors(['error' => 'Google連携リトライエラー: ' . $retryMessage]);
+                                ->withErrors(['error' => 'Google連携リトライエラー: '.$retryMessage]);
                         }
                     } else {
                         Log::error('❌ トークン更新APIが失敗しました。レスポンス: ', ['body' => $tokenResponse->body()]);
+
                         return redirect(route('settings.availability.index'))
                             ->withErrors(['error' => 'Google認証リフレッシュ失敗: リフレッシュトークンが失効しています。再連携してください。']);
                     }
                 } else {
                     Log::warning('⚠️ データベースに googleCredential または refresh_token が存在しませんでした。');
+
                     return redirect(route('settings.availability.index'))
                         ->withErrors(['error' => 'Google連携情報が見つかりません。']);
                 }
@@ -129,7 +132,7 @@ class GoogleCalendarController extends Controller
                 Log::error("❌ Google Calendar API 側から致命的な例外エラーを検知しました。Status: {$status}, Message: {$googleMessage}");
 
                 return redirect(route('settings.availability.index'))
-                    ->withErrors(['error' => "Google連携エラー({$status}): " . $googleMessage]);
+                    ->withErrors(['error' => "Google連携エラー({$status}): ".$googleMessage]);
             }
         }
 
@@ -137,7 +140,7 @@ class GoogleCalendarController extends Controller
         $responseData = $apiResponse->json();
 
         // 境界値チェック：正常ステータス（200）を返しながら、中身の構造が壊れている時の最終セーフティネット
-        if (!isset($responseData['calendars']['primary']['busy'])) {
+        if (! isset($responseData['calendars']['primary']['busy'])) {
             Log::error('Google Calendar API response does not contain expected data', [
                 'response' => $responseData,
             ]);
@@ -210,7 +213,7 @@ class GoogleCalendarController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
-        if (!auth()->user()->isCoach()) {
+        if (! auth()->user()->isCoach()) {
             abort(403, 'コーチ専用の機能です。');
         }
 
@@ -230,7 +233,7 @@ class GoogleCalendarController extends Controller
     public function callback(Request $request): RedirectResponse
     {
         // コーチ以外なら 403 エラーにする
-        if (!auth()->user()->isCoach()) {
+        if (! auth()->user()->isCoach()) {
             abort(403, 'コーチ専用の機能です。');
         }
 
@@ -247,19 +250,20 @@ class GoogleCalendarController extends Controller
 
         // もしデータベースにも存在せず、Googleからも届かなかった場合は、リフレッシュトークンが完全に
         // 失われているため、強制的に「強制再同意（prompt=consent）」画面へ突き返して再吸引します。
-        if (!$refreshToken) {
+        if (! $refreshToken) {
             Log::warning('⚠️ リフレッシュトークンが完全に失効しているため、強制再認可画面へリダイレクトします。');
+
             return redirect()->route('google-calendar.redirect');
         }
 
         auth()->user()->googleCredential()->updateOrCreate(
             [],
             [
-                'google_email'  => $googleUser->getEmail(),
-                'calendar_id'   => 'primary',
-                'connected_at'  => Carbon::now(),
-                'access_token'  => $googleUser->token,
-                'refresh_token' => $refreshToken, 
+                'google_email' => $googleUser->getEmail(),
+                'calendar_id' => 'primary',
+                'connected_at' => Carbon::now(),
+                'access_token' => $googleUser->token,
+                'refresh_token' => $refreshToken,
             ]
         );
 
@@ -273,7 +277,7 @@ class GoogleCalendarController extends Controller
      */
     public function redirect(Request $request): RedirectResponse
     {
-        if (!auth()->user()->isCoach()) {
+        if (! auth()->user()->isCoach()) {
             abort(403, 'コーチ専用の機能です。');
         }
 

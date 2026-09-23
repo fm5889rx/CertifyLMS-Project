@@ -33,7 +33,7 @@ class MeetingQuotaHistoryController extends Controller
 
         return view('meeting-quota.history', [
             'transactions' => $transactions,
-//            'remaining' => $service->remaining($user),
+            //            'remaining' => $service->remaining($user),
             'remaining' => $remaining,              // S-A-03で変更
             'type' => $validated['type'] ?? '',
         ]);

@@ -6,8 +6,8 @@ namespace App\Notifications;
 
 use App\Models\Question;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class QaReplyPostedNotification extends Notification
 {
@@ -36,11 +36,11 @@ class QaReplyPostedNotification extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage())
+        return (new MailMessage)
             ->subject('【LMS通知】あなたの質問に新しい回答が投稿されました') // メールの件名
-            ->greeting($notifiable->name . ' さん') // 宛名（受講生名）
+            ->greeting($notifiable->name.' さん') // 宛名（受講生名）
             ->line('質問掲示板に投稿したあなたの質問に対して、新着の回答（リリプライ）が届きました。')
-            ->line('■ 質問タイトル: ' . $this->thread->title)
+            ->line('■ 質問タイトル: '.$this->thread->title)
             ->action('回答を確認する', route('qa-board.show', ['thread' => $this->thread->id])) // MailPit内の美しい青いボタン
             ->line('ご確認のほど、よろしくお願いいたします。');
     }
@@ -52,7 +52,7 @@ class QaReplyPostedNotification extends Notification
     {
         return [
             'title' => 'あなたの質問に新しい回答が投稿されました。',
-            'url'   => route('qa-board.show', ['thread' => $this->thread->id]),
+            'url' => route('qa-board.show', ['thread' => $this->thread->id]),
         ];
     }
 }

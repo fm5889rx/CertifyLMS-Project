@@ -15,6 +15,7 @@ use App\Models\Section;
 use App\Models\User;
 use App\Services\EnrollmentStatsService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Mockery;
 use Tests\TestCase;
 
@@ -120,6 +121,11 @@ class DashboardControllerTest extends TestCase
     {
         $admin = User::factory()->admin()->inProgress()->create();
 
+        // T-A-06: ダッシュボードのキャッシュ化に対応する追記
+        // モックテスト前にキャッシュをクリアする
+        cache()->forget((string) config('dashboard.admin_kpi_cache_key'));
+        cache()->forget((string) config('dashboard.admin_completion_rate_cache_key'));
+
         $mock = Mockery::mock(EnrollmentStatsService::class);
         $mock->shouldReceive('adminKpi')->andThrow(new \RuntimeException('boom'));
         $mock->shouldReceive('completionRateByCertification')->andThrow(new \RuntimeException('boom'));
@@ -131,6 +137,7 @@ class DashboardControllerTest extends TestCase
         $response->assertViewIs('dashboard.admin');
         $response->assertSee('まずはプランを作成してユーザーを招待してください');
     }
+
     /**
      * T-B-01 パフォーマンス改善・振る舞い不変テスト
      * コーチダッシュボードの担当受講生クエリを最適化（with/withMaxによるN+1完全根絶）した前後において、
@@ -153,7 +160,7 @@ class DashboardControllerTest extends TestCase
 
         // 3. 多対多の結合テーブルモデルに、コーチと資格の割り当て関係をマウント
         $coach->assignedCertifications()->attach($certification->id, [
-            'id' => (string) \Illuminate\Support\Str::ulid(),
+            'id' => (string) Str::ulid(),
             'assigned_by_user_id' => $admin->id,
             'assigned_at' => now(),
         ]);

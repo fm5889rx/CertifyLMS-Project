@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Profile\ProfileUpdateRequest;
 use App\Http\Requests\Profile\PasswordUpdateRequest;
-use App\Enums\UserRole;
+use App\Http\Requests\Profile\ProfileUpdateRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
@@ -22,7 +21,7 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
         $tab = $request->input('tab', 'profile');
@@ -35,7 +34,7 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
         $data = $request->validated();
 
@@ -53,7 +52,7 @@ class ProfileController extends Controller
      */
     public function updatePassword(PasswordUpdateRequest $request): RedirectResponse
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
         $data = $request->validated();
 
@@ -73,7 +72,7 @@ class ProfileController extends Controller
             'avatar' => ['required', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ]);
 
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
         if ($request->file('avatar')) {
@@ -96,7 +95,7 @@ class ProfileController extends Controller
      */
     public function deleteAvatar(): RedirectResponse
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
         if ($user->avatar_url) {

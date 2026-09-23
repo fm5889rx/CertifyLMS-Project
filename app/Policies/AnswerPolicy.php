@@ -18,13 +18,13 @@ class AnswerPolicy
     // 投稿者本人のみが回答の編集が可能
     public function update(User $user, Answer $answer): bool
     {
-        return (new QaReplyPolicy())->update($user, $answer);
+        return (new QaReplyPolicy)->update($user, $answer);
     }
 
     // 投稿者本人のみが回答の削除が可能
     public function delete(User $user, Answer $answer): bool
     {
-        return (new QaReplyPolicy())->update($user, $answer);
+        return (new QaReplyPolicy)->update($user, $answer);
     }
 
     // 管理者のみが回答を削除可能 (DELETE /admin/qa-board/.../replies/{reply})

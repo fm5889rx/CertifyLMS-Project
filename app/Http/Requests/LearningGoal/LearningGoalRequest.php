@@ -22,9 +22,9 @@ class LearningGoalRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title'        => ['required', 'string', 'max:100'],            // タイトル：必須 / 100文字制限
-            'description'  => ['nullable', 'string', 'max:1000'],           // 詳細：任意 / 1000文字制限
-            'target_date'  => ['required', 'date', 'after_or_equal:today'], // 目標期日：必須 / 今日以降の日付
+            'title' => ['required', 'string', 'max:100'],            // タイトル：必須 / 100文字制限
+            'description' => ['nullable', 'string', 'max:1000'],           // 詳細：任意 / 1000文字制限
+            'target_date' => ['required', 'date', 'after_or_equal:today'], // 目標期日：必須 / 今日以降の日付
         ];
     }
 }

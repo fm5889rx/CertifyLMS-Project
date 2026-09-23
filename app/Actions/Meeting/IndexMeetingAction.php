@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Actions\Meeting;
 
-use App\Models\User;
 use App\Models\Meeting;
+use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 /**
@@ -25,7 +25,7 @@ final class IndexMeetingAction
 
         return match ($filter) {
             'past' => $query->past()->paginate($perPage),
-            'all'  => $query->paginate($perPage),
+            'all' => $query->paginate($perPage),
             default => $query->upcoming()->paginate($perPage),
         };
     }

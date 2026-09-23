@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Actions\Meeting;
 
-use App\Models\User;
 use App\Models\Meeting;
+use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 /**
@@ -26,12 +26,12 @@ final class IndexCoachMeetingAction
         $query = Meeting::query()
             ->with(['enrollment.certification', 'student'])
             ->forCoach($user)
-            ->when($studentId, fn($q, $id) => $q->where('student_id', $id))
-            ->when($enrollmentId, fn($q, $id) => $q->where('enrollment_id', $id));
+            ->when($studentId, fn ($q, $id) => $q->where('student_id', $id))
+            ->when($enrollmentId, fn ($q, $id) => $q->where('enrollment_id', $id));
 
         return match ($filter) {
             'past' => $query->past()->orderByDesc('scheduled_at')->paginate($perPage),
-            'all'  => $query->orderByDesc('scheduled_at')->paginate($perPage),
+            'all' => $query->orderByDesc('scheduled_at')->paginate($perPage),
             default => $query->upcoming()->orderBy('scheduled_at')->paginate($perPage),
         };
     }

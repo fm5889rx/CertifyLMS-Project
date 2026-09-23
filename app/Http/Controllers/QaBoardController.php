@@ -6,8 +6,8 @@ namespace App\Http\Controllers;
 
 use App\Enums\CertificationStatus;
 use App\Enums\QaThreadStatus; // Enumをインポート
-use App\Http\Requests\QaThread\QaThreadRequest;
 use App\Http\Requests\QaThread\QaReplyRequest;
+use App\Http\Requests\QaThread\QaThreadRequest;
 use App\Models\Answer;
 use App\Models\Certification;
 use App\Models\QaThread;
@@ -17,7 +17,6 @@ use App\Notifications\QaReplyPostedNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -67,19 +66,19 @@ class QaBoardController extends Controller
         }
 
         // データベースの絞り込みを適用
-        if (!empty($dbStatuses)) {
+        if (! empty($dbStatuses)) {
             $query->whereIn('status', $dbStatuses);
         }
 
         // --- 3. 資格（certification_id）での絞り込み ---
         $selectedCertificationId = $request->input('certification_id', '');
-        if (!empty($selectedCertificationId)) {
+        if (! empty($selectedCertificationId)) {
             $query->where('certification_id', $selectedCertificationId);
         }
 
         // --- 4. キーワード検索の処理 ---
         $keyword = $request->input('keyword', '');
-        if (!empty($keyword)) {
+        if (! empty($keyword)) {
             $query->where(function ($q) use ($keyword) {
                 $q->where('title', 'LIKE', "%{$keyword}%")->orWhere('body', 'LIKE', "%{$keyword}%");
             });
@@ -94,9 +93,9 @@ class QaBoardController extends Controller
         // page=X という数字だけは正規表現で綺麗に除外してから合体させる
         $cleanQueryString = preg_replace('/&?page=[0-9]+/', '', $queryString);
 
-        if (!empty($cleanQueryString)) {
+        if (! empty($cleanQueryString)) {
             // ページネーターのベースURLに、生の検索条件をそのままドッキング
-            $threads->withPath($request->url() . '?' . $cleanQueryString);
+            $threads->withPath($request->url().'?'.$cleanQueryString);
         }
 
         // ② certifications: 資格マスターを全件取得
@@ -104,17 +103,17 @@ class QaBoardController extends Controller
 
         // ③ filters:
         $filters = [
-            'status'           => $statusForBlade,
+            'status' => $statusForBlade,
             'certification_id' => $selectedCertificationId,
-            'keyword'          => $keyword,
+            'keyword' => $keyword,
         ];
 
         return view('qa-thread.index', [
-            'threads'          => $threads,
-            'certifications'   => $certifications,
-            'filters'          => $filters,
-            'indexRoute'       => 'qa-board.index',
-            'publishedStatus'  => CertificationStatus::Published,
+            'threads' => $threads,
+            'certifications' => $certifications,
+            'filters' => $filters,
+            'indexRoute' => 'qa-board.index',
+            'publishedStatus' => CertificationStatus::Published,
         ]);
     }
 
@@ -153,12 +152,13 @@ class QaBoardController extends Controller
 
         // 2. ログインユーザーに紐づけて Question レコードを新規作成
         $question = Question::create([
-            'id'               => (string) Str::ulid(), // 保険としてここでも確実にULIDを生成
-            'user_id'          => Auth::id(),           // 投稿者のユーザーID
+            'id' => (string) Str::ulid(), // 保険としてここでも確実にULIDを生成
+            'user_id' => Auth::id(),           // 投稿者のユーザーID
             'certification_id' => $validated['certification_id'] ?? null, // 画面から選択された資格マスターID
-            'title'            => $validated['title'],
-            'body'             => $validated['body'],   // カラム名・Bladeと統一した body
+            'title' => $validated['title'],
+            'body' => $validated['body'],   // カラム名・Bladeと統一した body
         ]);
+
         // 3. 投稿完了後は、作成された質問の「詳細画面（show）」へ自動遷移
         return redirect()->route('qa-board.show', $question->id)
             ->with('success', '質問を投稿しました。');
@@ -182,12 +182,12 @@ class QaBoardController extends Controller
         // 直に呼び出そうとしてクラッシュするのを防ぐため、各回答の中に親オブジェクトを直接埋め込む
         foreach ($replies as $reply) {
             $reply->question = $thread;
-            $reply->thread   = $thread;
+            $reply->thread = $thread;
         }
 
         // 4. bladeに必要な変数をセットして返却
         return view('qa-thread.show', [
-            'thread'  => $thread,
+            'thread' => $thread,
             'question' => $thread, // blade側で thread と question の両方の変数名で使えるようにする
             'replies' => $replies,
         ]);
@@ -248,6 +248,7 @@ class QaBoardController extends Controller
         return redirect()->route('qa-board.index')
             ->with('success', '質問を削除しました。');
     }
+
     /**
      * ⑧ 質問の通知処理（解決済み）
      * POST /qa-board/{question}/resolve
@@ -310,17 +311,16 @@ class QaBoardController extends Controller
 
         // スレッドのステータスが解決済（resolved）の場合は、データベースに保存される手前で
         // 処理を安全にブロック（403エラーを発生、または元の画面へリダイレクト）させる
-        if ($thread->status === QaThreadStatus::Resolved)
-        {
+        if ($thread->status === QaThreadStatus::Resolved) {
             return redirect()->back()->with('danger', '解決済みの質問には回答できません');
         }
 
         // 回答を新規作成
         Answer::create([
-            'id'          => (string) Str::ulid(), // 回答自体の新しいULIDを発行
+            'id' => (string) Str::ulid(), // 回答自体の新しいULIDを発行
             'question_id' => $thread->id,          // 親スレッドのID
-            'user_id'     => Auth::id(),           // ログイン中の回答者ユーザーID
-            'body'        => $request->validated()['body'], // 統一された本文（body）
+            'user_id' => Auth::id(),           // ログイン中の回答者ユーザーID
+            'body' => $request->validated()['body'], // 統一された本文（body）
         ]);
 
         // スレッドの所有者ユーザのIDを取り出す
@@ -347,7 +347,7 @@ class QaBoardController extends Controller
     {
         // それぞれ生のULIDから、対象の質問と回答を取得
         $thread = QaThread::where('id', $id)->firstOrFail();
-        $reply  = Answer::where('id', $replyId)->firstOrFail();
+        $reply = Answer::where('id', $replyId)->firstOrFail();
 
         // ログインユーザーが回答の投稿者本人でなければ、ここで403を返す
         $this->authorize('update', $reply);
@@ -364,7 +364,7 @@ class QaBoardController extends Controller
     {
         // それぞれ生のULIDから、対象の質問と回答を取得
         $thread = QaThread::where('id', $id)->firstOrFail();
-        $reply  = Answer::where('id', $replyId)->firstOrFail();
+        $reply = Answer::where('id', $replyId)->firstOrFail();
 
         // 更新処理の前にポリシーを呼び出して防御
         $this->authorize('update', $reply);
@@ -385,7 +385,7 @@ class QaBoardController extends Controller
     {
         // それぞれ生のULIDから、対象の質問と回答を取得
         $thread = Question::where('id', $id)->firstOrFail();
-        $reply  = Answer::where('id', $replyId)->firstOrFail();
+        $reply = Answer::where('id', $replyId)->firstOrFail();
 
         // 削除処理の前にポリシー（delete）を呼び出して防御
         $this->authorize('delete', $reply);
