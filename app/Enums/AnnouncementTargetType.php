@@ -6,9 +6,9 @@ namespace App\Enums;
 
 enum AnnouncementTargetType: string
 {
-    case AllStudents  = 'all';
+    case AllStudents = 'all';
     case Certification = 'certification';
-    case User          = 'user';
+    case User = 'user';
 
     /**
      * 提供済みBladeが要求する日本語ラベル
@@ -16,9 +16,9 @@ enum AnnouncementTargetType: string
     public function label(): string
     {
         return match ($this) {
-            self::AllStudents   => '全受講生',
+            self::AllStudents => '全受講生',
             self::Certification => '資格指定',
-            self::User          => 'ユーザー指定',
+            self::User => 'ユーザー指定',
         };
     }
 }

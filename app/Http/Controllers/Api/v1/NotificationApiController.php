@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\v1;
 
-use App\Http\Controllers\Controller;
 use App\Enums\UserRole;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Request;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * 通知 JSON API コントローラー（S-A-05改修適合版）
@@ -25,7 +24,7 @@ class NotificationApiController extends Controller
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        if (!$user) {
+        if (! $user) {
             return response()->json(['error' => 'Unauthenticated'], 401);
         }
 
@@ -38,10 +37,10 @@ class NotificationApiController extends Controller
         // クエリパラメータの tab（all,unread）および per_page（1〜50の整数）をチェックし、
         // 違反時は 422 + JSON エラー構造体を返却する
         $validator = Validator::make($request->all(), [
-            'tab'      => 'nullable|string|in:all,unread',
+            'tab' => 'nullable|string|in:all,unread',
             'per_page' => 'nullable|integer|between:1,50',
         ], [
-            'tab.in'         => 'タブ識別子は「all」または「unread」のいずれかを指定してください。',
+            'tab.in' => 'タブ識別子は「all」または「unread」のいずれかを指定してください。',
             'per_page.between' => '1ページあたりの件数は1〜50の整数で指定してください。',
         ]);
 
@@ -76,18 +75,18 @@ class NotificationApiController extends Controller
             }
 
             return [
-                'id'         => $notification->id,
-                'title'      => $data['title'] ?? '通知',
-                'message'    => $data['message'] ?? ($data['body'] ?? $data['body_preview'] ?? ''),
-                'time'       => $humanTime,
-                'is_unread'  => $notification->read_at === null,
+                'id' => $notification->id,
+                'title' => $data['title'] ?? '通知',
+                'message' => $data['message'] ?? ($data['body'] ?? $data['body_preview'] ?? ''),
+                'time' => $humanTime,
+                'is_unread' => $notification->read_at === null,
                 'action_url' => $actionUrl,
             ];
         });
 
         return response()->json([
             'notifications' => $formattedNotifications,
-            'unread_count'  => $unreadCount,
+            'unread_count' => $unreadCount,
         ], 200);
     }
 
@@ -97,14 +96,14 @@ class NotificationApiController extends Controller
     public function markAsRead(Request $request, string $id): JsonResponse
     {
         $user = $request->user();
-        if (!$user) {
+        if (! $user) {
             return response()->json(['error' => 'Unauthenticated'], 401);
         }
 
         // 他者通知 ID 指定時の 403 エラー対応
         // 物理層から通知レコードそのものの存在を確認し、なければエラーレスポンスを返す
         $notification = DatabaseNotification::find($id);
-        if (!$notification) {
+        if (! $notification) {
             return response()->json(['error' => 'Notification not found'], 404);
         }
 
@@ -117,7 +116,7 @@ class NotificationApiController extends Controller
         $notification->markAsRead();
 
         return response()->json([
-            'status'       => 'success',
+            'status' => 'success',
             'unread_count' => $user->unreadNotifications()->count(),
         ], 200);
     }
@@ -128,14 +127,14 @@ class NotificationApiController extends Controller
     public function markAllAsRead(Request $request): JsonResponse
     {
         $user = $request->user();
-        if (!$user) {
+        if (! $user) {
             return response()->json(['error' => 'Unauthenticated'], 401);
         }
 
         $user->unreadNotifications()->get()->markAsRead();
 
         return response()->json([
-            'status'       => 'success',
+            'status' => 'success',
             'unread_count' => 0,
         ], 200);
     }

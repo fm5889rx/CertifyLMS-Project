@@ -11,6 +11,7 @@ use App\Models\MockExam;
 use App\Models\MockExamSession;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 /**
@@ -303,7 +304,7 @@ class EnrollmentControllerTest extends TestCase
 
         // 3. 多対多の結合テーブルモデルに、コーチと資格X の割り当て関係をマウント
         $coach->assignedCertifications()->attach($assignedCert->id, [
-            'id' => (string) \Illuminate\Support\Str::ulid(),
+            'id' => (string) Str::ulid(),
             'assigned_by_user_id' => User::factory()->admin()->create()->id,
             'assigned_at' => now(),
         ]);
@@ -323,6 +324,7 @@ class EnrollmentControllerTest extends TestCase
         // かつ担当外のデータ（$otherEnrollment->id）は 100% 完全に除外されている事実を検証
         $response->assertViewHas('enrollments', function ($enrollments) use ($ownEnrollment, $otherEnrollment) {
             $ids = collect($enrollments->items())->pluck('id');
+
             return $ids->contains($ownEnrollment->id) && ! $ids->contains($otherEnrollment->id);
         });
     }

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Services\Learning;
 
 use App\Enums\ContentStatus;
-use App\Models\Enrollment;
 use App\Models\Chapter;
+use App\Models\Enrollment;
 use App\Models\Part;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -68,6 +68,7 @@ final class LearningProgressService
      * （FetchStudentDashboardAction 用 N+1 回避）
      *
      * @param Collection<int, Enrollment>|\Illuminate\Database\Eloquent\Collection<int, Enrollment> $enrollments
+     *
      * @return array<string, float>
      */
     public function batchCalculateProgress($enrollments): array

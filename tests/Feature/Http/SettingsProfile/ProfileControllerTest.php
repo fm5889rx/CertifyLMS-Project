@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\SettingsProfile;
 
-use App\Models\User;
 use App\Enums\UserRole;
 use App\Enums\UserStatus;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class ProfileControllerTest extends TestCase
@@ -19,7 +18,9 @@ class ProfileControllerTest extends TestCase
     use RefreshDatabase;
 
     private User $student;
+
     private User $coach;
+
     private string $rawPassword;
 
     /**
@@ -34,16 +35,16 @@ class ProfileControllerTest extends TestCase
 
         // 1. テスト用の受講生（Student）を生成
         $this->student = User::factory()->create([
-            'role'     => UserRole::Student->value ?? 'student',
-            'status'   => $invitedStatus,
+            'role' => UserRole::Student->value ?? 'student',
+            'status' => $invitedStatus,
             'password' => Hash::make($this->rawPassword),
-            'bio'      => '初期の自己紹介文です。',
+            'bio' => '初期の自己紹介文です。',
         ]);
 
         // 2. テスト用のコーチ（Coach）を生成
         $this->coach = User::factory()->create([
-            'role'     => UserRole::Coach->value ?? 'coach',
-            'status'   => $invitedStatus,
+            'role' => UserRole::Coach->value ?? 'coach',
+            'status' => $invitedStatus,
             'password' => Hash::make($this->rawPassword),
         ]);
     }
@@ -67,7 +68,7 @@ class ProfileControllerTest extends TestCase
     public function test_ユーザーは自分の氏名および自己紹介を本物のbioカラムに対して正常に更新できること(): void
     {
         $patchData = [
-            'name'         => '新しき受講生氏名',
+            'name' => '新しき受講生氏名',
             'introduction' => '新しく書き換えた最高の自己紹介文（bio）です。',
         ];
 
@@ -80,9 +81,9 @@ class ProfileControllerTest extends TestCase
 
         // 本物のマイグレーション仕様である「bio」カラムに美しくインサートされていることを厳格に証明！
         $this->assertDatabaseHas('users', [
-            'id'   => $this->student->id,
+            'id' => $this->student->id,
             'name' => '新しき受講生氏名',
-            'bio'  => '新しく書き換えた最高の自己紹介文（bio）です。',
+            'bio' => '新しく書き換えた最高の自己紹介文（bio）です。',
         ]);
     }
 
@@ -92,8 +93,8 @@ class ProfileControllerTest extends TestCase
     public function test_ユーザーは現在のパスワードを正しく入力したうえで新しいパスワードに正常に変更できること(): void
     {
         $putData = [
-            'current_password'      => $this->rawPassword,
-            'password'              => 'NewSecurePassword5678!',
+            'current_password' => $this->rawPassword,
+            'password' => 'NewSecurePassword5678!',
             'password_confirmation' => 'NewSecurePassword5678!',
         ];
 
@@ -114,8 +115,8 @@ class ProfileControllerTest extends TestCase
     public function test_現在のパスワードが一致しないか新しいパスワードが最低文字数を満たさない場合はエラーになること(): void
     {
         $invalidData = [
-            'current_password'      => 'WrongCurrentPassword!',
-            'password'              => 'short',
+            'current_password' => 'WrongCurrentPassword!',
+            'password' => 'short',
             'password_confirmation' => 'short',
         ];
 

@@ -28,11 +28,12 @@ class Announcement extends Model
      * Enumオブジェクト ＆ Carbon日付オブジェクトのキャスト定義
      */
     protected $casts = [
-        'target_type'   => AnnouncementTargetType::class,
+        'target_type' => AnnouncementTargetType::class,
         'dispatched_at' => 'datetime',
     ];
 
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     /**

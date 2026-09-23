@@ -24,10 +24,10 @@ class CertificateDownloadController extends Controller
         $this->authorize('download', $certificate);
 
         // PDF ファイルがすでに存在するかチェック
-        if (empty($certificate->pdf_path) || !Storage::disk('public')->exists($certificate->pdf_path)) {
+        if (empty($certificate->pdf_path) || ! Storage::disk('public')->exists($certificate->pdf_path)) {
 
             // 1. 他メンバーのデータ構造を汚さない、安全な一意の物理格納用パスを決定
-            $cleanPath = 'certificates/certificate_' . $certificate->id . '.pdf';
+            $cleanPath = 'certificates/certificate_'.$certificate->id.'.pdf';
 
             // 2. 提供済みの PDF 用 Blade テンプレートにデータをデリバリーして HTML 文字列化
             $html = view('certificates.pdf', [
@@ -37,12 +37,12 @@ class CertificateDownloadController extends Controller
             // 📄 CertificateDownloadController.php の mPDF 生成部分を以下に置換！
 
             // 👑 【シニアの mPDF フォントファミリー物理層強制上書き監査】
-            $mpdf = new \Mpdf\Mpdf([
-                'mode'             => 'ja+a4',
-                'format'           => 'A4',
+            $mpdf = new Mpdf([
+                'mode' => 'ja+a4',
+                'format' => 'A4',
                 'autoScriptToLang' => true,
-                'autoLangToFont'   => true,
-                'default_font'     => 'ja',
+                'autoLangToFont' => true,
+                'default_font' => 'ja',
             ]);
 
             $mpdf->WriteHTML($html);

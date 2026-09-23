@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        schema::create('user_google_calendar', function (Blueprint $table) {
+        Schema::create('user_google_calendar', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->ulid('user_id');
             $table->foreign('user_id')

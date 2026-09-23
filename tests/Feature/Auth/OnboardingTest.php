@@ -13,6 +13,7 @@ use App\Models\Plan;
 use App\Models\User;
 use App\Services\InvitationTokenService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\URL;
 use Tests\TestCase;
 
@@ -358,13 +359,13 @@ class OnboardingTest extends TestCase
         ]);
 
         // 2. 自動ログインセッションを明示的にクリア（ログアウト状態を再現）
-        \Illuminate\Support\Facades\Auth::logout();
+        Auth::logout();
         session()->flush();
 
         // 3. 再ログインの監査：
         // Fortify の認証エンドポイント（/login）へ、設定した新パスワードをポスト送信
         $response = $this->post('/login', [
-            'email'    => $userBefore->email,
+            'email' => $userBefore->email,
             'password' => 'secret-pass',
         ]);
 

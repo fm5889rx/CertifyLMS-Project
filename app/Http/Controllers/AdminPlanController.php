@@ -5,14 +5,15 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Enums\PlanStatus;
+use App\Enums\UserRole;
+use App\Http\Requests\Plan\PlanRequest;
 use App\Models\Plan;
 use App\Models\User;
-use App\Http\Requests\Plan\PlanRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use Illuminate\View\View;
 
 class AdminPlanController extends Controller
 {
@@ -35,12 +36,12 @@ class AdminPlanController extends Controller
         }
 
         // 1. キーワード検索（プラン名）
-        if (!empty($keyword)) {
-            $query->where('name', 'like', '%' . $keyword . '%');
+        if (! empty($keyword)) {
+            $query->where('name', 'like', '%'.$keyword.'%');
         }
 
         // 2. 状態フィルタ
-        if (!empty($status)) {
+        if (! empty($status)) {
             $query->where('status', $status);
         }
 
@@ -84,7 +85,7 @@ class AdminPlanController extends Controller
 
         // づく受講者一覧をBladeへマウント
         $students = User::where('plan_id', $plan->id)
-            ->where('role', \App\Enums\UserRole::Student)
+            ->where('role', UserRole::Student)
             ->get();
 
         return view('plan.management.show', compact('plan', 'students'));
@@ -93,6 +94,7 @@ class AdminPlanController extends Controller
     public function edit(string $id): View
     {
         $plan = Plan::where('id', $id)->firstOrFail();
+
         return view('plan.management.edit', compact('plan'));
     }
 

@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Notifications;
 
-use App\Models\User;
-use App\Models\Question;
-use App\Notifications\QaReplyPostedNotification;
 use App\Enums\QaThreadStatus;
 use App\Enums\UserRole;
+use App\Enums\UserStatus;
+use App\Models\Question;
+use App\Models\User;
+use App\Notifications\QaReplyPostedNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Str;
@@ -19,8 +20,11 @@ class NotificationControllerTest extends TestCase
     use RefreshDatabase;
 
     private User $student;
+
     private User $anotherStudent;
+
     private User $coach;
+
     private Question $thread;
 
     /**
@@ -30,10 +34,10 @@ class NotificationControllerTest extends TestCase
     {
         parent::setUp();
 
-        //【T-A-05：テスト空間キュー自動執行同期規約のマウント】
+        // 【T-A-05：テスト空間キュー自動執行同期規約のマウント】
         config(['queue.default' => 'sync']);
 
-        $inProgressStatus = defined('\App\Enums\UserStatus::InProgress') ? \App\Enums\UserStatus::InProgress : 'in_progress';
+        $inProgressStatus = defined('\App\Enums\UserStatus::InProgress') ? UserStatus::InProgress : 'in_progress';
 
         // 1. 各ロールのアカウントを生成
         $this->student = User::factory()->create(['role' => UserRole::Student, 'status' => $inProgressStatus]);
@@ -42,13 +46,13 @@ class NotificationControllerTest extends TestCase
 
         // 2. 掲示板の親質問スレッド（Question）を生成
         $this->thread = Question::create([
-            'id'                    => (string) Str::ulid(),
-            'user_id'               => $this->student->id,
-            'title'                 => 'テスト用質問スレッド',
-            'body'                  => '本文です',
-            'status'                => QaThreadStatus::Open->value,
-            'created_by_user_id'    => $this->student->id,
-            'updated_by_user_id'    => $this->student->id,
+            'id' => (string) Str::ulid(),
+            'user_id' => $this->student->id,
+            'title' => 'テスト用質問スレッド',
+            'body' => '本文です',
+            'status' => QaThreadStatus::Open->value,
+            'created_by_user_id' => $this->student->id,
+            'updated_by_user_id' => $this->student->id,
         ]);
     }
 

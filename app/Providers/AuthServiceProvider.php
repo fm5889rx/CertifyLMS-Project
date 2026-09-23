@@ -53,8 +53,8 @@ use App\Policies\SectionQuestionAttemptPolicy;
 use App\Policies\SectionQuestionPolicy;
 use App\Policies\SectionQuizPolicy;
 use App\Policies\SectionViewPolicy;
-use App\Policies\UserPolicy;
-use App\Policies\UserCertificatePolicy;                     // S-A-04で追加
+use App\Policies\UserCertificatePolicy;
+use App\Policies\UserPolicy;                     // S-A-04で追加
 use App\Policies\WeakDrillPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;

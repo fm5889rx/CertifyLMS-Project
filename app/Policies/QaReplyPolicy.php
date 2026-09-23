@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Policies;
 
-use App\Models\Answer;
-use App\Models\User;
-use App\Models\QaThread;
-use App\Enums\QaThreadStatus;
 use App\Enums\CertificationStatus;
+use App\Enums\QaThreadStatus;
+use App\Models\Answer;
+use App\Models\QaThread;
+use App\Models\User;
 
 class QaReplyPolicy
 {
@@ -18,15 +18,14 @@ class QaReplyPolicy
     public function create(User $user, QaThread $thread): bool
     {
         // 条件1: 受講中・担当中のアクティブユーザーでなければfalse
-        if (!$user->isActiveUser()) {
+        if (! $user->isActiveUser()) {
             return false;
         }
 
         // 条件2: 紐づく資格マスターを取得し、公開中でない（Published以外）ならfalse
         // 仕様書：「公開停止中の資格のスレッドは受講生・コーチには見えない」
         $certification = $thread->certification;
-        if (!$certification || $certification->status !== CertificationStatus::Published)
-        {
+        if (! $certification || $certification->status !== CertificationStatus::Published) {
             return false;
         }
 

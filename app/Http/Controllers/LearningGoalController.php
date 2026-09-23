@@ -8,10 +8,9 @@ use App\Http\Requests\LearningGoal\LearningGoalRequest;
 use App\Models\Enrollment;
 use App\Models\LearningGoal;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\View\View;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use Illuminate\View\View;
 
 class LearningGoalController extends Controller
 {
@@ -22,19 +21,19 @@ class LearningGoalController extends Controller
     {
         $enrollment = Enrollment::where('id', $enrollmentId)->firstOrFail();
 
-        if ((string)$enrollment->user_id !== (string)Auth::id()) {
+        if ((string) $enrollment->user_id !== (string) Auth::id()) {
             abort(403, '個人目標を追加する権限がありません。');
         }
 
         $data = $request->validated();
 
         LearningGoal::create([
-            'id'            => (string) Str::ulid(),
+            'id' => (string) Str::ulid(),
             'enrollment_id' => $enrollmentId,
-            'title'         => $data['title'],
-            'description'   => $data['description'],
-            'target_date'   => $data['target_date'],
-            'achieved_at'   => null,
+            'title' => $data['title'],
+            'description' => $data['description'],
+            'target_date' => $data['target_date'],
+            'achieved_at' => null,
         ]);
 
         return redirect()->back()->with('success', '新しい学習目標を追加しました。');
@@ -48,7 +47,7 @@ class LearningGoalController extends Controller
         $goal = LearningGoal::where('id', $id)->firstOrFail();
         $enrollment = Enrollment::where('id', $goal->enrollment_id)->firstOrFail();
 
-        if ((string)$enrollment->user_id !== (string)Auth::id()) {
+        if ((string) $enrollment->user_id !== (string) Auth::id()) {
             abort(403, 'この目標を編集する権限がありません。');
         }
 
@@ -63,7 +62,7 @@ class LearningGoalController extends Controller
         $goal = LearningGoal::where('id', $id)->firstOrFail();
         $enrollment = Enrollment::where('id', $goal->enrollment_id)->firstOrFail();
 
-        if ((string)$enrollment->user_id !== (string)Auth::id()) {
+        if ((string) $enrollment->user_id !== (string) Auth::id()) {
             abort(403, 'この目標を更新する権限がありません。');
         }
 
@@ -81,7 +80,7 @@ class LearningGoalController extends Controller
         $goal = LearningGoal::where('id', $id)->firstOrFail();
         $enrollment = Enrollment::where('id', $goal->enrollment_id)->firstOrFail();
 
-        if ((string)$enrollment->user_id !== (string)Auth::id()) {
+        if ((string) $enrollment->user_id !== (string) Auth::id()) {
             abort(403, 'この目標を削除する権限がありません。');
         }
 
@@ -99,7 +98,7 @@ class LearningGoalController extends Controller
         $goal = LearningGoal::where('id', $id)->firstOrFail();
         $enrollment = Enrollment::where('id', $goal->enrollment_id)->firstOrFail();
 
-        if ((string)$enrollment->user_id !== (string)Auth::id()) {
+        if ((string) $enrollment->user_id !== (string) Auth::id()) {
             abort(403, '達成マークを付与する権限がありません。');
         }
 
@@ -116,7 +115,7 @@ class LearningGoalController extends Controller
         $goal = LearningGoal::where('id', $id)->firstOrFail();
         $enrollment = Enrollment::where('id', $goal->enrollment_id)->firstOrFail();
 
-        if ((string)$enrollment->user_id !== (string)Auth::id()) {
+        if ((string) $enrollment->user_id !== (string) Auth::id()) {
             abort(403, '達成マークを解除する権限がありません。');
         }
 

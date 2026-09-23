@@ -6,8 +6,8 @@ namespace App\Models;
 
 use App\Enums\AiChatMessageRole;
 use App\Enums\AiChatMessageStatus;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AiChatMessage extends Model
@@ -29,7 +29,7 @@ class AiChatMessage extends Model
 
     protected $casts = [
         // 文字列ではなく、Enumクラスへ自動キャスト
-        'role'   => AiChatMessageRole::class,
+        'role' => AiChatMessageRole::class,
         'status' => AiChatMessageStatus::class,
     ];
 

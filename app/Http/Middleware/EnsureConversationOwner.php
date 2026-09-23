@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
+use App\Models\AiChatConversation;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-use App\Models\AiChatConversation;
-use Google\Service\CustomerEngagementSuite\Conversation;
 
 /**
  * 会話のオーナー本人のみが操作できる防衛線（他受講生を403で遮断）
@@ -35,7 +34,7 @@ class EnsureConversationOwner
             }
 
             // 4. パラメータのパースに失敗していた時は 403 エラーを返す
-            if (!$conversation) {
+            if (! $conversation) {
                 abort(403, '指定された会話の解析に失敗しました。');
             }
 

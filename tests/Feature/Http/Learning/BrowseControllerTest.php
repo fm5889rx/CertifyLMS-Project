@@ -90,7 +90,10 @@ class BrowseControllerTest extends TestCase
     public function test_show_part_forbidden_for_non_enrolled_student(): void
     {
         $student = User::factory()->student()->inProgress()->create();
-        $part = Part::factory()->create(['status' => ContentStatus::Published->value]);
+        $cert = Certification::factory()->published()->create();
+        $part = Part::factory()->for($cert)->create([
+            'status' => ContentStatus::Published->value
+        ]);
 
         $response = $this->actingAs($student)->get(route('learning.parts.show', $part));
 

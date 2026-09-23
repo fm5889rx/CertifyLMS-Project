@@ -135,6 +135,9 @@ sail bin pint --test     # 整形漏れの確認（CI 相当のチェック）
 - league/commonmark（教材本文の Markdown レンダリング）
 - Pusher（チャットのリアルタイム配信）
 - Docker（Laravel Sail）
+- [S-A-01追加] Laravel socialite
+- [S-A-02追加] gemini-3.8-flash
+- [S-A-03追加] stripe 1.51.0
 
 ## 環境変数
 
@@ -143,7 +146,7 @@ sail bin pint --test     # 整形漏れの確認（CI 相当のチェック）
 - `PUSHER_*` — チャットのリアルタイム配信に使用します。有効にする場合は Pusher のキーを取得して設定し、`BROADCAST_DRIVER=pusher` に変更してください。未設定（既定の `BROADCAST_DRIVER=log`）でもメッセージの送受信自体は動作し、相手画面へのリアルタイム反映のみ行われません
 
 新しい環境変数やセットアップ手順を追加した場合は、`.env.example` と本 README に追記し、チームの誰でも環境を再現できる状態を保ってください。
-
+<br><br><br>
 
 ## 追加パッケージの導入 (S-A-01：Google カレンダー API 連携用)
 
@@ -159,18 +162,21 @@ sail artisan config:clear
 ### 環境変数の追加（S-A-01：Google カレンダー API　連携用）
 `.env` 及び `.env.example` に以下の環境変数を追加しました。
 
-GOOGLE_CALENDAR_CLIENT_ID=your_google_calendar_client_id<br>
-GOOGLE_CALENDAR_CLIENT_SECRET=your_google_calendar_client_secret<br>
-GOOGLE_CALENDAR_REDIRECT_URI=http://localhost:8000/settings/google-calendar/callback<br>
+- GOOGLE_CALENDAR_CLIENT_ID=your_google_calendar_client_id<br>
+- GOOGLE_CALENDAR_CLIENT_SECRET=your_google_calendar_client_secret<br>
+- GOOGLE_CALENDAR_REDIRECT_URI=http://localhost:8000/settings/google-calendar/callback<br>
 
+<br><br><br>
 
 ## 環境変数の追加（S-A-02：Gemini AI チャットボット　連携用）
 `.env` 及び `.env.example` に以下の環境変数を追加しました。
 
-AI_CHAT_ENABLED=true<br>
-GEMINI_DAILY_LIMIT=50<br>
-GEMINI_API_KEY=your_gemini_api_key_here<br>
+- GEMINI_MODEL=gemini-3.8-flash
+- AI_CHAT_ENABLED=true<br>
+- GEMINI_DAILY_LIMIT=50<br>
+- GEMINI_API_KEY=your_gemini_api_key_here<br>
 
+<br><br><br>
 
 ## Stripe を使用するのに必要な作業（SーA-03：Stripe 連携用）
 チケット S-A-03 の Stripe 連携を行うために、外部サービス stripe-CLI を導入する必要があります。<br>
@@ -191,36 +197,52 @@ brew install stripe/stripe-cli/stripe
 ```bash
 stripe login --new-session
 ```
-※ stripe login を実行すると、ターミナルに「https://stripe.com...」という専用の認証 URL が表示されます。そのリンクをブラウザで開いて stripe アカウント作成を画面に指示に従って行って下さい。<br>
+※ stripe login を実行すると、ターミナルに「<https://stripe.com...」という専用の認証> URL が表示されます。そのリンクをブラウザで開いて stripe アカウント作成を画面に指示に従って行って下さい。<br>
 なお、途中で利用環境の選択が出てきますが、プロジェクトの開発中なので「サンドボックス」を選択して下さい。<br>
 「レビューして承認」画面が出たら、先ほど選択したサントボックス名が出ているのを確認して「承認」ボタンを押して下さい。<br>
 
+### Stripe API キーの取得手順（環境変数用）
+上記で作成した Stripe アカウントのダッシュボードから、アプリケーションの動作に必要な API キーを取得します。<br>
+開発およびテストを行う際は、必ず **「テスト環境」** のキーを使用してください。<br>
+
+1. [Stripeダッシュボード](https://stripe.com) にログインします。
+2. 画面右上にある **「テスト環境（Test mode）」** のトグルスイッチがオン（有効）になっていることを確認します。
+3. 画面右上の **「開発者（Developers）」** メニューをクリックし、左メニューから **「APIキー（API keys）」** を選択します。
+4. 画面内の「標準キー」プロパティから、以下の2つの値をコピーして控えてください。
+   - **公開可能キー（Publishable key）**: `pk_test_...` から始まる文字列（`.env` の `STRIPE_KEY` に該当）
+   - **シークレットキー（Secret key）**: 「シークレットキーを表示」をクリックして現れる `sk_test_...` から始まる文字列（`.env` の `STRIPE_SECRET` に該当）
+
 ### 実機検証中について
+
 ターミナルから以下のコマンドでStripe-CLIを**起動させたまま**にしておいて下さい。
+
 ```bash
 # Mac 側で受信した Stripe パケットを、Sail コンテナ（localhost:8000）へ転送
 stripe listen --forward-to localhost:8000/webhooks/stripe --events checkout.session.completed
 ```
-※ 画面にstripeの秘密鍵（whsec_xxxxxxx...）と表示されるので、これをコピーして環境変数にセットして下さい。<br>
+
+※ 画面にstripeの秘密鍵（whsec_xxxxxxx...）と表示されるので、これをコピーして **.env ファイルの `STRIPE_WEBHOOK_SECRET`** にセットして下さい。<br>
   環境変数にコピーした後は一旦 CLI を Ctrl＋C で止めて、以下のコマンドを入力してから、上の stripe コマンドをもう一度入力して下さい。
+
 ```bash
 sail artisan config:clear
 ```
 
 ※ ブラウザが Stripe 画面に切り替わった際のカード情報は以下を使って下さい。
-  - メールアドレス：user@example.com　（任意のメールアドレス、実際にメールが送られることはない）
-  - カード番号：4242 4242 4242 4242　（Stripe SDK 推奨）
-  - 月/年：09/27 （未来の年月であればなんでも良い）
-  - CVV：123　（任意の数字3桁）
-  - 氏名：HANAKO JUKOUSYA　（任意の氏名）
+- メールアドレス：<user@example.com>　（任意のメールアドレス、実際にメールが送られることはない）
+- カード番号：4242 4242 4242 4242　（Stripe SDK 推奨）
+- 月/年：09/27 （未来の年月であればなんでも良い）
+- CVV：123　（任意の数字3桁）
+- 氏名：HANAKO JUKOUSYA　（任意の氏名）
 
 ### 環境変数の追加
 `.env` 及び `.env.example` に以下の環境変数を追加しました。
 
-STRIPE_KEY=pk_test_xxxxxxxxxxxxxxxxx<br>
-STRIPE_SECRET=sk_test_xxxxxxxxxxxxxxxxx<br>
-STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxxxxxxx<br>
+- STRIPE_KEY=pk_test_xxxxxxxxxxxxxxxxx<br>
+- STRIPE_SECRET=sk_test_xxxxxxxxxxxxxxxxx<br>
+- STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxxxxxxx<br>
 
+<br><br><br>
 
 ## キュー基盤（非同期通信）の運用・起動手順【チケットID：T-A-05】
 

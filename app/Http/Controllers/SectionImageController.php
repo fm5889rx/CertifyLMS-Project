@@ -35,7 +35,7 @@ class SectionImageController extends Controller
         $action($image);
 
         // 通常のWebフォーム送信時はリダイレクトバック
-        if (!request()->expectsJson() && !request()->ajax()) {
+        if (! request()->expectsJson() && ! request()->ajax()) {
             return redirect()->back()->with('success', '教材内画像を削除しました。');
         }
 

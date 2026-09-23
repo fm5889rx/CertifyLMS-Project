@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <title>Dashboard for /var/www/html/app/Http/Requests</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../../_css/bootstrap.min.css?v=10.1.16" rel="stylesheet" type="text/css">
+  <link href="../../_css/nv.d3.min.css?v=10.1.16" rel="stylesheet" type="text/css">
+  <link href="../../_css/style.css?v=10.1.16" rel="stylesheet" type="text/css">
+  <link href="../../_css/custom.css" rel="stylesheet" type="text/css">
+ </head>
+ <body>
+  <header>
+   <div class="container-fluid">
+    <div class="row">
+     <div class="col-md-12">
+      <nav aria-label="breadcrumb">
+       <ol class="breadcrumb">
+         <li class="breadcrumb-item"><a href="../../index.html">/var/www/html/app</a></li>
+         <li class="breadcrumb-item"><a href="../index.html">Http</a></li>
+         <li class="breadcrumb-item"><a href="index.html">Requests</a></li>
+         <li class="breadcrumb-item active">(Dashboard)</li>
+
+       </ol>
+      </nav>
+     </div>
+    </div>
+   </div>
+  </header>
+  <div class="container-fluid">
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Classes</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="classCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="classComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="CertificationCategory/UpdateRequest.php.html#13">App\Http\Requests\CertificationCategory\UpdateRequest</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Chapter/ReorderRequest.php.html#14">App\Http\Requests\Chapter\ReorderRequest</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="MeetingQuota/HistoryIndexRequest.php.html#11">App\Http\Requests\MeetingQuota\HistoryIndexRequest</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QuestionCategory/UpdateRequest.php.html#14">App\Http\Requests\QuestionCategory\UpdateRequest</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Section/ReorderRequest.php.html#14">App\Http\Requests\Section\ReorderRequest</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Chapter/UpdateRequest.php.html#13">App\Http\Requests\Chapter\UpdateRequest</a></td><td class="text-right">36%</td></tr>
+       <tr><td><a href="Part/UpdateRequest.php.html#13">App\Http\Requests\Part\UpdateRequest</a></td><td class="text-right">36%</td></tr>
+       <tr><td><a href="MockExamQuestion/UpdateRequest.php.html#13">App\Http\Requests\MockExamQuestion\UpdateRequest</a></td><td class="text-right">42%</td></tr>
+       <tr><td><a href="SectionQuestion/IndexRequest.php.html#18">App\Http\Requests\SectionQuestion\IndexRequest</a></td><td class="text-right">42%</td></tr>
+       <tr><td><a href="MockExamSession/IndexRequest.php.html#12">App\Http\Requests\MockExamSession\IndexRequest</a></td><td class="text-right">45%</td></tr>
+       <tr><td><a href="Meeting/AvailabilityRequest.php.html#20">App\Http\Requests\Meeting\AvailabilityRequest</a></td><td class="text-right">84%</td></tr>
+       <tr><td><a href="Profile/ProfileUpdateRequest.php.html#11">App\Http\Requests\Profile\ProfileUpdateRequest</a></td><td class="text-right">88%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Chapter/ReorderRequest.php.html#14">App\Http\Requests\Chapter\ReorderRequest</a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="QuestionCategory/UpdateRequest.php.html#14">App\Http\Requests\QuestionCategory\UpdateRequest</a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Section/ReorderRequest.php.html#14">App\Http\Requests\Section\ReorderRequest</a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="MeetingQuota/HistoryIndexRequest.php.html#11">App\Http\Requests\MeetingQuota\HistoryIndexRequest</a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Chapter/UpdateRequest.php.html#13">App\Http\Requests\Chapter\UpdateRequest</a></td><td class="text-right">8</td></tr>
+       <tr><td><a href="Part/UpdateRequest.php.html#13">App\Http\Requests\Part\UpdateRequest</a></td><td class="text-right">8</td></tr>
+       <tr><td><a href="MockExamQuestion/UpdateRequest.php.html#13">App\Http\Requests\MockExamQuestion\UpdateRequest</a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Meeting/AvailabilityRequest.php.html#20">App\Http\Requests\Meeting\AvailabilityRequest</a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Profile/ProfileUpdateRequest.php.html#11">App\Http\Requests\Profile\ProfileUpdateRequest</a></td><td class="text-right">5</td></tr>
+       <tr><td><a href="SectionQuestion/IndexRequest.php.html#18">App\Http\Requests\SectionQuestion\IndexRequest</a></td><td class="text-right">4</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Methods</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="methodCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="methodComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="CertificationCategory/UpdateRequest.php.html#15"><abbr title="App\Http\Requests\CertificationCategory\UpdateRequest::authorize">authorize</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CertificationCategory/UpdateRequest.php.html#23"><abbr title="App\Http\Requests\CertificationCategory\UpdateRequest::rules">rules</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CertificationCategory/UpdateRequest.php.html#42"><abbr title="App\Http\Requests\CertificationCategory\UpdateRequest::attributes">attributes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Chapter/ReorderRequest.php.html#16"><abbr title="App\Http\Requests\Chapter\ReorderRequest::authorize">authorize</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Chapter/ReorderRequest.php.html#27"><abbr title="App\Http\Requests\Chapter\ReorderRequest::rules">rules</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Chapter/ReorderRequest.php.html#38"><abbr title="App\Http\Requests\Chapter\ReorderRequest::attributes">attributes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Chapter/UpdateRequest.php.html#15"><abbr title="App\Http\Requests\Chapter\UpdateRequest::authorize">authorize</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Chapter/UpdateRequest.php.html#37"><abbr title="App\Http\Requests\Chapter\UpdateRequest::attributes">attributes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="MeetingQuota/HistoryIndexRequest.php.html#13"><abbr title="App\Http\Requests\MeetingQuota\HistoryIndexRequest::authorize">authorize</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="MeetingQuota/HistoryIndexRequest.php.html#23"><abbr title="App\Http\Requests\MeetingQuota\HistoryIndexRequest::rules">rules</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="MockExamQuestion/UpdateRequest.php.html#15"><abbr title="App\Http\Requests\MockExamQuestion\UpdateRequest::authorize">authorize</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="MockExamQuestion/UpdateRequest.php.html#42"><abbr title="App\Http\Requests\MockExamQuestion\UpdateRequest::attributes">attributes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="MockExamSession/IndexRequest.php.html#14"><abbr title="App\Http\Requests\MockExamSession\IndexRequest::authorize">authorize</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="MockExamSession/IndexRequest.php.html#34"><abbr title="App\Http\Requests\MockExamSession\IndexRequest::attributes">attributes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Part/UpdateRequest.php.html#15"><abbr title="App\Http\Requests\Part\UpdateRequest::authorize">authorize</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Part/UpdateRequest.php.html#37"><abbr title="App\Http\Requests\Part\UpdateRequest::attributes">attributes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QuestionCategory/UpdateRequest.php.html#16"><abbr title="App\Http\Requests\QuestionCategory\UpdateRequest::authorize">authorize</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QuestionCategory/UpdateRequest.php.html#27"><abbr title="App\Http\Requests\QuestionCategory\UpdateRequest::rules">rules</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QuestionCategory/UpdateRequest.php.html#50"><abbr title="App\Http\Requests\QuestionCategory\UpdateRequest::attributes">attributes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Section/ReorderRequest.php.html#16"><abbr title="App\Http\Requests\Section\ReorderRequest::authorize">authorize</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Section/ReorderRequest.php.html#27"><abbr title="App\Http\Requests\Section\ReorderRequest::rules">rules</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Section/ReorderRequest.php.html#38"><abbr title="App\Http\Requests\Section\ReorderRequest::attributes">attributes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SectionQuestion/IndexRequest.php.html#31"><abbr title="App\Http\Requests\SectionQuestion\IndexRequest::rules">rules</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Meeting/AvailabilityRequest.php.html#22"><abbr title="App\Http\Requests\Meeting\AvailabilityRequest::authorize">authorize</abbr></a></td><td class="text-right">71%</td></tr>
+       <tr><td><a href="Meeting/StoreRequest.php.html#22"><abbr title="App\Http\Requests\Meeting\StoreRequest::authorize">authorize</abbr></a></td><td class="text-right">71%</td></tr>
+       <tr><td><a href="QuizHistory/IndexRequest.php.html#20"><abbr title="App\Http\Requests\QuizHistory\IndexRequest::authorize">authorize</abbr></a></td><td class="text-right">75%</td></tr>
+       <tr><td><a href="QuizStats/IndexRequest.php.html#19"><abbr title="App\Http\Requests\QuizStats\IndexRequest::authorize">authorize</abbr></a></td><td class="text-right">75%</td></tr>
+       <tr><td><a href="SectionQuestionAnswer/StoreRequest.php.html#23"><abbr title="App\Http\Requests\SectionQuestionAnswer\StoreRequest::authorize">authorize</abbr></a></td><td class="text-right">75%</td></tr>
+       <tr><td><a href="Profile/ProfileUpdateRequest.php.html#24"><abbr title="App\Http\Requests\Profile\ProfileUpdateRequest::rules">rules</abbr></a></td><td class="text-right">87%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Chapter/ReorderRequest.php.html#16"><abbr title="App\Http\Requests\Chapter\ReorderRequest::authorize">authorize</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Chapter/UpdateRequest.php.html#15"><abbr title="App\Http\Requests\Chapter\UpdateRequest::authorize">authorize</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="MeetingQuota/HistoryIndexRequest.php.html#13"><abbr title="App\Http\Requests\MeetingQuota\HistoryIndexRequest::authorize">authorize</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="MockExamQuestion/UpdateRequest.php.html#15"><abbr title="App\Http\Requests\MockExamQuestion\UpdateRequest::authorize">authorize</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Part/UpdateRequest.php.html#15"><abbr title="App\Http\Requests\Part\UpdateRequest::authorize">authorize</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="QuestionCategory/UpdateRequest.php.html#16"><abbr title="App\Http\Requests\QuestionCategory\UpdateRequest::authorize">authorize</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Section/ReorderRequest.php.html#16"><abbr title="App\Http\Requests\Section\ReorderRequest::authorize">authorize</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Meeting/AvailabilityRequest.php.html#22"><abbr title="App\Http\Requests\Meeting\AvailabilityRequest::authorize">authorize</abbr></a></td><td class="text-right">4</td></tr>
+       <tr><td><a href="Meeting/StoreRequest.php.html#22"><abbr title="App\Http\Requests\Meeting\StoreRequest::authorize">authorize</abbr></a></td><td class="text-right">4</td></tr>
+       <tr><td><a href="Profile/ProfileUpdateRequest.php.html#24"><abbr title="App\Http\Requests\Profile\ProfileUpdateRequest::rules">rules</abbr></a></td><td class="text-right">4</td></tr>
+       <tr><td><a href="QuizHistory/IndexRequest.php.html#20"><abbr title="App\Http\Requests\QuizHistory\IndexRequest::authorize">authorize</abbr></a></td><td class="text-right">2</td></tr>
+       <tr><td><a href="QuizStats/IndexRequest.php.html#19"><abbr title="App\Http\Requests\QuizStats\IndexRequest::authorize">authorize</abbr></a></td><td class="text-right">2</td></tr>
+       <tr><td><a href="SectionQuestionAnswer/StoreRequest.php.html#23"><abbr title="App\Http\Requests\SectionQuestionAnswer\StoreRequest::authorize">authorize</abbr></a></td><td class="text-right">2</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <footer>
+    <hr/>
+    <p>
+     <small>Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 10.1.16</a> using <a href="https://www.php.net/" target="_top">PHP 8.5.10</a> and <a href="https://phpunit.de/">PHPUnit 10.5.63</a> at Wed Sep 23 13:47:57 JST 2026.</small>
+    </p>
+   </footer>
+  </div>
+  <script src="../../_js/jquery.min.js?v=10.1.16" type="text/javascript"></script>
+  <script src="../../_js/d3.min.js?v=10.1.16" type="text/javascript"></script>
+  <script src="../../_js/nv.d3.min.js?v=10.1.16" type="text/javascript"></script>
+  <script type="text/javascript">
+$(document).ready(function() {
+  nv.addGraph(function() {
+    var chart = nv.models.multiBarChart();
+    chart.tooltips(false)
+      .showControls(false)
+      .showLegend(false)
+      .reduceXTicks(false)
+      .staggerLabels(true)
+      .yAxis.tickFormat(d3.format('d'));
+
+    d3.select('#classCoverageDistribution svg')
+      .datum(getCoverageDistributionData([5,0,0,0,2,3,0,0,0,2,4,50], "Class Coverage"))
+      .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  nv.addGraph(function() {
+    var chart = nv.models.multiBarChart();
+    chart.tooltips(false)
+      .showControls(false)
+      .showLegend(false)
+      .reduceXTicks(false)
+      .staggerLabels(true)
+      .yAxis.tickFormat(d3.format('d'));
+
+    d3.select('#methodCoverageDistribution svg')
+      .datum(getCoverageDistributionData([23,0,0,0,0,0,0,0,5,1,0,157], "Method Coverage"))
+      .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  function getCoverageDistributionData(data, label) {
+    var labels = [
+      '0%',
+      '0-10%',
+      '10-20%',
+      '20-30%',
+      '30-40%',
+      '40-50%',
+      '50-60%',
+      '60-70%',
+      '70-80%',
+      '80-90%',
+      '90-100%',
+      '100%'
+    ];
+    var values = [];
+    $.each(labels, function(key) {
+      values.push({x: labels[key], y: data[key]});
+    });
+
+    return [
+      {
+        key: label,
+        values: values,
+        color: "#4572A7"
+      }
+    ];
+  }
+  nv.addGraph(function() {
+    var chart = nv.models.scatterChart()
+      .showDistX(true)
+      .showDistY(true)
+      .showLegend(false)
+      .forceX([0, 100]);
+    chart.tooltipContent(function(graph) {
+      return '<p>' + graph.point.class + '</p>';
+    });
+
+    chart.xAxis.axisLabel('Code Coverage (in percent)');
+    chart.yAxis.axisLabel('Cyclomatic Complexity');
+
+    d3.select('#classComplexity svg')
+      .datum(getComplexityData([[100,2,"<a href=\"Announcement\/AnnouncementStoreRequest.php.html#11\">App\\Http\\Requests\\Announcement\\AnnouncementStoreRequest<\/a>"],[100,7,"<a href=\"Auth\/OnboardingRequest.php.html#17\">App\\Http\\Requests\\Auth\\OnboardingRequest<\/a>"],[100,6,"<a href=\"Availability\/StoreRequest.php.html#17\">App\\Http\\Requests\\Availability\\StoreRequest<\/a>"],[100,7,"<a href=\"Availability\/UpdateRequest.php.html#16\">App\\Http\\Requests\\Availability\\UpdateRequest<\/a>"],[100,2,"<a href=\"Certification\/IndexRequest.php.html#16\">App\\Http\\Requests\\Certification\\IndexRequest<\/a>"],[100,3,"<a href=\"Certification\/StoreRequest.php.html#15\">App\\Http\\Requests\\Certification\\StoreRequest<\/a>"],[100,3,"<a href=\"Certification\/UpdateRequest.php.html#15\">App\\Http\\Requests\\Certification\\UpdateRequest<\/a>"],[100,2,"<a href=\"CertificationCatalog\/IndexRequest.php.html#14\">App\\Http\\Requests\\CertificationCatalog\\IndexRequest<\/a>"],[100,3,"<a href=\"CertificationCategory\/StoreRequest.php.html#13\">App\\Http\\Requests\\CertificationCategory\\StoreRequest<\/a>"],[0,3,"<a href=\"CertificationCategory\/UpdateRequest.php.html#13\">App\\Http\\Requests\\CertificationCategory\\UpdateRequest<\/a>"],[0,4,"<a href=\"Chapter\/ReorderRequest.php.html#14\">App\\Http\\Requests\\Chapter\\ReorderRequest<\/a>"],[100,4,"<a href=\"Chapter\/StoreRequest.php.html#14\">App\\Http\\Requests\\Chapter\\StoreRequest<\/a>"],[36.36363636363637,4,"<a href=\"Chapter\/UpdateRequest.php.html#13\">App\\Http\\Requests\\Chapter\\UpdateRequest<\/a>"],[100,3,"<a href=\"Chat\/IndexAsCoachRequest.php.html#15\">App\\Http\\Requests\\Chat\\IndexAsCoachRequest<\/a>"],[100,5,"<a href=\"Chat\/IndexRequest.php.html#16\">App\\Http\\Requests\\Chat\\IndexRequest<\/a>"],[100,3,"<a href=\"Chat\/StoreMessageRequest.php.html#18\">App\\Http\\Requests\\Chat\\StoreMessageRequest<\/a>"],[100,3,"<a href=\"ContentSearch\/SearchRequest.php.html#13\">App\\Http\\Requests\\ContentSearch\\SearchRequest<\/a>"],[100,3,"<a href=\"Enrollment\/FailRequest.php.html#12\">App\\Http\\Requests\\Enrollment\\FailRequest<\/a>"],[100,3,"<a href=\"Enrollment\/StoreRequest.php.html#16\">App\\Http\\Requests\\Enrollment\\StoreRequest<\/a>"],[100,3,"<a href=\"Enrollment\/UpdateExamDateRequest.php.html#13\">App\\Http\\Requests\\Enrollment\\UpdateExamDateRequest<\/a>"],[100,2,"<a href=\"EnrollmentNote\/EnrollmentNoteRequest.php.html#9\">App\\Http\\Requests\\EnrollmentNote\\EnrollmentNoteRequest<\/a>"],[100,2,"<a href=\"Invitation\/ResendRequest.php.html#16\">App\\Http\\Requests\\Invitation\\ResendRequest<\/a>"],[100,4,"<a href=\"Invitation\/StoreRequest.php.html#18\">App\\Http\\Requests\\Invitation\\StoreRequest<\/a>"],[100,2,"<a href=\"LearningGoal\/LearningGoalRequest.php.html#9\">App\\Http\\Requests\\LearningGoal\\LearningGoalRequest<\/a>"],[100,3,"<a href=\"LearningHourTarget\/UpsertRequest.php.html#13\">App\\Http\\Requests\\LearningHourTarget\\UpsertRequest<\/a>"],[84.61538461538461,6,"<a href=\"Meeting\/AvailabilityRequest.php.html#20\">App\\Http\\Requests\\Meeting\\AvailabilityRequest<\/a>"],[100,2,"<a href=\"Meeting\/IndexAsCoachRequest.php.html#16\">App\\Http\\Requests\\Meeting\\IndexAsCoachRequest<\/a>"],[100,2,"<a href=\"Meeting\/IndexRequest.php.html#16\">App\\Http\\Requests\\Meeting\\IndexRequest<\/a>"],[100,2,"<a href=\"Meeting\/MeetingPackRequest.php.html#10\">App\\Http\\Requests\\Meeting\\MeetingPackRequest<\/a>"],[91.66666666666666,7,"<a href=\"Meeting\/StoreRequest.php.html#20\">App\\Http\\Requests\\Meeting\\StoreRequest<\/a>"],[100,4,"<a href=\"Meeting\/UpsertMemoRequest.php.html#18\">App\\Http\\Requests\\Meeting\\UpsertMemoRequest<\/a>"],[0,3,"<a href=\"MeetingQuota\/HistoryIndexRequest.php.html#11\">App\\Http\\Requests\\MeetingQuota\\HistoryIndexRequest<\/a>"],[100,3,"<a href=\"MockExam\/IndexRequest.php.html#13\">App\\Http\\Requests\\MockExam\\IndexRequest<\/a>"],[100,5,"<a href=\"MockExam\/StoreRequest.php.html#16\">App\\Http\\Requests\\MockExam\\StoreRequest<\/a>"],[100,4,"<a href=\"MockExam\/UpdateRequest.php.html#14\">App\\Http\\Requests\\MockExam\\UpdateRequest<\/a>"],[100,4,"<a href=\"MockExamAnswer\/UpdateRequest.php.html#16\">App\\Http\\Requests\\MockExamAnswer\\UpdateRequest<\/a>"],[100,4,"<a href=\"MockExamQuestion\/StoreRequest.php.html#18\">App\\Http\\Requests\\MockExamQuestion\\StoreRequest<\/a>"],[42.857142857142854,4,"<a href=\"MockExamQuestion\/UpdateRequest.php.html#13\">App\\Http\\Requests\\MockExamQuestion\\UpdateRequest<\/a>"],[45.45454545454545,3,"<a href=\"MockExamSession\/IndexRequest.php.html#12\">App\\Http\\Requests\\MockExamSession\\IndexRequest<\/a>"],[100,3,"<a href=\"MockExamSession\/Monitor\/IndexRequest.php.html#15\">App\\Http\\Requests\\MockExamSession\\Monitor\\IndexRequest<\/a>"],[100,4,"<a href=\"Part\/ReorderRequest.php.html#14\">App\\Http\\Requests\\Part\\ReorderRequest<\/a>"],[100,4,"<a href=\"Part\/StoreRequest.php.html#14\">App\\Http\\Requests\\Part\\StoreRequest<\/a>"],[36.36363636363637,4,"<a href=\"Part\/UpdateRequest.php.html#13\">App\\Http\\Requests\\Part\\UpdateRequest<\/a>"],[100,2,"<a href=\"Plan\/PlanRequest.php.html#9\">App\\Http\\Requests\\Plan\\PlanRequest<\/a>"],[100,2,"<a href=\"Profile\/PasswordUpdateRequest.php.html#10\">App\\Http\\Requests\\Profile\\PasswordUpdateRequest<\/a>"],[88.88888888888889,5,"<a href=\"Profile\/ProfileUpdateRequest.php.html#11\">App\\Http\\Requests\\Profile\\ProfileUpdateRequest<\/a>"],[100,2,"<a href=\"QaThread\/QaReplyRequest.php.html#9\">App\\Http\\Requests\\QaThread\\QaReplyRequest<\/a>"],[100,4,"<a href=\"QaThread\/QaThreadRequest.php.html#9\">App\\Http\\Requests\\QaThread\\QaThreadRequest<\/a>"],[100,4,"<a href=\"QuestionCategory\/StoreRequest.php.html#16\">App\\Http\\Requests\\QuestionCategory\\StoreRequest<\/a>"],[0,4,"<a href=\"QuestionCategory\/UpdateRequest.php.html#14\">App\\Http\\Requests\\QuestionCategory\\UpdateRequest<\/a>"],[93.75,5,"<a href=\"QuizHistory\/IndexRequest.php.html#18\">App\\Http\\Requests\\QuizHistory\\IndexRequest<\/a>"],[93.75,5,"<a href=\"QuizStats\/IndexRequest.php.html#17\">App\\Http\\Requests\\QuizStats\\IndexRequest<\/a>"],[100,3,"<a href=\"Section\/PreviewRequest.php.html#14\">App\\Http\\Requests\\Section\\PreviewRequest<\/a>"],[0,4,"<a href=\"Section\/ReorderRequest.php.html#14\">App\\Http\\Requests\\Section\\ReorderRequest<\/a>"],[100,4,"<a href=\"Section\/StoreRequest.php.html#14\">App\\Http\\Requests\\Section\\StoreRequest<\/a>"],[100,4,"<a href=\"Section\/UpdateRequest.php.html#13\">App\\Http\\Requests\\Section\\UpdateRequest<\/a>"],[100,4,"<a href=\"SectionImage\/StoreRequest.php.html#14\">App\\Http\\Requests\\SectionImage\\StoreRequest<\/a>"],[42.857142857142854,3,"<a href=\"SectionQuestion\/IndexRequest.php.html#18\">App\\Http\\Requests\\SectionQuestion\\IndexRequest<\/a>"],[100,4,"<a href=\"SectionQuestion\/StoreRequest.php.html#20\">App\\Http\\Requests\\SectionQuestion\\StoreRequest<\/a>"],[100,4,"<a href=\"SectionQuestion\/UpdateRequest.php.html#16\">App\\Http\\Requests\\SectionQuestion\\UpdateRequest<\/a>"],[97.61904761904762,5,"<a href=\"SectionQuestionAnswer\/StoreRequest.php.html#21\">App\\Http\\Requests\\SectionQuestionAnswer\\StoreRequest<\/a>"],[100,3,"<a href=\"User\/ExtendCourseRequest.php.html#16\">App\\Http\\Requests\\User\\ExtendCourseRequest<\/a>"],[100,3,"<a href=\"User\/GrantMeetingQuotaRequest.php.html#14\">App\\Http\\Requests\\User\\GrantMeetingQuotaRequest<\/a>"],[100,3,"<a href=\"User\/IndexRequest.php.html#17\">App\\Http\\Requests\\User\\IndexRequest<\/a>"],[100,2,"<a href=\"User\/WithdrawRequest.php.html#14\">App\\Http\\Requests\\User\\WithdrawRequest<\/a>"],[100,3,"<a href=\"UserPreference\/UpdateDefaultEnrollmentRequest.php.html#17\">App\\Http\\Requests\\UserPreference\\UpdateDefaultEnrollmentRequest<\/a>"]], 'Class Complexity'))
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  nv.addGraph(function() {
+    var chart = nv.models.scatterChart()
+      .showDistX(true)
+      .showDistY(true)
+      .showLegend(false)
+      .forceX([0, 100]);
+    chart.tooltipContent(function(graph) {
+      return '<p>' + graph.point.class + '</p>';
+    });
+
+    chart.xAxis.axisLabel('Code Coverage (in percent)');
+    chart.yAxis.axisLabel('Method Complexity');
+
+    d3.select('#methodComplexity svg')
+      .datum(getComplexityData([[100,1,"<a href=\"Announcement\/AnnouncementStoreRequest.php.html#13\">App\\Http\\Requests\\Announcement\\AnnouncementStoreRequest::authorize<\/a>"],[100,1,"<a href=\"Announcement\/AnnouncementStoreRequest.php.html#21\">App\\Http\\Requests\\Announcement\\AnnouncementStoreRequest::rules<\/a>"],[100,1,"<a href=\"Auth\/OnboardingRequest.php.html#19\">App\\Http\\Requests\\Auth\\OnboardingRequest::authorize<\/a>"],[100,2,"<a href=\"Auth\/OnboardingRequest.php.html#27\">App\\Http\\Requests\\Auth\\OnboardingRequest::rules<\/a>"],[100,1,"<a href=\"Auth\/OnboardingRequest.php.html#45\">App\\Http\\Requests\\Auth\\OnboardingRequest::attributes<\/a>"],[100,1,"<a href=\"Auth\/OnboardingRequest.php.html#59\">App\\Http\\Requests\\Auth\\OnboardingRequest::messages<\/a>"],[100,2,"<a href=\"Auth\/OnboardingRequest.php.html#70\">App\\Http\\Requests\\Auth\\OnboardingRequest::invitedRole<\/a>"],[100,2,"<a href=\"Availability\/StoreRequest.php.html#19\">App\\Http\\Requests\\Availability\\StoreRequest::authorize<\/a>"],[100,1,"<a href=\"Availability\/StoreRequest.php.html#26\">App\\Http\\Requests\\Availability\\StoreRequest::prepareForValidation<\/a>"],[100,1,"<a href=\"Availability\/StoreRequest.php.html#36\">App\\Http\\Requests\\Availability\\StoreRequest::rules<\/a>"],[100,1,"<a href=\"Availability\/StoreRequest.php.html#49\">App\\Http\\Requests\\Availability\\StoreRequest::attributes<\/a>"],[100,1,"<a href=\"Availability\/StoreRequest.php.html#62\">App\\Http\\Requests\\Availability\\StoreRequest::messages<\/a>"],[100,3,"<a href=\"Availability\/UpdateRequest.php.html#18\">App\\Http\\Requests\\Availability\\UpdateRequest::authorize<\/a>"],[100,1,"<a href=\"Availability\/UpdateRequest.php.html#28\">App\\Http\\Requests\\Availability\\UpdateRequest::prepareForValidation<\/a>"],[100,1,"<a href=\"Availability\/UpdateRequest.php.html#38\">App\\Http\\Requests\\Availability\\UpdateRequest::rules<\/a>"],[100,1,"<a href=\"Availability\/UpdateRequest.php.html#51\">App\\Http\\Requests\\Availability\\UpdateRequest::attributes<\/a>"],[100,1,"<a href=\"Availability\/UpdateRequest.php.html#64\">App\\Http\\Requests\\Availability\\UpdateRequest::messages<\/a>"],[100,1,"<a href=\"Certification\/IndexRequest.php.html#18\">App\\Http\\Requests\\Certification\\IndexRequest::authorize<\/a>"],[100,1,"<a href=\"Certification\/IndexRequest.php.html#26\">App\\Http\\Requests\\Certification\\IndexRequest::rules<\/a>"],[100,1,"<a href=\"Certification\/StoreRequest.php.html#17\">App\\Http\\Requests\\Certification\\StoreRequest::authorize<\/a>"],[100,1,"<a href=\"Certification\/StoreRequest.php.html#25\">App\\Http\\Requests\\Certification\\StoreRequest::rules<\/a>"],[100,1,"<a href=\"Certification\/StoreRequest.php.html#38\">App\\Http\\Requests\\Certification\\StoreRequest::attributes<\/a>"],[100,1,"<a href=\"Certification\/UpdateRequest.php.html#17\">App\\Http\\Requests\\Certification\\UpdateRequest::authorize<\/a>"],[100,1,"<a href=\"Certification\/UpdateRequest.php.html#25\">App\\Http\\Requests\\Certification\\UpdateRequest::rules<\/a>"],[100,1,"<a href=\"Certification\/UpdateRequest.php.html#38\">App\\Http\\Requests\\Certification\\UpdateRequest::attributes<\/a>"],[100,1,"<a href=\"CertificationCatalog\/IndexRequest.php.html#16\">App\\Http\\Requests\\CertificationCatalog\\IndexRequest::authorize<\/a>"],[100,1,"<a href=\"CertificationCatalog\/IndexRequest.php.html#24\">App\\Http\\Requests\\CertificationCatalog\\IndexRequest::rules<\/a>"],[100,1,"<a href=\"CertificationCategory\/StoreRequest.php.html#15\">App\\Http\\Requests\\CertificationCategory\\StoreRequest::authorize<\/a>"],[100,1,"<a href=\"CertificationCategory\/StoreRequest.php.html#23\">App\\Http\\Requests\\CertificationCategory\\StoreRequest::rules<\/a>"],[100,1,"<a href=\"CertificationCategory\/StoreRequest.php.html#35\">App\\Http\\Requests\\CertificationCategory\\StoreRequest::attributes<\/a>"],[0,1,"<a href=\"CertificationCategory\/UpdateRequest.php.html#15\">App\\Http\\Requests\\CertificationCategory\\UpdateRequest::authorize<\/a>"],[0,1,"<a href=\"CertificationCategory\/UpdateRequest.php.html#23\">App\\Http\\Requests\\CertificationCategory\\UpdateRequest::rules<\/a>"],[0,1,"<a href=\"CertificationCategory\/UpdateRequest.php.html#42\">App\\Http\\Requests\\CertificationCategory\\UpdateRequest::attributes<\/a>"],[0,2,"<a href=\"Chapter\/ReorderRequest.php.html#16\">App\\Http\\Requests\\Chapter\\ReorderRequest::authorize<\/a>"],[0,1,"<a href=\"Chapter\/ReorderRequest.php.html#27\">App\\Http\\Requests\\Chapter\\ReorderRequest::rules<\/a>"],[0,1,"<a href=\"Chapter\/ReorderRequest.php.html#38\">App\\Http\\Requests\\Chapter\\ReorderRequest::attributes<\/a>"],[100,2,"<a href=\"Chapter\/StoreRequest.php.html#16\">App\\Http\\Requests\\Chapter\\StoreRequest::authorize<\/a>"],[100,1,"<a href=\"Chapter\/StoreRequest.php.html#27\">App\\Http\\Requests\\Chapter\\StoreRequest::rules<\/a>"],[100,1,"<a href=\"Chapter\/StoreRequest.php.html#38\">App\\Http\\Requests\\Chapter\\StoreRequest::attributes<\/a>"],[0,2,"<a href=\"Chapter\/UpdateRequest.php.html#15\">App\\Http\\Requests\\Chapter\\UpdateRequest::authorize<\/a>"],[100,1,"<a href=\"Chapter\/UpdateRequest.php.html#26\">App\\Http\\Requests\\Chapter\\UpdateRequest::rules<\/a>"],[0,1,"<a href=\"Chapter\/UpdateRequest.php.html#37\">App\\Http\\Requests\\Chapter\\UpdateRequest::attributes<\/a>"],[100,1,"<a href=\"Chat\/IndexAsCoachRequest.php.html#17\">App\\Http\\Requests\\Chat\\IndexAsCoachRequest::authorize<\/a>"],[100,1,"<a href=\"Chat\/IndexAsCoachRequest.php.html#25\">App\\Http\\Requests\\Chat\\IndexAsCoachRequest::rules<\/a>"],[100,1,"<a href=\"Chat\/IndexAsCoachRequest.php.html#38\">App\\Http\\Requests\\Chat\\IndexAsCoachRequest::filters<\/a>"],[100,3,"<a href=\"Chat\/IndexRequest.php.html#18\">App\\Http\\Requests\\Chat\\IndexRequest::authorize<\/a>"],[100,1,"<a href=\"Chat\/IndexRequest.php.html#30\">App\\Http\\Requests\\Chat\\IndexRequest::rules<\/a>"],[100,1,"<a href=\"Chat\/IndexRequest.php.html#42\">App\\Http\\Requests\\Chat\\IndexRequest::filters<\/a>"],[100,2,"<a href=\"Chat\/StoreMessageRequest.php.html#20\">App\\Http\\Requests\\Chat\\StoreMessageRequest::authorize<\/a>"],[100,1,"<a href=\"Chat\/StoreMessageRequest.php.html#31\">App\\Http\\Requests\\Chat\\StoreMessageRequest::rules<\/a>"],[100,1,"<a href=\"ContentSearch\/SearchRequest.php.html#15\">App\\Http\\Requests\\ContentSearch\\SearchRequest::authorize<\/a>"],[100,1,"<a href=\"ContentSearch\/SearchRequest.php.html#23\">App\\Http\\Requests\\ContentSearch\\SearchRequest::rules<\/a>"],[100,1,"<a href=\"ContentSearch\/SearchRequest.php.html#34\">App\\Http\\Requests\\ContentSearch\\SearchRequest::attributes<\/a>"],[100,1,"<a href=\"Enrollment\/FailRequest.php.html#14\">App\\Http\\Requests\\Enrollment\\FailRequest::authorize<\/a>"],[100,1,"<a href=\"Enrollment\/FailRequest.php.html#22\">App\\Http\\Requests\\Enrollment\\FailRequest::rules<\/a>"],[100,1,"<a href=\"Enrollment\/FailRequest.php.html#32\">App\\Http\\Requests\\Enrollment\\FailRequest::attributes<\/a>"],[100,1,"<a href=\"Enrollment\/StoreRequest.php.html#18\">App\\Http\\Requests\\Enrollment\\StoreRequest::authorize<\/a>"],[100,1,"<a href=\"Enrollment\/StoreRequest.php.html#26\">App\\Http\\Requests\\Enrollment\\StoreRequest::rules<\/a>"],[100,1,"<a href=\"Enrollment\/StoreRequest.php.html#42\">App\\Http\\Requests\\Enrollment\\StoreRequest::attributes<\/a>"],[100,1,"<a href=\"Enrollment\/UpdateExamDateRequest.php.html#15\">App\\Http\\Requests\\Enrollment\\UpdateExamDateRequest::authorize<\/a>"],[100,1,"<a href=\"Enrollment\/UpdateExamDateRequest.php.html#23\">App\\Http\\Requests\\Enrollment\\UpdateExamDateRequest::rules<\/a>"],[100,1,"<a href=\"Enrollment\/UpdateExamDateRequest.php.html#33\">App\\Http\\Requests\\Enrollment\\UpdateExamDateRequest::attributes<\/a>"],[100,1,"<a href=\"EnrollmentNote\/EnrollmentNoteRequest.php.html#11\">App\\Http\\Requests\\EnrollmentNote\\EnrollmentNoteRequest::authorize<\/a>"],[100,1,"<a href=\"EnrollmentNote\/EnrollmentNoteRequest.php.html#16\">App\\Http\\Requests\\EnrollmentNote\\EnrollmentNoteRequest::rules<\/a>"],[100,1,"<a href=\"Invitation\/ResendRequest.php.html#18\">App\\Http\\Requests\\Invitation\\ResendRequest::authorize<\/a>"],[100,1,"<a href=\"Invitation\/ResendRequest.php.html#26\">App\\Http\\Requests\\Invitation\\ResendRequest::rules<\/a>"],[100,1,"<a href=\"Invitation\/StoreRequest.php.html#20\">App\\Http\\Requests\\Invitation\\StoreRequest::authorize<\/a>"],[100,1,"<a href=\"Invitation\/StoreRequest.php.html#28\">App\\Http\\Requests\\Invitation\\StoreRequest::rules<\/a>"],[100,1,"<a href=\"Invitation\/StoreRequest.php.html#47\">App\\Http\\Requests\\Invitation\\StoreRequest::attributes<\/a>"],[100,1,"<a href=\"Invitation\/StoreRequest.php.html#59\">App\\Http\\Requests\\Invitation\\StoreRequest::messages<\/a>"],[100,1,"<a href=\"LearningGoal\/LearningGoalRequest.php.html#14\">App\\Http\\Requests\\LearningGoal\\LearningGoalRequest::authorize<\/a>"],[100,1,"<a href=\"LearningGoal\/LearningGoalRequest.php.html#22\">App\\Http\\Requests\\LearningGoal\\LearningGoalRequest::rules<\/a>"],[100,1,"<a href=\"LearningHourTarget\/UpsertRequest.php.html#15\">App\\Http\\Requests\\LearningHourTarget\\UpsertRequest::authorize<\/a>"],[100,1,"<a href=\"LearningHourTarget\/UpsertRequest.php.html#23\">App\\Http\\Requests\\LearningHourTarget\\UpsertRequest::rules<\/a>"],[100,1,"<a href=\"LearningHourTarget\/UpsertRequest.php.html#33\">App\\Http\\Requests\\LearningHourTarget\\UpsertRequest::attributes<\/a>"],[71.42857142857143,4,"<a href=\"Meeting\/AvailabilityRequest.php.html#22\">App\\Http\\Requests\\Meeting\\AvailabilityRequest::authorize<\/a>"],[100,1,"<a href=\"Meeting\/AvailabilityRequest.php.html#41\">App\\Http\\Requests\\Meeting\\AvailabilityRequest::rules<\/a>"],[100,1,"<a href=\"Meeting\/AvailabilityRequest.php.html#51\">App\\Http\\Requests\\Meeting\\AvailabilityRequest::attributes<\/a>"],[100,1,"<a href=\"Meeting\/IndexAsCoachRequest.php.html#18\">App\\Http\\Requests\\Meeting\\IndexAsCoachRequest::authorize<\/a>"],[100,1,"<a href=\"Meeting\/IndexAsCoachRequest.php.html#26\">App\\Http\\Requests\\Meeting\\IndexAsCoachRequest::rules<\/a>"],[100,1,"<a href=\"Meeting\/IndexRequest.php.html#18\">App\\Http\\Requests\\Meeting\\IndexRequest::authorize<\/a>"],[100,1,"<a href=\"Meeting\/IndexRequest.php.html#26\">App\\Http\\Requests\\Meeting\\IndexRequest::rules<\/a>"],[100,1,"<a href=\"Meeting\/MeetingPackRequest.php.html#15\">App\\Http\\Requests\\Meeting\\MeetingPackRequest::authorize<\/a>"],[100,1,"<a href=\"Meeting\/MeetingPackRequest.php.html#25\">App\\Http\\Requests\\Meeting\\MeetingPackRequest::rules<\/a>"],[71.42857142857143,4,"<a href=\"Meeting\/StoreRequest.php.html#22\">App\\Http\\Requests\\Meeting\\StoreRequest::authorize<\/a>"],[100,1,"<a href=\"Meeting\/StoreRequest.php.html#41\">App\\Http\\Requests\\Meeting\\StoreRequest::rules<\/a>"],[100,1,"<a href=\"Meeting\/StoreRequest.php.html#57\">App\\Http\\Requests\\Meeting\\StoreRequest::messages<\/a>"],[100,1,"<a href=\"Meeting\/StoreRequest.php.html#68\">App\\Http\\Requests\\Meeting\\StoreRequest::attributes<\/a>"],[100,2,"<a href=\"Meeting\/UpsertMemoRequest.php.html#20\">App\\Http\\Requests\\Meeting\\UpsertMemoRequest::authorize<\/a>"],[100,1,"<a href=\"Meeting\/UpsertMemoRequest.php.html#31\">App\\Http\\Requests\\Meeting\\UpsertMemoRequest::rules<\/a>"],[100,1,"<a href=\"Meeting\/UpsertMemoRequest.php.html#41\">App\\Http\\Requests\\Meeting\\UpsertMemoRequest::attributes<\/a>"],[0,2,"<a href=\"MeetingQuota\/HistoryIndexRequest.php.html#13\">App\\Http\\Requests\\MeetingQuota\\HistoryIndexRequest::authorize<\/a>"],[0,1,"<a href=\"MeetingQuota\/HistoryIndexRequest.php.html#23\">App\\Http\\Requests\\MeetingQuota\\HistoryIndexRequest::rules<\/a>"],[100,1,"<a href=\"MockExam\/IndexRequest.php.html#15\">App\\Http\\Requests\\MockExam\\IndexRequest::authorize<\/a>"],[100,1,"<a href=\"MockExam\/IndexRequest.php.html#23\">App\\Http\\Requests\\MockExam\\IndexRequest::rules<\/a>"],[100,1,"<a href=\"MockExam\/IndexRequest.php.html#35\">App\\Http\\Requests\\MockExam\\IndexRequest::attributes<\/a>"],[100,3,"<a href=\"MockExam\/StoreRequest.php.html#18\">App\\Http\\Requests\\MockExam\\StoreRequest::authorize<\/a>"],[100,1,"<a href=\"MockExam\/StoreRequest.php.html#36\">App\\Http\\Requests\\MockExam\\StoreRequest::rules<\/a>"],[100,1,"<a href=\"MockExam\/StoreRequest.php.html#51\">App\\Http\\Requests\\MockExam\\StoreRequest::attributes<\/a>"],[100,2,"<a href=\"MockExam\/UpdateRequest.php.html#16\">App\\Http\\Requests\\MockExam\\UpdateRequest::authorize<\/a>"],[100,1,"<a href=\"MockExam\/UpdateRequest.php.html#27\">App\\Http\\Requests\\MockExam\\UpdateRequest::rules<\/a>"],[100,1,"<a href=\"MockExam\/UpdateRequest.php.html#41\">App\\Http\\Requests\\MockExam\\UpdateRequest::attributes<\/a>"],[100,2,"<a href=\"MockExamAnswer\/UpdateRequest.php.html#18\">App\\Http\\Requests\\MockExamAnswer\\UpdateRequest::authorize<\/a>"],[100,1,"<a href=\"MockExamAnswer\/UpdateRequest.php.html#29\">App\\Http\\Requests\\MockExamAnswer\\UpdateRequest::rules<\/a>"],[100,1,"<a href=\"MockExamAnswer\/UpdateRequest.php.html#40\">App\\Http\\Requests\\MockExamAnswer\\UpdateRequest::attributes<\/a>"],[100,2,"<a href=\"MockExamQuestion\/StoreRequest.php.html#20\">App\\Http\\Requests\\MockExamQuestion\\StoreRequest::authorize<\/a>"],[100,1,"<a href=\"MockExamQuestion\/StoreRequest.php.html#31\">App\\Http\\Requests\\MockExamQuestion\\StoreRequest::rules<\/a>"],[100,1,"<a href=\"MockExamQuestion\/StoreRequest.php.html#47\">App\\Http\\Requests\\MockExamQuestion\\StoreRequest::attributes<\/a>"],[0,2,"<a href=\"MockExamQuestion\/UpdateRequest.php.html#15\">App\\Http\\Requests\\MockExamQuestion\\UpdateRequest::authorize<\/a>"],[100,1,"<a href=\"MockExamQuestion\/UpdateRequest.php.html#26\">App\\Http\\Requests\\MockExamQuestion\\UpdateRequest::rules<\/a>"],[0,1,"<a href=\"MockExamQuestion\/UpdateRequest.php.html#42\">App\\Http\\Requests\\MockExamQuestion\\UpdateRequest::attributes<\/a>"],[0,1,"<a href=\"MockExamSession\/IndexRequest.php.html#14\">App\\Http\\Requests\\MockExamSession\\IndexRequest::authorize<\/a>"],[100,1,"<a href=\"MockExamSession\/IndexRequest.php.html#22\">App\\Http\\Requests\\MockExamSession\\IndexRequest::rules<\/a>"],[0,1,"<a href=\"MockExamSession\/IndexRequest.php.html#34\">App\\Http\\Requests\\MockExamSession\\IndexRequest::attributes<\/a>"],[100,1,"<a href=\"MockExamSession\/Monitor\/IndexRequest.php.html#17\">App\\Http\\Requests\\MockExamSession\\Monitor\\IndexRequest::authorize<\/a>"],[100,1,"<a href=\"MockExamSession\/Monitor\/IndexRequest.php.html#25\">App\\Http\\Requests\\MockExamSession\\Monitor\\IndexRequest::rules<\/a>"],[100,1,"<a href=\"MockExamSession\/Monitor\/IndexRequest.php.html#38\">App\\Http\\Requests\\MockExamSession\\Monitor\\IndexRequest::attributes<\/a>"],[100,2,"<a href=\"Part\/ReorderRequest.php.html#16\">App\\Http\\Requests\\Part\\ReorderRequest::authorize<\/a>"],[100,1,"<a href=\"Part\/ReorderRequest.php.html#27\">App\\Http\\Requests\\Part\\ReorderRequest::rules<\/a>"],[100,1,"<a href=\"Part\/ReorderRequest.php.html#38\">App\\Http\\Requests\\Part\\ReorderRequest::attributes<\/a>"],[100,2,"<a href=\"Part\/StoreRequest.php.html#16\">App\\Http\\Requests\\Part\\StoreRequest::authorize<\/a>"],[100,1,"<a href=\"Part\/StoreRequest.php.html#27\">App\\Http\\Requests\\Part\\StoreRequest::rules<\/a>"],[100,1,"<a href=\"Part\/StoreRequest.php.html#38\">App\\Http\\Requests\\Part\\StoreRequest::attributes<\/a>"],[0,2,"<a href=\"Part\/UpdateRequest.php.html#15\">App\\Http\\Requests\\Part\\UpdateRequest::authorize<\/a>"],[100,1,"<a href=\"Part\/UpdateRequest.php.html#26\">App\\Http\\Requests\\Part\\UpdateRequest::rules<\/a>"],[0,1,"<a href=\"Part\/UpdateRequest.php.html#37\">App\\Http\\Requests\\Part\\UpdateRequest::attributes<\/a>"],[100,1,"<a href=\"Plan\/PlanRequest.php.html#11\">App\\Http\\Requests\\Plan\\PlanRequest::authorize<\/a>"],[100,1,"<a href=\"Plan\/PlanRequest.php.html#16\">App\\Http\\Requests\\Plan\\PlanRequest::rules<\/a>"],[100,1,"<a href=\"Profile\/PasswordUpdateRequest.php.html#15\">App\\Http\\Requests\\Profile\\PasswordUpdateRequest::authorize<\/a>"],[100,1,"<a href=\"Profile\/PasswordUpdateRequest.php.html#23\">App\\Http\\Requests\\Profile\\PasswordUpdateRequest::rules<\/a>"],[100,1,"<a href=\"Profile\/ProfileUpdateRequest.php.html#16\">App\\Http\\Requests\\Profile\\ProfileUpdateRequest::authorize<\/a>"],[87.5,4,"<a href=\"Profile\/ProfileUpdateRequest.php.html#24\">App\\Http\\Requests\\Profile\\ProfileUpdateRequest::rules<\/a>"],[100,1,"<a href=\"QaThread\/QaReplyRequest.php.html#14\">App\\Http\\Requests\\QaThread\\QaReplyRequest::authorize<\/a>"],[100,1,"<a href=\"QaThread\/QaReplyRequest.php.html#22\">App\\Http\\Requests\\QaThread\\QaReplyRequest::rules<\/a>"],[100,1,"<a href=\"QaThread\/QaThreadRequest.php.html#14\">App\\Http\\Requests\\QaThread\\QaThreadRequest::authorize<\/a>"],[100,3,"<a href=\"QaThread\/QaThreadRequest.php.html#22\">App\\Http\\Requests\\QaThread\\QaThreadRequest::rules<\/a>"],[100,2,"<a href=\"QuestionCategory\/StoreRequest.php.html#18\">App\\Http\\Requests\\QuestionCategory\\StoreRequest::authorize<\/a>"],[100,1,"<a href=\"QuestionCategory\/StoreRequest.php.html#29\">App\\Http\\Requests\\QuestionCategory\\StoreRequest::rules<\/a>"],[100,1,"<a href=\"QuestionCategory\/StoreRequest.php.html#51\">App\\Http\\Requests\\QuestionCategory\\StoreRequest::attributes<\/a>"],[0,2,"<a href=\"QuestionCategory\/UpdateRequest.php.html#16\">App\\Http\\Requests\\QuestionCategory\\UpdateRequest::authorize<\/a>"],[0,1,"<a href=\"QuestionCategory\/UpdateRequest.php.html#27\">App\\Http\\Requests\\QuestionCategory\\UpdateRequest::rules<\/a>"],[0,1,"<a href=\"QuestionCategory\/UpdateRequest.php.html#50\">App\\Http\\Requests\\QuestionCategory\\UpdateRequest::attributes<\/a>"],[75,2,"<a href=\"QuizHistory\/IndexRequest.php.html#20\">App\\Http\\Requests\\QuizHistory\\IndexRequest::authorize<\/a>"],[100,1,"<a href=\"QuizHistory\/IndexRequest.php.html#33\">App\\Http\\Requests\\QuizHistory\\IndexRequest::rules<\/a>"],[100,2,"<a href=\"QuizHistory\/IndexRequest.php.html#46\">App\\Http\\Requests\\QuizHistory\\IndexRequest::filters<\/a>"],[75,2,"<a href=\"QuizStats\/IndexRequest.php.html#19\">App\\Http\\Requests\\QuizStats\\IndexRequest::authorize<\/a>"],[100,1,"<a href=\"QuizStats\/IndexRequest.php.html#32\">App\\Http\\Requests\\QuizStats\\IndexRequest::rules<\/a>"],[100,2,"<a href=\"QuizStats\/IndexRequest.php.html#45\">App\\Http\\Requests\\QuizStats\\IndexRequest::filters<\/a>"],[100,2,"<a href=\"Section\/PreviewRequest.php.html#16\">App\\Http\\Requests\\Section\\PreviewRequest::authorize<\/a>"],[100,1,"<a href=\"Section\/PreviewRequest.php.html#28\">App\\Http\\Requests\\Section\\PreviewRequest::rules<\/a>"],[0,2,"<a href=\"Section\/ReorderRequest.php.html#16\">App\\Http\\Requests\\Section\\ReorderRequest::authorize<\/a>"],[0,1,"<a href=\"Section\/ReorderRequest.php.html#27\">App\\Http\\Requests\\Section\\ReorderRequest::rules<\/a>"],[0,1,"<a href=\"Section\/ReorderRequest.php.html#38\">App\\Http\\Requests\\Section\\ReorderRequest::attributes<\/a>"],[100,2,"<a href=\"Section\/StoreRequest.php.html#16\">App\\Http\\Requests\\Section\\StoreRequest::authorize<\/a>"],[100,1,"<a href=\"Section\/StoreRequest.php.html#27\">App\\Http\\Requests\\Section\\StoreRequest::rules<\/a>"],[100,1,"<a href=\"Section\/StoreRequest.php.html#39\">App\\Http\\Requests\\Section\\StoreRequest::attributes<\/a>"],[100,2,"<a href=\"Section\/UpdateRequest.php.html#15\">App\\Http\\Requests\\Section\\UpdateRequest::authorize<\/a>"],[100,1,"<a href=\"Section\/UpdateRequest.php.html#26\">App\\Http\\Requests\\Section\\UpdateRequest::rules<\/a>"],[100,1,"<a href=\"Section\/UpdateRequest.php.html#38\">App\\Http\\Requests\\Section\\UpdateRequest::attributes<\/a>"],[100,2,"<a href=\"SectionImage\/StoreRequest.php.html#16\">App\\Http\\Requests\\SectionImage\\StoreRequest::authorize<\/a>"],[100,1,"<a href=\"SectionImage\/StoreRequest.php.html#27\">App\\Http\\Requests\\SectionImage\\StoreRequest::rules<\/a>"],[100,1,"<a href=\"SectionImage\/StoreRequest.php.html#37\">App\\Http\\Requests\\SectionImage\\StoreRequest::attributes<\/a>"],[100,2,"<a href=\"SectionQuestion\/IndexRequest.php.html#20\">App\\Http\\Requests\\SectionQuestion\\IndexRequest::authorize<\/a>"],[0,1,"<a href=\"SectionQuestion\/IndexRequest.php.html#31\">App\\Http\\Requests\\SectionQuestion\\IndexRequest::rules<\/a>"],[100,2,"<a href=\"SectionQuestion\/StoreRequest.php.html#22\">App\\Http\\Requests\\SectionQuestion\\StoreRequest::authorize<\/a>"],[100,1,"<a href=\"SectionQuestion\/StoreRequest.php.html#33\">App\\Http\\Requests\\SectionQuestion\\StoreRequest::rules<\/a>"],[100,1,"<a href=\"SectionQuestion\/StoreRequest.php.html#49\">App\\Http\\Requests\\SectionQuestion\\StoreRequest::attributes<\/a>"],[100,2,"<a href=\"SectionQuestion\/UpdateRequest.php.html#18\">App\\Http\\Requests\\SectionQuestion\\UpdateRequest::authorize<\/a>"],[100,1,"<a href=\"SectionQuestion\/UpdateRequest.php.html#29\">App\\Http\\Requests\\SectionQuestion\\UpdateRequest::rules<\/a>"],[100,1,"<a href=\"SectionQuestion\/UpdateRequest.php.html#45\">App\\Http\\Requests\\SectionQuestion\\UpdateRequest::attributes<\/a>"],[75,2,"<a href=\"SectionQuestionAnswer\/StoreRequest.php.html#23\">App\\Http\\Requests\\SectionQuestionAnswer\\StoreRequest::authorize<\/a>"],[100,2,"<a href=\"SectionQuestionAnswer\/StoreRequest.php.html#36\">App\\Http\\Requests\\SectionQuestionAnswer\\StoreRequest::rules<\/a>"],[100,1,"<a href=\"SectionQuestionAnswer\/StoreRequest.php.html#75\">App\\Http\\Requests\\SectionQuestionAnswer\\StoreRequest::attributes<\/a>"],[100,1,"<a href=\"User\/ExtendCourseRequest.php.html#18\">App\\Http\\Requests\\User\\ExtendCourseRequest::authorize<\/a>"],[100,1,"<a href=\"User\/ExtendCourseRequest.php.html#26\">App\\Http\\Requests\\User\\ExtendCourseRequest::rules<\/a>"],[100,1,"<a href=\"User\/ExtendCourseRequest.php.html#40\">App\\Http\\Requests\\User\\ExtendCourseRequest::attributes<\/a>"],[100,1,"<a href=\"User\/GrantMeetingQuotaRequest.php.html#16\">App\\Http\\Requests\\User\\GrantMeetingQuotaRequest::authorize<\/a>"],[100,1,"<a href=\"User\/GrantMeetingQuotaRequest.php.html#24\">App\\Http\\Requests\\User\\GrantMeetingQuotaRequest::rules<\/a>"],[100,1,"<a href=\"User\/GrantMeetingQuotaRequest.php.html#35\">App\\Http\\Requests\\User\\GrantMeetingQuotaRequest::attributes<\/a>"],[100,1,"<a href=\"User\/IndexRequest.php.html#19\">App\\Http\\Requests\\User\\IndexRequest::authorize<\/a>"],[100,1,"<a href=\"User\/IndexRequest.php.html#27\">App\\Http\\Requests\\User\\IndexRequest::rules<\/a>"],[100,1,"<a href=\"User\/IndexRequest.php.html#40\">App\\Http\\Requests\\User\\IndexRequest::attributes<\/a>"],[100,1,"<a href=\"User\/WithdrawRequest.php.html#16\">App\\Http\\Requests\\User\\WithdrawRequest::authorize<\/a>"],[100,1,"<a href=\"User\/WithdrawRequest.php.html#24\">App\\Http\\Requests\\User\\WithdrawRequest::rules<\/a>"],[100,2,"<a href=\"UserPreference\/UpdateDefaultEnrollmentRequest.php.html#19\">App\\Http\\Requests\\UserPreference\\UpdateDefaultEnrollmentRequest::authorize<\/a>"],[100,1,"<a href=\"UserPreference\/UpdateDefaultEnrollmentRequest.php.html#30\">App\\Http\\Requests\\UserPreference\\UpdateDefaultEnrollmentRequest::rules<\/a>"]], 'Method Complexity'))
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  function getComplexityData(data, label) {
+    var values = [];
+    $.each(data, function(key) {
+      var value = Math.round(data[key][0]*100) / 100;
+      values.push({
+        x: value,
+        y: data[key][1],
+        class: data[key][2],
+        size: 0.05,
+        shape: 'diamond'
+      });
+    });
+
+    return [
+      {
+        key: label,
+        values: values,
+        color: "#4572A7"
+      }
+    ];
+  }
+});
+  </script>
+ </body>
+</html>

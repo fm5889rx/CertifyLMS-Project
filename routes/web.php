@@ -2,6 +2,10 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\AdminMeetingPackController;
+use App\Http\Controllers\AdminPlanController;
+use App\Http\Controllers\AdminQaBoardController;
+use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\Auth\OnboardingController;
 use App\Http\Controllers\BrowseController;
 use App\Http\Controllers\CertificationCatalogController;
@@ -14,7 +18,9 @@ use App\Http\Controllers\ContentSearchController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\EnrollmentManagementController;
+use App\Http\Controllers\EnrollmentNoteController;
 use App\Http\Controllers\InvitationController;
+use App\Http\Controllers\LearningGoalController;
 use App\Http\Controllers\LearningHourTargetController;
 use App\Http\Controllers\MeetingController;
 use App\Http\Controllers\MeetingQuotaHistoryController;
@@ -24,7 +30,10 @@ use App\Http\Controllers\MockExamController;
 use App\Http\Controllers\MockExamQuestionController;
 use App\Http\Controllers\MockExamSessionController;
 use App\Http\Controllers\MockExamSessionMonitorController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PartController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\QaBoardController;
 use App\Http\Controllers\QuestionCategoryController;
 use App\Http\Controllers\QuizHistoryController;
 use App\Http\Controllers\QuizStatsController;
@@ -33,25 +42,15 @@ use App\Http\Controllers\SectionController;
 use App\Http\Controllers\SectionImageController;
 use App\Http\Controllers\SectionProgressController;
 use App\Http\Controllers\SectionQuestionAnswerController;
-use App\Http\Controllers\SectionQuestionController;
-use App\Http\Controllers\SectionQuizController;
-use App\Http\Controllers\SectionQuizResultController;
-use App\Http\Controllers\Settings\AvailabilityController as SettingsAvailabilityController;
-use App\Http\Controllers\Settings\SettingsDefaultEnrollmentController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\WeakDrillController;
-use App\Http\Controllers\WeakDrillResultController;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\QaBoardController;             // 追加：S-B-01（受講者・コーチ用）
-use App\Http\Controllers\AdminQaBoardController;        // 追加：S-B-01（管理者用）
-use App\Http\Controllers\AdminMeetingPackController;    // 追加：S-B-02
-use App\Http\Controllers\AdminPlanController;           // 追加：S-B-03
-use App\Http\Controllers\NotificationController;        // 追加：S-B-04
-use App\Http\Controllers\LearningGoalController;        // 追加：S-B-05
-use App\Http\Controllers\ProfileController;             // 追加：S-B-06
-use App\Http\Controllers\EnrollmentNoteController;      // 追加：S-B-07
-use App\Http\Controllers\AnnouncementController;        // 追加：S-B-08
-
+use App\Http\Controllers\SectionQuestionController;             // 追加：S-B-01（受講者・コーチ用）
+use App\Http\Controllers\SectionQuizController;        // 追加：S-B-01（管理者用）
+use App\Http\Controllers\SectionQuizResultController;    // 追加：S-B-02
+use App\Http\Controllers\Settings\AvailabilityController as SettingsAvailabilityController;           // 追加：S-B-03
+use App\Http\Controllers\Settings\SettingsDefaultEnrollmentController;        // 追加：S-B-04
+use App\Http\Controllers\UserController;        // 追加：S-B-05
+use App\Http\Controllers\WeakDrillController;             // 追加：S-B-06
+use App\Http\Controllers\WeakDrillResultController;      // 追加：S-B-07
+use Illuminate\Support\Facades\Route;        // 追加：S-B-08
 
 Route::get('/', function () {
     return auth()->check()
@@ -518,7 +517,7 @@ Route::middleware(['web', 'auth'])->group(function () {
     Route::delete('/qa-board/{thread}/replies/{reply}', [QaBoardController::class, 'destroyReply'])->name('qa-board.replies.destroy');
 });
 
-    // ⑥ 管理者モデレーション
+// ⑥ 管理者モデレーション
 Route::middleware(['can:is-admin'])->group(function () {
     Route::get('/admin/qa-board', [AdminQaBoardController::class, 'index'])->name('admin.qa-board.index');
     Route::get('/admin/qa-board/{thread}', [AdminQaBoardController::class, 'show'])->name('admin.qa-board.show');
@@ -590,7 +589,6 @@ Route::middleware(['web', 'auth'])->group(function () {
     Route::delete('/enrollment-goals/{goal}/achieve', [LearningGoalController::class, 'unachieve'])->name('enrollment-goals.unachieve');
 });
 
-
 // ============================================================
 // 認証ユーザー共通（修了済含む）: 設定・プロフィール管理 (S-B-06 最終適合版)
 // ============================================================
@@ -630,6 +628,7 @@ Route::middleware(['web', 'auth'])->group(function () {
 // コーチ専用： Google カレンダー連携機能 (S-A-01)
 // ============================================================
 use App\Http\Controllers\GoogleCalendarController;
+
 Route::middleware(['web', 'auth', 'role:coach'])->group(function () {
     Route::get('/settings/google-calendar', [GoogleCalendarController::class, 'redirect'])->name('settings.google-calendar.redirect');
     Route::get('/settings/google-calendar/callback', [GoogleCalendarController::class, 'callback'])->name('settings.google-calendar.callback');
@@ -661,13 +660,13 @@ use App\Http\Controllers\MeetingQuotaCheckoutController;
 
 // 1. 受講生専用（学習中限定）のセキュアな決済購入導線グループ
 Route::middleware(['auth', 'role:student', 'active-learning'])->group(function () {
-        Route::get('/meeting-quota/checkout', [MeetingQuotaCheckoutController::class, 'index'])
-            ->name('meeting-quota.checkout.select');
-        Route::post('/meeting-quota/checkout', [MeetingQuotaCheckoutController::class, 'store'])
-            ->name('meeting-quota.checkout.create'); // ➡ select.bladeのform送信先と100%適合！
-        Route::get('/meeting-quota/success', [MeetingQuotaCheckoutController::class, 'success'])
-            ->name('meeting-quota.checkout.success');
-    });
+    Route::get('/meeting-quota/checkout', [MeetingQuotaCheckoutController::class, 'index'])
+        ->name('meeting-quota.checkout.select');
+    Route::post('/meeting-quota/checkout', [MeetingQuotaCheckoutController::class, 'store'])
+        ->name('meeting-quota.checkout.create'); // ➡ select.bladeのform送信先と100%適合！
+    Route::get('/meeting-quota/success', [MeetingQuotaCheckoutController::class, 'success'])
+        ->name('meeting-quota.checkout.success');
+});
 
 // 2. Stripe外部サーバーからの認可なし公開窓口（Webhook）
 use App\Http\Controllers\StripeWebhookController;

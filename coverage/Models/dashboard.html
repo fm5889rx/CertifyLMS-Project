@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <title>Dashboard for /var/www/html/app/Models</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../_css/bootstrap.min.css?v=10.1.16" rel="stylesheet" type="text/css">
+  <link href="../_css/nv.d3.min.css?v=10.1.16" rel="stylesheet" type="text/css">
+  <link href="../_css/style.css?v=10.1.16" rel="stylesheet" type="text/css">
+  <link href="../_css/custom.css" rel="stylesheet" type="text/css">
+ </head>
+ <body>
+  <header>
+   <div class="container-fluid">
+    <div class="row">
+     <div class="col-md-12">
+      <nav aria-label="breadcrumb">
+       <ol class="breadcrumb">
+         <li class="breadcrumb-item"><a href="../index.html">/var/www/html/app</a></li>
+         <li class="breadcrumb-item"><a href="index.html">Models</a></li>
+         <li class="breadcrumb-item active">(Dashboard)</li>
+
+       </ol>
+      </nav>
+     </div>
+    </div>
+   </div>
+  </header>
+  <div class="container-fluid">
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Classes</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="classCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="classComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Answer.php.html#12">App\Models\Answer</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="EnrollmentNote.php.html#11">App\Models\EnrollmentNote</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="LearningGoal.php.html#11">App\Models\LearningGoal</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="MeetingReminderLog.php.html#11">App\Models\MeetingReminderLog</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="UserCertificate.php.html#11">App\Models\UserCertificate</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="UserGoogleCalendar.php.html#15">App\Models\UserGoogleCalendar</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ChatMember.php.html#23">App\Models\ChatMember</a></td><td class="text-right">37%</td></tr>
+       <tr><td><a href="ChatRoom.php.html#25">App\Models\ChatRoom</a></td><td class="text-right">38%</td></tr>
+       <tr><td><a href="SectionQuestionAnswer.php.html#23">App\Models\SectionQuestionAnswer</a></td><td class="text-right">42%</td></tr>
+       <tr><td><a href="SectionQuestionAttempt.php.html#21">App\Models\SectionQuestionAttempt</a></td><td class="text-right">42%</td></tr>
+       <tr><td><a href="SectionQuestion.php.html#24">App\Models\SectionQuestion</a></td><td class="text-right">53%</td></tr>
+       <tr><td><a href="User.php.html#29">App\Models\User</a></td><td class="text-right">60%</td></tr>
+       <tr><td><a href="Meeting.php.html#26">App\Models\Meeting</a></td><td class="text-right">66%</td></tr>
+       <tr><td><a href="UserPlanLog.php.html#21">App\Models\UserPlanLog</a></td><td class="text-right">66%</td></tr>
+       <tr><td><a href="MockExamSession.php.html#28">App\Models\MockExamSession</a></td><td class="text-right">75%</td></tr>
+       <tr><td><a href="Question.php.html#14">App\Models\Question</a></td><td class="text-right">75%</td></tr>
+       <tr><td><a href="QuestionCategory.php.html#22">App\Models\QuestionCategory</a></td><td class="text-right">75%</td></tr>
+       <tr><td><a href="AiChatConversation.php.html#22">App\Models\AiChatConversation</a></td><td class="text-right">80%</td></tr>
+       <tr><td><a href="MockExamQuestion.php.html#22">App\Models\MockExamQuestion</a></td><td class="text-right">80%</td></tr>
+       <tr><td><a href="Section.php.html#22">App\Models\Section</a></td><td class="text-right">84%</td></tr>
+       <tr><td><a href="LearningSession.php.html#25">App\Models\LearningSession</a></td><td class="text-right">87%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="User.php.html#29">App\Models\User</a></td><td class="text-right">127</td></tr>
+       <tr><td><a href="ChatRoom.php.html#25">App\Models\ChatRoom</a></td><td class="text-right">52</td></tr>
+       <tr><td><a href="SectionQuestion.php.html#24">App\Models\SectionQuestion</a></td><td class="text-right">26</td></tr>
+       <tr><td><a href="SectionQuestionAttempt.php.html#21">App\Models\SectionQuestionAttempt</a></td><td class="text-right">24</td></tr>
+       <tr><td><a href="Section.php.html#22">App\Models\Section</a></td><td class="text-right">10</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Methods</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="methodCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="methodComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="AiChatConversation.php.html#44"><abbr title="App\Models\AiChatConversation::user">user</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Answer.php.html#33"><abbr title="App\Models\Answer::user">user</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Answer.php.html#39"><abbr title="App\Models\Answer::question">question</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Answer.php.html#45"><abbr title="App\Models\Answer::thread">thread</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Answer.php.html#54"><abbr title="App\Models\Answer::getQaThreadIdAttribute">getQaThreadIdAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Certification.php.html#60"><abbr title="App\Models\Certification::createdBy">createdBy</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Certification.php.html#68"><abbr title="App\Models\Certification::updatedBy">updatedBy</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ChatMember.php.html#56"><abbr title="App\Models\ChatMember::scopeForRoom">scopeForRoom</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ChatMember.php.html#69"><abbr title="App\Models\ChatMember::scopeUnread">scopeUnread</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Enrollment.php.html#107"><abbr title="App\Models\Enrollment::defaultedByUser">defaultedByUser</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Enrollment.php.html#117"><abbr title="App\Models\Enrollment::chatRoom">chatRoom</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="EnrollmentNote.php.html#38"><abbr title="App\Models\EnrollmentNote::user">user</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="EnrollmentNote.php.html#46"><abbr title="App\Models\EnrollmentNote::enrollment">enrollment</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="LearningGoal.php.html#45"><abbr title="App\Models\LearningGoal::enrollment">enrollment</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="LearningSession.php.html#91"><abbr title="App\Models\LearningSession::scopeOnDate">scopeOnDate</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Meeting.php.html#98"><abbr title="App\Models\Meeting::quotaTransaction">quotaTransaction</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Meeting.php.html#116"><abbr title="App\Models\Meeting::scopePast">scopePast</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="MeetingReminderLog.php.html#39"><abbr title="App\Models\MeetingReminderLog::meeting">meeting</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="MockExamQuestion.php.html#66"><abbr title="App\Models\MockExamQuestion::answers">answers</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="MockExamSession.php.html#101"><abbr title="App\Models\MockExamSession::scopeCanceled">scopeCanceled</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="MockExamSession.php.html#106"><abbr title="App\Models\MockExamSession::scopeForUser">scopeForUser</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Question.php.html#44"><abbr title="App\Models\Question::answers">answers</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QuestionCategory.php.html#58"><abbr title="App\Models\QuestionCategory::mockExamQuestions">mockExamQuestions</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Section.php.html#70"><abbr title="App\Models\Section::learningSessions">learningSessions</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Section.php.html#78"><abbr title="App\Models\Section::progresses">progresses</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SectionQuestion.php.html#72"><abbr title="App\Models\SectionQuestion::sectionQuestionAnswers">sectionQuestionAnswers</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SectionQuestion.php.html#94"><abbr title="App\Models\SectionQuestion::scopeVisibleForStudent">scopeVisibleForStudent</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SectionQuestion.php.html#116"><abbr title="App\Models\SectionQuestion::scopeOrdered">scopeOrdered</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SectionQuestionAnswer.php.html#73"><abbr title="App\Models\SectionQuestionAnswer::scopeForEnrollment">scopeForEnrollment</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SectionQuestionAnswer.php.html#87"><abbr title="App\Models\SectionQuestionAnswer::scopeForCategory">scopeForCategory</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SectionQuestionAnswer.php.html#92"><abbr title="App\Models\SectionQuestionAnswer::scopeBySource">scopeBySource</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SectionQuestionAnswer.php.html#102"><abbr title="App\Models\SectionQuestionAnswer::scopeIncorrect">scopeIncorrect</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SectionQuestionAttempt.php.html#75"><abbr title="App\Models\SectionQuestionAttempt::scopeForEnrollment">scopeForEnrollment</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SectionQuestionAttempt.php.html#84"><abbr title="App\Models\SectionQuestionAttempt::scopeForSection">scopeForSection</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SectionQuestionAttempt.php.html#89"><abbr title="App\Models\SectionQuestionAttempt::scopeForCategory">scopeForCategory</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#80"><abbr title="App\Models\User::statusChanges">statusChanges</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#138"><abbr title="App\Models\User::certificates">certificates</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#194"><abbr title="App\Models\User::meetingQuotaTransactions">meetingQuotaTransactions</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#202"><abbr title="App\Models\User::learningSessions">learningSessions</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#210"><abbr title="App\Models\User::sectionQuestionAnswers">sectionQuestionAnswers</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#218"><abbr title="App\Models\User::sectionQuestionAttempts">sectionQuestionAttempts</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#228"><abbr title="App\Models\User::mockExamSessions">mockExamSessions</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#248"><abbr title="App\Models\User::meetingsAsStudent">meetingsAsStudent</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#268"><abbr title="App\Models\User::chatMembers">chatMembers</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#278"><abbr title="App\Models\User::sentChatMessages">sentChatMessages</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#298"><abbr title="App\Models\User::receivesBroadcastNotificationsOn">receivesBroadcastNotificationsOn</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#321"><abbr title="App\Models\User::questions">questions</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#331"><abbr title="App\Models\User::answers">answers</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#363"><abbr title="App\Models\User::isActiveUser">isActiveUser</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#373"><abbr title="App\Models\User::isAssignedToCertification">isAssignedToCertification</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#392"><abbr title="App\Models\User::hasGoogleCalendarIntegration">hasGoogleCalendarIntegration</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="UserCertificate.php.html#28"><abbr title="App\Models\UserCertificate::user">user</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="UserCertificate.php.html#36"><abbr title="App\Models\UserCertificate::enrollment">enrollment</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="UserGoogleCalendar.php.html#70"><abbr title="App\Models\UserGoogleCalendar::user">user</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="UserGoogleCalendar.php.html#83"><abbr title="App\Models\UserGoogleCalendar::isConnected">isConnected</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="UserGoogleCalendar.php.html#91"><abbr title="App\Models\UserGoogleCalendar::disconnect">disconnect</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="UserGoogleCalendar.php.html#105"><abbr title="App\Models\UserGoogleCalendar::connect">connect</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="UserGoogleCalendar.php.html#119"><abbr title="App\Models\UserGoogleCalendar::updateTokens">updateTokens</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="UserGoogleCalendar.php.html#131"><abbr title="App\Models\UserGoogleCalendar::updateGoogleEmail">updateGoogleEmail</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="UserGoogleCalendar.php.html#142"><abbr title="App\Models\UserGoogleCalendar::updateCalendarId">updateCalendarId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="UserGoogleCalendar.php.html#153"><abbr title="App\Models\UserGoogleCalendar::updateConnectedAt">updateConnectedAt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="UserGoogleCalendar.php.html#164"><abbr title="App\Models\UserGoogleCalendar::updateAccessToken">updateAccessToken</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="UserGoogleCalendar.php.html#175"><abbr title="App\Models\UserGoogleCalendar::updateRefreshToken">updateRefreshToken</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="UserGoogleCalendar.php.html#188"><abbr title="App\Models\UserGoogleCalendar::updateTokensAndConnectedAt">updateTokensAndConnectedAt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="UserPlanLog.php.html#64"><abbr title="App\Models\UserPlanLog::changedBy">changedBy</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ChatRoom.php.html#95"><abbr title="App\Models\ChatRoom::scopeFilterForCoach">scopeFilterForCoach</abbr></a></td><td class="text-right">19%</td></tr>
+       <tr><td><a href="ChatRoom.php.html#132"><abbr title="App\Models\ChatRoom::scopeFilterForAdmin">scopeFilterForAdmin</abbr></a></td><td class="text-right">30%</td></tr>
+       <tr><td><a href="SectionQuestion.php.html#107"><abbr title="App\Models\SectionQuestion::scopeByCategory">scopeByCategory</abbr></a></td><td class="text-right">66%</td></tr>
+       <tr><td><a href="SectionQuestionAttempt.php.html#61"><abbr title="App\Models\SectionQuestionAttempt::accuracy">accuracy</abbr></a></td><td class="text-right">66%</td></tr>
+       <tr><td><a href="Section.php.html#98"><abbr title="App\Models\Section::scopeKeyword">scopeKeyword</abbr></a></td><td class="text-right">85%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="User.php.html#363"><abbr title="App\Models\User::isActiveUser">isActiveUser</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="ChatRoom.php.html#95"><abbr title="App\Models\ChatRoom::scopeFilterForCoach">scopeFilterForCoach</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="ChatRoom.php.html#132"><abbr title="App\Models\ChatRoom::scopeFilterForAdmin">scopeFilterForAdmin</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="SectionQuestion.php.html#107"><abbr title="App\Models\SectionQuestion::scopeByCategory">scopeByCategory</abbr></a></td><td class="text-right">3</td></tr>
+       <tr><td><a href="Section.php.html#98"><abbr title="App\Models\Section::scopeKeyword">scopeKeyword</abbr></a></td><td class="text-right">3</td></tr>
+       <tr><td><a href="SectionQuestionAttempt.php.html#61"><abbr title="App\Models\SectionQuestionAttempt::accuracy">accuracy</abbr></a></td><td class="text-right">2</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <footer>
+    <hr/>
+    <p>
+     <small>Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 10.1.16</a> using <a href="https://www.php.net/" target="_top">PHP 8.5.10</a> and <a href="https://phpunit.de/">PHPUnit 10.5.63</a> at Wed Sep 23 13:47:57 JST 2026.</small>
+    </p>
+   </footer>
+  </div>
+  <script src="../_js/jquery.min.js?v=10.1.16" type="text/javascript"></script>
+  <script src="../_js/d3.min.js?v=10.1.16" type="text/javascript"></script>
+  <script src="../_js/nv.d3.min.js?v=10.1.16" type="text/javascript"></script>
+  <script type="text/javascript">
+$(document).ready(function() {
+  nv.addGraph(function() {
+    var chart = nv.models.multiBarChart();
+    chart.tooltips(false)
+      .showControls(false)
+      .showLegend(false)
+      .reduceXTicks(false)
+      .staggerLabels(true)
+      .yAxis.tickFormat(d3.format('d'));
+
+    d3.select('#classCoverageDistribution svg')
+      .datum(getCoverageDistributionData([6,0,0,0,2,2,1,3,3,4,2,26], "Class Coverage"))
+      .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  nv.addGraph(function() {
+    var chart = nv.models.multiBarChart();
+    chart.tooltips(false)
+      .showControls(false)
+      .showLegend(false)
+      .reduceXTicks(false)
+      .staggerLabels(true)
+      .yAxis.tickFormat(d3.format('d'));
+
+    d3.select('#methodCoverageDistribution svg')
+      .datum(getCoverageDistributionData([65,0,1,0,1,0,0,2,0,1,0,180], "Method Coverage"))
+      .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  function getCoverageDistributionData(data, label) {
+    var labels = [
+      '0%',
+      '0-10%',
+      '10-20%',
+      '20-30%',
+      '30-40%',
+      '40-50%',
+      '50-60%',
+      '60-70%',
+      '70-80%',
+      '80-90%',
+      '90-100%',
+      '100%'
+    ];
+    var values = [];
+    $.each(labels, function(key) {
+      values.push({x: labels[key], y: data[key]});
+    });
+
+    return [
+      {
+        key: label,
+        values: values,
+        color: "#4572A7"
+      }
+    ];
+  }
+  nv.addGraph(function() {
+    var chart = nv.models.scatterChart()
+      .showDistX(true)
+      .showDistY(true)
+      .showLegend(false)
+      .forceX([0, 100]);
+    chart.tooltipContent(function(graph) {
+      return '<p>' + graph.point.class + '</p>';
+    });
+
+    chart.xAxis.axisLabel('Code Coverage (in percent)');
+    chart.yAxis.axisLabel('Cyclomatic Complexity');
+
+    d3.select('#classComplexity svg')
+      .datum(getComplexityData([[80,5,"<a href=\"AiChatConversation.php.html#22\">App\\Models\\AiChatConversation<\/a>"],[100,1,"<a href=\"AiChatMessage.php.html#13\">App\\Models\\AiChatMessage<\/a>"],[100,3,"<a href=\"Announcement.php.html#12\">App\\Models\\Announcement<\/a>"],[0,4,"<a href=\"Answer.php.html#12\">App\\Models\\Answer<\/a>"],[100,4,"<a href=\"Certificate.php.html#21\">App\\Models\\Certificate<\/a>"],[93.54838709677419,15,"<a href=\"Certification.php.html#25\">App\\Models\\Certification<\/a>"],[100,2,"<a href=\"CertificationCategory.php.html#20\">App\\Models\\CertificationCategory<\/a>"],[100,0,"<a href=\"CertificationCoachAssignment.php.html#17\">App\\Models\\CertificationCoachAssignment<\/a>"],[100,4,"<a href=\"Chapter.php.html#22\">App\\Models\\Chapter<\/a>"],[37.5,5,"<a href=\"ChatMember.php.html#23\">App\\Models\\ChatMember<\/a>"],[100,3,"<a href=\"ChatMessage.php.html#21\">App\\Models\\ChatMessage<\/a>"],[38.46153846153847,13,"<a href=\"ChatRoom.php.html#25\">App\\Models\\ChatRoom<\/a>"],[100,3,"<a href=\"CoachAvailability.php.html#23\">App\\Models\\CoachAvailability<\/a>"],[90.9090909090909,17,"<a href=\"Enrollment.php.html#30\">App\\Models\\Enrollment<\/a>"],[0,2,"<a href=\"EnrollmentNote.php.html#11\">App\\Models\\EnrollmentNote<\/a>"],[100,2,"<a href=\"EnrollmentStatusLog.php.html#21\">App\\Models\\EnrollmentStatusLog<\/a>"],[100,7,"<a href=\"Invitation.php.html#25\">App\\Models\\Invitation<\/a>"],[0,1,"<a href=\"LearningGoal.php.html#11\">App\\Models\\LearningGoal<\/a>"],[100,1,"<a href=\"LearningHourTarget.php.html#19\">App\\Models\\LearningHourTarget<\/a>"],[87.5,8,"<a href=\"LearningSession.php.html#25\">App\\Models\\LearningSession<\/a>"],[66.66666666666666,10,"<a href=\"Meeting.php.html#26\">App\\Models\\Meeting<\/a>"],[100,1,"<a href=\"MeetingMemo.php.html#21\">App\\Models\\MeetingMemo<\/a>"],[100,5,"<a href=\"MeetingPack.php.html#24\">App\\Models\\MeetingPack<\/a>"],[100,4,"<a href=\"MeetingQuotaTransaction.php.html#25\">App\\Models\\MeetingQuotaTransaction<\/a>"],[0,1,"<a href=\"MeetingReminderLog.php.html#11\">App\\Models\\MeetingReminderLog<\/a>"],[100,7,"<a href=\"MockExam.php.html#23\">App\\Models\\MockExam<\/a>"],[100,3,"<a href=\"MockExamAnswer.php.html#22\">App\\Models\\MockExamAnswer<\/a>"],[80,5,"<a href=\"MockExamQuestion.php.html#22\">App\\Models\\MockExamQuestion<\/a>"],[100,2,"<a href=\"MockExamQuestionOption.php.html#22\">App\\Models\\MockExamQuestionOption<\/a>"],[75,8,"<a href=\"MockExamSession.php.html#28\">App\\Models\\MockExamSession<\/a>"],[100,4,"<a href=\"Part.php.html#22\">App\\Models\\Part<\/a>"],[100,1,"<a href=\"Payment.php.html#12\">App\\Models\\Payment<\/a>"],[100,6,"<a href=\"Plan.php.html#22\">App\\Models\\Plan<\/a>"],[100,0,"<a href=\"QaReply.php.html#10\">App\\Models\\QaReply<\/a>"],[100,0,"<a href=\"QaThread.php.html#10\">App\\Models\\QaThread<\/a>"],[75,4,"<a href=\"Question.php.html#14\">App\\Models\\Question<\/a>"],[75,4,"<a href=\"QuestionCategory.php.html#22\">App\\Models\\QuestionCategory<\/a>"],[84.21052631578947,10,"<a href=\"Section.php.html#22\">App\\Models\\Section<\/a>"],[100,1,"<a href=\"SectionImage.php.html#19\">App\\Models\\SectionImage<\/a>"],[100,2,"<a href=\"SectionProgress.php.html#19\">App\\Models\\SectionProgress<\/a>"],[53.333333333333336,12,"<a href=\"SectionQuestion.php.html#24\">App\\Models\\SectionQuestion<\/a>"],[42.857142857142854,10,"<a href=\"SectionQuestionAnswer.php.html#23\">App\\Models\\SectionQuestionAnswer<\/a>"],[42.857142857142854,9,"<a href=\"SectionQuestionAttempt.php.html#21\">App\\Models\\SectionQuestionAttempt<\/a>"],[100,2,"<a href=\"SectionQuestionOption.php.html#21\">App\\Models\\SectionQuestionOption<\/a>"],[60.37735849056604,38,"<a href=\"User.php.html#29\">App\\Models\\User<\/a>"],[0,2,"<a href=\"UserCertificate.php.html#11\">App\\Models\\UserCertificate<\/a>"],[0,11,"<a href=\"UserGoogleCalendar.php.html#15\">App\\Models\\UserGoogleCalendar<\/a>"],[66.66666666666666,3,"<a href=\"UserPlanLog.php.html#21\">App\\Models\\UserPlanLog<\/a>"],[100,4,"<a href=\"UserStatusLog.php.html#23\">App\\Models\\UserStatusLog<\/a>"]], 'Class Complexity'))
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  nv.addGraph(function() {
+    var chart = nv.models.scatterChart()
+      .showDistX(true)
+      .showDistY(true)
+      .showLegend(false)
+      .forceX([0, 100]);
+    chart.tooltipContent(function(graph) {
+      return '<p>' + graph.point.class + '</p>';
+    });
+
+    chart.xAxis.axisLabel('Code Coverage (in percent)');
+    chart.yAxis.axisLabel('Method Complexity');
+
+    d3.select('#methodComplexity svg')
+      .datum(getComplexityData([[0,1,"<a href=\"AiChatConversation.php.html#44\">App\\Models\\AiChatConversation::user<\/a>"],[100,1,"<a href=\"AiChatConversation.php.html#52\">App\\Models\\AiChatConversation::messages<\/a>"],[100,1,"<a href=\"AiChatConversation.php.html#60\">App\\Models\\AiChatConversation::section<\/a>"],[100,1,"<a href=\"AiChatConversation.php.html#68\">App\\Models\\AiChatConversation::enrollment<\/a>"],[100,1,"<a href=\"AiChatConversation.php.html#77\">App\\Models\\AiChatConversation::certification<\/a>"],[100,1,"<a href=\"AiChatMessage.php.html#36\">App\\Models\\AiChatMessage::conversation<\/a>"],[100,1,"<a href=\"Announcement.php.html#42\">App\\Models\\Announcement::createdBy<\/a>"],[100,1,"<a href=\"Announcement.php.html#50\">App\\Models\\Announcement::targetCertification<\/a>"],[100,1,"<a href=\"Announcement.php.html#58\">App\\Models\\Announcement::targetUser<\/a>"],[0,1,"<a href=\"Answer.php.html#33\">App\\Models\\Answer::user<\/a>"],[0,1,"<a href=\"Answer.php.html#39\">App\\Models\\Answer::question<\/a>"],[0,1,"<a href=\"Answer.php.html#45\">App\\Models\\Answer::thread<\/a>"],[0,1,"<a href=\"Answer.php.html#54\">App\\Models\\Answer::getQaThreadIdAttribute<\/a>"],[100,1,"<a href=\"Certificate.php.html#41\">App\\Models\\Certificate::user<\/a>"],[100,1,"<a href=\"Certificate.php.html#49\">App\\Models\\Certificate::enrollment<\/a>"],[100,1,"<a href=\"Certificate.php.html#57\">App\\Models\\Certificate::certification<\/a>"],[100,1,"<a href=\"Certificate.php.html#62\">App\\Models\\Certificate::scopeIssuedThisMonth<\/a>"],[100,1,"<a href=\"Certification.php.html#52\">App\\Models\\Certification::category<\/a>"],[0,1,"<a href=\"Certification.php.html#60\">App\\Models\\Certification::createdBy<\/a>"],[0,1,"<a href=\"Certification.php.html#68\">App\\Models\\Certification::updatedBy<\/a>"],[100,1,"<a href=\"Certification.php.html#78\">App\\Models\\Certification::coaches<\/a>"],[100,1,"<a href=\"Certification.php.html#95\">App\\Models\\Certification::certificates<\/a>"],[100,1,"<a href=\"Certification.php.html#103\">App\\Models\\Certification::enrollments<\/a>"],[100,1,"<a href=\"Certification.php.html#111\">App\\Models\\Certification::parts<\/a>"],[100,1,"<a href=\"Certification.php.html#119\">App\\Models\\Certification::questionCategories<\/a>"],[100,1,"<a href=\"Certification.php.html#127\">App\\Models\\Certification::mockExams<\/a>"],[100,1,"<a href=\"Certification.php.html#132\">App\\Models\\Certification::scopePublished<\/a>"],[100,1,"<a href=\"Certification.php.html#137\">App\\Models\\Certification::scopeAssignedTo<\/a>"],[100,1,"<a href=\"Certification.php.html#149\">App\\Models\\Certification::scopeForUser<\/a>"],[100,3,"<a href=\"Certification.php.html#158\">App\\Models\\Certification::scopeKeyword<\/a>"],[100,1,"<a href=\"CertificationCategory.php.html#38\">App\\Models\\CertificationCategory::certifications<\/a>"],[100,1,"<a href=\"CertificationCategory.php.html#43\">App\\Models\\CertificationCategory::scopeOrdered<\/a>"],[100,1,"<a href=\"Chapter.php.html#45\">App\\Models\\Chapter::part<\/a>"],[100,1,"<a href=\"Chapter.php.html#53\">App\\Models\\Chapter::sections<\/a>"],[100,1,"<a href=\"Chapter.php.html#58\">App\\Models\\Chapter::scopePublished<\/a>"],[100,1,"<a href=\"Chapter.php.html#64\">App\\Models\\Chapter::scopeOrdered<\/a>"],[100,1,"<a href=\"ChatMember.php.html#43\">App\\Models\\ChatMember::chatRoom<\/a>"],[100,1,"<a href=\"ChatMember.php.html#51\">App\\Models\\ChatMember::user<\/a>"],[0,1,"<a href=\"ChatMember.php.html#56\">App\\Models\\ChatMember::scopeForRoom<\/a>"],[100,1,"<a href=\"ChatMember.php.html#61\">App\\Models\\ChatMember::scopeForUser<\/a>"],[0,1,"<a href=\"ChatMember.php.html#69\">App\\Models\\ChatMember::scopeUnread<\/a>"],[100,1,"<a href=\"ChatMessage.php.html#32\">App\\Models\\ChatMessage::booted<\/a>"],[100,1,"<a href=\"ChatMessage.php.html#44\">App\\Models\\ChatMessage::chatRoom<\/a>"],[100,1,"<a href=\"ChatMessage.php.html#52\">App\\Models\\ChatMessage::sender<\/a>"],[100,1,"<a href=\"ChatRoom.php.html#42\">App\\Models\\ChatRoom::enrollment<\/a>"],[100,1,"<a href=\"ChatRoom.php.html#50\">App\\Models\\ChatRoom::members<\/a>"],[100,1,"<a href=\"ChatRoom.php.html#58\">App\\Models\\ChatRoom::messages<\/a>"],[100,1,"<a href=\"ChatRoom.php.html#68\">App\\Models\\ChatRoom::latestMessage<\/a>"],[100,1,"<a href=\"ChatRoom.php.html#76\">App\\Models\\ChatRoom::scopeForUser<\/a>"],[100,1,"<a href=\"ChatRoom.php.html#83\">App\\Models\\ChatRoom::scopeOrderByLastMessage<\/a>"],[19.047619047619047,4,"<a href=\"ChatRoom.php.html#95\">App\\Models\\ChatRoom::scopeFilterForCoach<\/a>"],[30,3,"<a href=\"ChatRoom.php.html#132\">App\\Models\\ChatRoom::scopeFilterForAdmin<\/a>"],[100,1,"<a href=\"CoachAvailability.php.html#44\">App\\Models\\CoachAvailability::coach<\/a>"],[100,1,"<a href=\"CoachAvailability.php.html#49\">App\\Models\\CoachAvailability::scopeActive<\/a>"],[100,1,"<a href=\"CoachAvailability.php.html#54\">App\\Models\\CoachAvailability::scopeForDay<\/a>"],[100,1,"<a href=\"Enrollment.php.html#54\">App\\Models\\Enrollment::user<\/a>"],[100,1,"<a href=\"Enrollment.php.html#62\">App\\Models\\Enrollment::certification<\/a>"],[100,1,"<a href=\"Enrollment.php.html#70\">App\\Models\\Enrollment::certificate<\/a>"],[100,1,"<a href=\"Enrollment.php.html#78\">App\\Models\\Enrollment::statusLogs<\/a>"],[100,1,"<a href=\"Enrollment.php.html#88\">App\\Models\\Enrollment::latestStatusLog<\/a>"],[100,1,"<a href=\"Enrollment.php.html#96\">App\\Models\\Enrollment::mockExamSessions<\/a>"],[0,1,"<a href=\"Enrollment.php.html#107\">App\\Models\\Enrollment::defaultedByUser<\/a>"],[0,1,"<a href=\"Enrollment.php.html#117\">App\\Models\\Enrollment::chatRoom<\/a>"],[100,1,"<a href=\"Enrollment.php.html#125\">App\\Models\\Enrollment::sectionProgresses<\/a>"],[100,1,"<a href=\"Enrollment.php.html#133\">App\\Models\\Enrollment::learningSessions<\/a>"],[100,1,"<a href=\"Enrollment.php.html#141\">App\\Models\\Enrollment::learningHourTarget<\/a>"],[100,1,"<a href=\"Enrollment.php.html#146\">App\\Models\\Enrollment::scopeLearning<\/a>"],[100,1,"<a href=\"Enrollment.php.html#151\">App\\Models\\Enrollment::scopePassed<\/a>"],[100,1,"<a href=\"Enrollment.php.html#156\">App\\Models\\Enrollment::scopeFailed<\/a>"],[100,3,"<a href=\"Enrollment.php.html#169\">App\\Models\\Enrollment::scopeForUser<\/a>"],[0,1,"<a href=\"EnrollmentNote.php.html#38\">App\\Models\\EnrollmentNote::user<\/a>"],[0,1,"<a href=\"EnrollmentNote.php.html#46\">App\\Models\\EnrollmentNote::enrollment<\/a>"],[100,1,"<a href=\"EnrollmentStatusLog.php.html#44\">App\\Models\\EnrollmentStatusLog::enrollment<\/a>"],[100,1,"<a href=\"EnrollmentStatusLog.php.html#54\">App\\Models\\EnrollmentStatusLog::changedBy<\/a>"],[100,1,"<a href=\"Invitation.php.html#48\">App\\Models\\Invitation::user<\/a>"],[100,1,"<a href=\"Invitation.php.html#53\">App\\Models\\Invitation::invitedBy<\/a>"],[100,1,"<a href=\"Invitation.php.html#58\">App\\Models\\Invitation::scopePending<\/a>"],[100,1,"<a href=\"Invitation.php.html#63\">App\\Models\\Invitation::scopeExpired<\/a>"],[100,3,"<a href=\"Invitation.php.html#69\">App\\Models\\Invitation::isUsable<\/a>"],[0,1,"<a href=\"LearningGoal.php.html#45\">App\\Models\\LearningGoal::enrollment<\/a>"],[100,1,"<a href=\"LearningHourTarget.php.html#36\">App\\Models\\LearningHourTarget::enrollment<\/a>"],[100,1,"<a href=\"LearningSession.php.html#50\">App\\Models\\LearningSession::user<\/a>"],[100,1,"<a href=\"LearningSession.php.html#58\">App\\Models\\LearningSession::enrollment<\/a>"],[100,1,"<a href=\"LearningSession.php.html#66\">App\\Models\\LearningSession::section<\/a>"],[100,1,"<a href=\"LearningSession.php.html#71\">App\\Models\\LearningSession::scopeOpen<\/a>"],[100,1,"<a href=\"LearningSession.php.html#76\">App\\Models\\LearningSession::scopeClosed<\/a>"],[100,1,"<a href=\"LearningSession.php.html#81\">App\\Models\\LearningSession::scopeForUser<\/a>"],[100,1,"<a href=\"LearningSession.php.html#86\">App\\Models\\LearningSession::scopeForEnrollment<\/a>"],[0,1,"<a href=\"LearningSession.php.html#91\">App\\Models\\LearningSession::scopeOnDate<\/a>"],[100,1,"<a href=\"Meeting.php.html#55\">App\\Models\\Meeting::enrollment<\/a>"],[100,1,"<a href=\"Meeting.php.html#63\">App\\Models\\Meeting::coach<\/a>"],[100,1,"<a href=\"Meeting.php.html#71\">App\\Models\\Meeting::student<\/a>"],[100,1,"<a href=\"Meeting.php.html#82\">App\\Models\\Meeting::canceledBy<\/a>"],[100,1,"<a href=\"Meeting.php.html#90\">App\\Models\\Meeting::meetingMemo<\/a>"],[0,1,"<a href=\"Meeting.php.html#98\">App\\Models\\Meeting::quotaTransaction<\/a>"],[100,1,"<a href=\"Meeting.php.html#106\">App\\Models\\Meeting::scopeUpcoming<\/a>"],[0,1,"<a href=\"Meeting.php.html#116\">App\\Models\\Meeting::scopePast<\/a>"],[100,1,"<a href=\"Meeting.php.html#124\">App\\Models\\Meeting::scopeForCoach<\/a>"],[100,1,"<a href=\"Meeting.php.html#129\">App\\Models\\Meeting::scopeForStudent<\/a>"],[100,1,"<a href=\"MeetingMemo.php.html#34\">App\\Models\\MeetingMemo::meeting<\/a>"],[100,1,"<a href=\"MeetingPack.php.html#50\">App\\Models\\MeetingPack::createdBy<\/a>"],[100,1,"<a href=\"MeetingPack.php.html#58\">App\\Models\\MeetingPack::updatedBy<\/a>"],[100,1,"<a href=\"MeetingPack.php.html#68\">App\\Models\\MeetingPack::scopePublished<\/a>"],[100,1,"<a href=\"MeetingPack.php.html#78\">App\\Models\\MeetingPack::scopeOrdered<\/a>"],[100,1,"<a href=\"MeetingPack.php.html#87\">App\\Models\\MeetingPack::payments<\/a>"],[100,1,"<a href=\"MeetingQuotaTransaction.php.html#53\">App\\Models\\MeetingQuotaTransaction::user<\/a>"],[100,1,"<a href=\"MeetingQuotaTransaction.php.html#63\">App\\Models\\MeetingQuotaTransaction::relatedMeeting<\/a>"],[100,1,"<a href=\"MeetingQuotaTransaction.php.html#76\">App\\Models\\MeetingQuotaTransaction::relatedPayment<\/a>"],[100,1,"<a href=\"MeetingQuotaTransaction.php.html#87\">App\\Models\\MeetingQuotaTransaction::grantedBy<\/a>"],[0,1,"<a href=\"MeetingReminderLog.php.html#39\">App\\Models\\MeetingReminderLog::meeting<\/a>"],[100,1,"<a href=\"MockExam.php.html#50\">App\\Models\\MockExam::certification<\/a>"],[100,1,"<a href=\"MockExam.php.html#58\">App\\Models\\MockExam::createdBy<\/a>"],[100,1,"<a href=\"MockExam.php.html#66\">App\\Models\\MockExam::updatedBy<\/a>"],[100,1,"<a href=\"MockExam.php.html#74\">App\\Models\\MockExam::mockExamQuestions<\/a>"],[100,1,"<a href=\"MockExam.php.html#82\">App\\Models\\MockExam::sessions<\/a>"],[100,1,"<a href=\"MockExam.php.html#87\">App\\Models\\MockExam::scopePublished<\/a>"],[100,1,"<a href=\"MockExam.php.html#92\">App\\Models\\MockExam::scopeForCertification<\/a>"],[100,1,"<a href=\"MockExamAnswer.php.html#44\">App\\Models\\MockExamAnswer::mockExamSession<\/a>"],[100,1,"<a href=\"MockExamAnswer.php.html#52\">App\\Models\\MockExamAnswer::mockExamQuestion<\/a>"],[100,1,"<a href=\"MockExamAnswer.php.html#62\">App\\Models\\MockExamAnswer::selectedOption<\/a>"],[100,1,"<a href=\"MockExamQuestion.php.html#42\">App\\Models\\MockExamQuestion::mockExam<\/a>"],[100,1,"<a href=\"MockExamQuestion.php.html#50\">App\\Models\\MockExamQuestion::category<\/a>"],[100,1,"<a href=\"MockExamQuestion.php.html#58\">App\\Models\\MockExamQuestion::options<\/a>"],[0,1,"<a href=\"MockExamQuestion.php.html#66\">App\\Models\\MockExamQuestion::answers<\/a>"],[100,1,"<a href=\"MockExamQuestion.php.html#71\">App\\Models\\MockExamQuestion::scopeOrdered<\/a>"],[100,1,"<a href=\"MockExamQuestionOption.php.html#42\">App\\Models\\MockExamQuestionOption::mockExamQuestion<\/a>"],[100,1,"<a href=\"MockExamQuestionOption.php.html#47\">App\\Models\\MockExamQuestionOption::scopeOrdered<\/a>"],[100,1,"<a href=\"MockExamSession.php.html#67\">App\\Models\\MockExamSession::mockExam<\/a>"],[100,1,"<a href=\"MockExamSession.php.html#75\">App\\Models\\MockExamSession::enrollment<\/a>"],[100,1,"<a href=\"MockExamSession.php.html#83\">App\\Models\\MockExamSession::user<\/a>"],[100,1,"<a href=\"MockExamSession.php.html#91\">App\\Models\\MockExamSession::answers<\/a>"],[100,1,"<a href=\"MockExamSession.php.html#96\">App\\Models\\MockExamSession::scopeGraded<\/a>"],[0,1,"<a href=\"MockExamSession.php.html#101\">App\\Models\\MockExamSession::scopeCanceled<\/a>"],[0,1,"<a href=\"MockExamSession.php.html#106\">App\\Models\\MockExamSession::scopeForUser<\/a>"],[100,1,"<a href=\"MockExamSession.php.html#111\">App\\Models\\MockExamSession::scopeForEnrollment<\/a>"],[100,1,"<a href=\"Part.php.html#45\">App\\Models\\Part::certification<\/a>"],[100,1,"<a href=\"Part.php.html#53\">App\\Models\\Part::chapters<\/a>"],[100,1,"<a href=\"Part.php.html#58\">App\\Models\\Part::scopePublished<\/a>"],[100,1,"<a href=\"Part.php.html#63\">App\\Models\\Part::scopeOrdered<\/a>"],[100,1,"<a href=\"Payment.php.html#38\">App\\Models\\Payment::meetingPack<\/a>"],[100,1,"<a href=\"Plan.php.html#47\">App\\Models\\Plan::createdBy<\/a>"],[100,1,"<a href=\"Plan.php.html#55\">App\\Models\\Plan::updatedBy<\/a>"],[100,1,"<a href=\"Plan.php.html#63\">App\\Models\\Plan::users<\/a>"],[100,1,"<a href=\"Plan.php.html#71\">App\\Models\\Plan::userPlanLogs<\/a>"],[100,1,"<a href=\"Plan.php.html#81\">App\\Models\\Plan::scopePublished<\/a>"],[100,1,"<a href=\"Plan.php.html#91\">App\\Models\\Plan::scopeOrdered<\/a>"],[100,1,"<a href=\"Question.php.html#38\">App\\Models\\Question::user<\/a>"],[0,1,"<a href=\"Question.php.html#44\">App\\Models\\Question::answers<\/a>"],[100,1,"<a href=\"Question.php.html#50\">App\\Models\\Question::certification<\/a>"],[100,1,"<a href=\"Question.php.html#56\">App\\Models\\Question::replies<\/a>"],[100,1,"<a href=\"QuestionCategory.php.html#42\">App\\Models\\QuestionCategory::certification<\/a>"],[100,1,"<a href=\"QuestionCategory.php.html#50\">App\\Models\\QuestionCategory::sectionQuestions<\/a>"],[0,1,"<a href=\"QuestionCategory.php.html#58\">App\\Models\\QuestionCategory::mockExamQuestions<\/a>"],[100,1,"<a href=\"QuestionCategory.php.html#63\">App\\Models\\QuestionCategory::scopeOrdered<\/a>"],[100,1,"<a href=\"Section.php.html#46\">App\\Models\\Section::chapter<\/a>"],[100,1,"<a href=\"Section.php.html#54\">App\\Models\\Section::questions<\/a>"],[100,1,"<a href=\"Section.php.html#62\">App\\Models\\Section::images<\/a>"],[0,1,"<a href=\"Section.php.html#70\">App\\Models\\Section::learningSessions<\/a>"],[0,1,"<a href=\"Section.php.html#78\">App\\Models\\Section::progresses<\/a>"],[100,1,"<a href=\"Section.php.html#83\">App\\Models\\Section::scopePublished<\/a>"],[100,1,"<a href=\"Section.php.html#93\">App\\Models\\Section::scopeOrdered<\/a>"],[85.71428571428571,3,"<a href=\"Section.php.html#98\">App\\Models\\Section::scopeKeyword<\/a>"],[100,1,"<a href=\"SectionImage.php.html#39\">App\\Models\\SectionImage::section<\/a>"],[100,1,"<a href=\"SectionProgress.php.html#39\">App\\Models\\SectionProgress::enrollment<\/a>"],[100,1,"<a href=\"SectionProgress.php.html#47\">App\\Models\\SectionProgress::section<\/a>"],[100,1,"<a href=\"SectionQuestion.php.html#48\">App\\Models\\SectionQuestion::section<\/a>"],[100,1,"<a href=\"SectionQuestion.php.html#56\">App\\Models\\SectionQuestion::category<\/a>"],[100,1,"<a href=\"SectionQuestion.php.html#64\">App\\Models\\SectionQuestion::options<\/a>"],[0,1,"<a href=\"SectionQuestion.php.html#72\">App\\Models\\SectionQuestion::sectionQuestionAnswers<\/a>"],[100,1,"<a href=\"SectionQuestion.php.html#80\">App\\Models\\SectionQuestion::sectionQuestionAttempts<\/a>"],[100,1,"<a href=\"SectionQuestion.php.html#85\">App\\Models\\SectionQuestion::scopePublished<\/a>"],[0,1,"<a href=\"SectionQuestion.php.html#94\">App\\Models\\SectionQuestion::scopeVisibleForStudent<\/a>"],[100,1,"<a href=\"SectionQuestion.php.html#102\">App\\Models\\SectionQuestion::scopeOfSection<\/a>"],[66.66666666666666,3,"<a href=\"SectionQuestion.php.html#107\">App\\Models\\SectionQuestion::scopeByCategory<\/a>"],[0,1,"<a href=\"SectionQuestion.php.html#116\">App\\Models\\SectionQuestion::scopeOrdered<\/a>"],[100,1,"<a href=\"SectionQuestionAnswer.php.html#47\">App\\Models\\SectionQuestionAnswer::user<\/a>"],[100,1,"<a href=\"SectionQuestionAnswer.php.html#55\">App\\Models\\SectionQuestionAnswer::sectionQuestion<\/a>"],[100,1,"<a href=\"SectionQuestionAnswer.php.html#63\">App\\Models\\SectionQuestionAnswer::selectedOption<\/a>"],[100,1,"<a href=\"SectionQuestionAnswer.php.html#68\">App\\Models\\SectionQuestionAnswer::scopeForUser<\/a>"],[0,1,"<a href=\"SectionQuestionAnswer.php.html#73\">App\\Models\\SectionQuestionAnswer::scopeForEnrollment<\/a>"],[100,1,"<a href=\"SectionQuestionAnswer.php.html#82\">App\\Models\\SectionQuestionAnswer::scopeForSection<\/a>"],[0,1,"<a href=\"SectionQuestionAnswer.php.html#87\">App\\Models\\SectionQuestionAnswer::scopeForCategory<\/a>"],[0,1,"<a href=\"SectionQuestionAnswer.php.html#92\">App\\Models\\SectionQuestionAnswer::scopeBySource<\/a>"],[100,1,"<a href=\"SectionQuestionAnswer.php.html#97\">App\\Models\\SectionQuestionAnswer::scopeCorrect<\/a>"],[0,1,"<a href=\"SectionQuestionAnswer.php.html#102\">App\\Models\\SectionQuestionAnswer::scopeIncorrect<\/a>"],[100,1,"<a href=\"SectionQuestionAttempt.php.html#45\">App\\Models\\SectionQuestionAttempt::user<\/a>"],[100,1,"<a href=\"SectionQuestionAttempt.php.html#53\">App\\Models\\SectionQuestionAttempt::sectionQuestion<\/a>"],[66.66666666666666,2,"<a href=\"SectionQuestionAttempt.php.html#61\">App\\Models\\SectionQuestionAttempt::accuracy<\/a>"],[100,1,"<a href=\"SectionQuestionAttempt.php.html#70\">App\\Models\\SectionQuestionAttempt::scopeForUser<\/a>"],[0,1,"<a href=\"SectionQuestionAttempt.php.html#75\">App\\Models\\SectionQuestionAttempt::scopeForEnrollment<\/a>"],[0,1,"<a href=\"SectionQuestionAttempt.php.html#84\">App\\Models\\SectionQuestionAttempt::scopeForSection<\/a>"],[0,1,"<a href=\"SectionQuestionAttempt.php.html#89\">App\\Models\\SectionQuestionAttempt::scopeForCategory<\/a>"],[100,1,"<a href=\"SectionQuestionAttempt.php.html#94\">App\\Models\\SectionQuestionAttempt::scopeLastIs<\/a>"],[100,1,"<a href=\"SectionQuestionOption.php.html#41\">App\\Models\\SectionQuestionOption::sectionQuestion<\/a>"],[100,1,"<a href=\"SectionQuestionOption.php.html#46\">App\\Models\\SectionQuestionOption::scopeOrdered<\/a>"],[100,1,"<a href=\"User.php.html#72\">App\\Models\\User::statusLogs<\/a>"],[0,1,"<a href=\"User.php.html#80\">App\\Models\\User::statusChanges<\/a>"],[100,1,"<a href=\"User.php.html#88\">App\\Models\\User::invitations<\/a>"],[100,1,"<a href=\"User.php.html#96\">App\\Models\\User::issuedInvitations<\/a>"],[100,1,"<a href=\"User.php.html#104\">App\\Models\\User::enrollments<\/a>"],[100,1,"<a href=\"User.php.html#116\">App\\Models\\User::switchableEnrollments<\/a>"],[100,1,"<a href=\"User.php.html#130\">App\\Models\\User::defaultEnrollment<\/a>"],[0,1,"<a href=\"User.php.html#138\">App\\Models\\User::certificates<\/a>"],[100,1,"<a href=\"User.php.html#148\">App\\Models\\User::assignedCertifications<\/a>"],[100,1,"<a href=\"User.php.html#170\">App\\Models\\User::coachingCertificationIds<\/a>"],[100,1,"<a href=\"User.php.html#178\">App\\Models\\User::plan<\/a>"],[100,1,"<a href=\"User.php.html#186\">App\\Models\\User::planLogs<\/a>"],[0,1,"<a href=\"User.php.html#194\">App\\Models\\User::meetingQuotaTransactions<\/a>"],[0,1,"<a href=\"User.php.html#202\">App\\Models\\User::learningSessions<\/a>"],[0,1,"<a href=\"User.php.html#210\">App\\Models\\User::sectionQuestionAnswers<\/a>"],[0,1,"<a href=\"User.php.html#218\">App\\Models\\User::sectionQuestionAttempts<\/a>"],[0,1,"<a href=\"User.php.html#228\">App\\Models\\User::mockExamSessions<\/a>"],[100,1,"<a href=\"User.php.html#238\">App\\Models\\User::meetingsAsCoach<\/a>"],[0,1,"<a href=\"User.php.html#248\">App\\Models\\User::meetingsAsStudent<\/a>"],[100,1,"<a href=\"User.php.html#258\">App\\Models\\User::coachAvailabilities<\/a>"],[0,1,"<a href=\"User.php.html#268\">App\\Models\\User::chatMembers<\/a>"],[0,1,"<a href=\"User.php.html#278\">App\\Models\\User::sentChatMessages<\/a>"],[100,1,"<a href=\"User.php.html#289\">App\\Models\\User::sendPasswordResetNotification<\/a>"],[0,1,"<a href=\"User.php.html#298\">App\\Models\\User::receivesBroadcastNotificationsOn<\/a>"],[100,1,"<a href=\"User.php.html#311\">App\\Models\\User::scopeActive<\/a>"],[0,1,"<a href=\"User.php.html#321\">App\\Models\\User::questions<\/a>"],[0,1,"<a href=\"User.php.html#331\">App\\Models\\User::answers<\/a>"],[100,1,"<a href=\"User.php.html#339\">App\\Models\\User::isStudent<\/a>"],[100,1,"<a href=\"User.php.html#347\">App\\Models\\User::isCoach<\/a>"],[100,1,"<a href=\"User.php.html#355\">App\\Models\\User::isAdmin<\/a>"],[0,4,"<a href=\"User.php.html#363\">App\\Models\\User::isActiveUser<\/a>"],[0,1,"<a href=\"User.php.html#373\">App\\Models\\User::isAssignedToCertification<\/a>"],[100,1,"<a href=\"User.php.html#384\">App\\Models\\User::googleCredential<\/a>"],[0,1,"<a href=\"User.php.html#392\">App\\Models\\User::hasGoogleCalendarIntegration<\/a>"],[100,1,"<a href=\"User.php.html#400\">App\\Models\\User::aiChatConversations<\/a>"],[0,1,"<a href=\"UserCertificate.php.html#28\">App\\Models\\UserCertificate::user<\/a>"],[0,1,"<a href=\"UserCertificate.php.html#36\">App\\Models\\UserCertificate::enrollment<\/a>"],[0,1,"<a href=\"UserGoogleCalendar.php.html#70\">App\\Models\\UserGoogleCalendar::user<\/a>"],[0,1,"<a href=\"UserGoogleCalendar.php.html#83\">App\\Models\\UserGoogleCalendar::isConnected<\/a>"],[0,1,"<a href=\"UserGoogleCalendar.php.html#91\">App\\Models\\UserGoogleCalendar::disconnect<\/a>"],[0,1,"<a href=\"UserGoogleCalendar.php.html#105\">App\\Models\\UserGoogleCalendar::connect<\/a>"],[0,1,"<a href=\"UserGoogleCalendar.php.html#119\">App\\Models\\UserGoogleCalendar::updateTokens<\/a>"],[0,1,"<a href=\"UserGoogleCalendar.php.html#131\">App\\Models\\UserGoogleCalendar::updateGoogleEmail<\/a>"],[0,1,"<a href=\"UserGoogleCalendar.php.html#142\">App\\Models\\UserGoogleCalendar::updateCalendarId<\/a>"],[0,1,"<a href=\"UserGoogleCalendar.php.html#153\">App\\Models\\UserGoogleCalendar::updateConnectedAt<\/a>"],[0,1,"<a href=\"UserGoogleCalendar.php.html#164\">App\\Models\\UserGoogleCalendar::updateAccessToken<\/a>"],[0,1,"<a href=\"UserGoogleCalendar.php.html#175\">App\\Models\\UserGoogleCalendar::updateRefreshToken<\/a>"],[0,1,"<a href=\"UserGoogleCalendar.php.html#188\">App\\Models\\UserGoogleCalendar::updateTokensAndConnectedAt<\/a>"],[100,1,"<a href=\"UserPlanLog.php.html#48\">App\\Models\\UserPlanLog::user<\/a>"],[100,1,"<a href=\"UserPlanLog.php.html#56\">App\\Models\\UserPlanLog::plan<\/a>"],[0,1,"<a href=\"UserPlanLog.php.html#64\">App\\Models\\UserPlanLog::changedBy<\/a>"],[100,1,"<a href=\"UserStatusLog.php.html#45\">App\\Models\\UserStatusLog::user<\/a>"],[100,1,"<a href=\"UserStatusLog.php.html#53\">App\\Models\\UserStatusLog::changedBy<\/a>"],[100,1,"<a href=\"UserStatusLog.php.html#63\">App\\Models\\UserStatusLog::scopeForUser<\/a>"],[100,1,"<a href=\"UserStatusLog.php.html#73\">App\\Models\\UserStatusLog::scopeRecent<\/a>"]], 'Method Complexity'))
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  function getComplexityData(data, label) {
+    var values = [];
+    $.each(data, function(key) {
+      var value = Math.round(data[key][0]*100) / 100;
+      values.push({
+        x: value,
+        y: data[key][1],
+        class: data[key][2],
+        size: 0.05,
+        shape: 'diamond'
+      });
+    });
+
+    return [
+      {
+        key: label,
+        values: values,
+        color: "#4572A7"
+      }
+    ];
+  }
+});
+  </script>
+ </body>
+</html>

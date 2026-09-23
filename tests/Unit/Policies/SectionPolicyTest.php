@@ -37,13 +37,14 @@ class SectionPolicyTest extends TestCase
     public function test_student_view_requires_full_published_chain(): void
     {
         $student = User::factory()->student()->create();
-        $publishedPart = Part::factory()->published()->create();
-        $publishedChapter = Chapter::factory()->for($publishedPart)->published()->create();
-        $publishedSection = Section::factory()->for($publishedChapter)->published()->create();
+        $cert = Certification::factory()->published()->create();
+        $publishedPart = Part::factory()->published()->create(['certification_id' => $cert->id]);
+        $publishedChapter = Chapter::factory()->published()->create(['part_id' => $publishedPart->id]);
+        $publishedSection = Section::factory()->published()->create(['chapter_id' => $publishedChapter->id]);
 
         $draftPart = Part::factory()->draft()->create();
-        $draftChapter = Chapter::factory()->for($draftPart)->published()->create();
-        $sectionUnderDraftPart = Section::factory()->for($draftChapter)->published()->create();
+        $draftChapter = Chapter::factory()->published()->create(['part_id' => $draftPart->id]);
+        $sectionUnderDraftPart = Section::factory()->published()->create(['chapter_id' => $draftChapter->id]);
 
         $policy = new SectionPolicy;
 
@@ -63,9 +64,9 @@ class SectionPolicyTest extends TestCase
             'assigned_by_user_id' => $admin->id,
             'assigned_at' => now(),
         ]);
-        $part = Part::factory()->for($assignedCert)->published()->create();
-        $chapter = Chapter::factory()->for($part)->published()->create();
-        $section = Section::factory()->for($chapter)->published()->create();
+        $part = Part::factory()->published()->create(['certification_id' => $assignedCert->id]);
+        $chapter = Chapter::factory()->published()->create(['part_id' => $part->id]);
+        $section = Section::factory()->published()->create(['chapter_id' => $chapter->id]);
         $policy = new SectionPolicy;
 
         $this->assertTrue($policy->update($coach, $section));

@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Models\MeetingPack;
 use App\Enums\MeetingPackStatus;
 use App\Http\Requests\Meeting\MeetingPackRequest;
+use App\Models\MeetingPack;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 
 class AdminMeetingPackController extends Controller
 {
@@ -27,7 +27,7 @@ class AdminMeetingPackController extends Controller
 
         // 1. キーワード検索（パック名）
         if ($request->filled('keyword')) {
-            $query->where('name', 'like', '%' . $request->input('keyword') . '%');
+            $query->where('name', 'like', '%'.$request->input('keyword').'%');
         }
 
         // 2. 状態フィルタ（本物の小文字バリューでクエリを投げます）
@@ -91,12 +91,16 @@ class AdminMeetingPackController extends Controller
      */
     public function update(MeetingPackRequest $request, string $id): RedirectResponse
     {
-        $pack = MeetingPack::where('id', $id)->firstOrFail();
+//        $pack = MeetingPack::where('id', $id)->firstOrFail();
+        $plan = MeetingPack::where('id', $id)->firstOrFail();
         $data['updated_by_user_id'] = Auth::id();
 
-        $pack->update($request->validated());
+//        $pack->update($request->validated());
+        $plan->update(array_merge($request->validated(), [
+            'updated_by_user_id' => Auth::id(),
+        ]));
 
-        return redirect()->route('admin.meeting-packs.show', $pack->id)
+        return redirect()->route('admin.meeting-packs.show', $plan->id)
             ->with('success', '面談パックの基本情報を更新しました。');
     }
 

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
-use App\Models\Question;
-use App\Models\Answer;
-use App\Models\User;
-use App\Models\Certification;
 use App\Enums\QaThreadStatus;
+use App\Models\Answer;
+use App\Models\Certification;
+use App\Models\Question;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
@@ -38,7 +38,7 @@ class QaThreadSeeder extends Seeder
                 'id' => (string) Str::ulid(),
                 'user_id' => $author->id,
                 'certification_id' => $cert->id, // 👈 既存の正しい資格IDを確実に紐付け
-                'title' => 'テスト質問タイトル ' . ($i + 1),
+                'title' => 'テスト質問タイトル '.($i + 1),
                 'body' => 'これはテスト質問の本文です。資格IDとユーザーIDが完璧にリンクしています。',
                 'status' => rand(0, 1) ? QaThreadStatus::Open : QaThreadStatus::Resolved,
                 'created_at' => now()->subDays(rand(0, 30)),

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Actions\Meeting;
 
-use App\Models\Enrollment;
-use App\Models\Meeting;
-use App\Models\Certification;
 use App\Enums\MeetingStatus;
 use App\Exceptions\MeetingQuota\InsufficientMeetingQuotaException;
 use App\Exceptions\Mentoring\MeetingNoAvailableCoachException;
+use App\Models\Certification;
+use App\Models\Enrollment;
+use App\Models\Meeting;
 use App\Services\CoachMeetingLoadService;
 use App\Services\MeetingAvailabilityService;
 use App\Services\MeetingQuotaService;

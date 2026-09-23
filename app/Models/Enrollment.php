@@ -168,11 +168,16 @@ class Enrollment extends Model
      */
     public function scopeForUser(Builder $query, User $user): Builder
     {
-        return match ($user->role) {
-            UserRole::Admin => $query,
-            UserRole::Coach => $query,
-            UserRole::Student => $query->where('user_id', $user->id),
-            default => $query->whereRaw('1 = 0'),
-        };
+        if ($user->isAdmin()) {
+            return $query;
+        }
+
+        if ($user->isCoach()) {
+            return $query->whereIn('certification_id', $user->coachingCertificationIds())
+                ->whereHas('user', function ($q) {
+                    $q->whereNotNull('id');
+                });
+        }
+        return $query->where('user_id', $user->id);
     }
 }

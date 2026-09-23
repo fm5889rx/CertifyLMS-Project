@@ -58,8 +58,9 @@ class PartPolicyTest extends TestCase
     public function test_student_view_published_only(): void
     {
         $student = User::factory()->student()->create();
-        $publishedPart = Part::factory()->published()->create();
-        $draftPart = Part::factory()->draft()->create();
+        $cert = Certification::factory()->published()->create();
+        $publishedPart = Part::factory()->published()->create(['certification_id' => $cert->id]);
+        $draftPart = Part::factory()->draft()->create(['certification_id' => $cert->id]);
         $policy = new PartPolicy;
 
         $this->assertTrue($policy->view($student, $publishedPart));

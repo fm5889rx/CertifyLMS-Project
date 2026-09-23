@@ -30,7 +30,7 @@ class QaThreadRequest extends FormRequest
         // PATCHまたはPUTメソッドの場合、certification_idのバリデーションを除外
         if ($this->isMethod('patch') || $this->isMethod('put')) {
             unset($rules['certification_id']);
-        };
+        }
 
         return $rules;
     }

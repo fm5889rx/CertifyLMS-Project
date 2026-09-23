@@ -106,8 +106,8 @@ final class FetchStudentDashboardAction
     {
         // T-A-03で変更
         // LearningProgressService の追加
-//      $progressMap = $this->safe(fn() => $this->batchCalculateProgress
-//      ($learningEnrollments)) ?? [];
+        //      $progressMap = $this->safe(fn() => $this->batchCalculateProgress
+        //      ($learningEnrollments)) ?? [];
         $progressMap = $this->safe(fn () => $this->progressService->batchCalculateProgress($learningEnrollments)) ?? [];
 
         return $learningEnrollments
@@ -126,47 +126,47 @@ final class FetchStudentDashboardAction
      *
      * @return array<string, float>
      */
-/*
-    private function batchCalculateProgress($enrollments): array
-    {
-        if ($enrollments->isEmpty()) {
-            return [];
+    /*
+        private function batchCalculateProgress($enrollments): array
+        {
+            if ($enrollments->isEmpty()) {
+                return [];
+            }
+
+            $enrollmentIds = $enrollments->pluck('id')->all();
+            $certificationIds = $enrollments->pluck('certification_id')->unique()->values()->all();
+
+            $rows = DB::table('sections')
+                ->join('chapters', 'chapters.id', '=', 'sections.chapter_id')
+                ->join('parts', 'parts.id', '=', 'chapters.part_id')
+                ->join('enrollments', 'enrollments.certification_id', '=', 'parts.certification_id')
+                ->leftJoin('section_progresses', function ($join): void {
+                    $join->on('section_progresses.section_id', '=', 'sections.id')
+                        ->on('section_progresses.enrollment_id', '=', 'enrollments.id');
+                })
+                ->whereIn('enrollments.id', $enrollmentIds)
+                ->whereIn('parts.certification_id', $certificationIds)
+                ->where('parts.status', ContentStatus::Published->value)
+                ->where('chapters.status', ContentStatus::Published->value)
+                ->where('sections.status', ContentStatus::Published->value)
+                ->groupBy('enrollments.id')
+                ->selectRaw('enrollments.id AS enrollment_id, COUNT(sections.id) AS total, COUNT(section_progresses.id) AS done')
+                ->get();
+
+            $result = [];
+            foreach ($enrollmentIds as $id) {
+                $result[$id] = 0.0;
+            }
+
+            foreach ($rows as $row) {
+                $total = (int) $row->total;
+                $done = (int) $row->done;
+                $result[(string) $row->enrollment_id] = $total === 0 ? 0.0 : round($done / $total, 4);
+            }
+
+            return $result;
         }
-
-        $enrollmentIds = $enrollments->pluck('id')->all();
-        $certificationIds = $enrollments->pluck('certification_id')->unique()->values()->all();
-
-        $rows = DB::table('sections')
-            ->join('chapters', 'chapters.id', '=', 'sections.chapter_id')
-            ->join('parts', 'parts.id', '=', 'chapters.part_id')
-            ->join('enrollments', 'enrollments.certification_id', '=', 'parts.certification_id')
-            ->leftJoin('section_progresses', function ($join): void {
-                $join->on('section_progresses.section_id', '=', 'sections.id')
-                    ->on('section_progresses.enrollment_id', '=', 'enrollments.id');
-            })
-            ->whereIn('enrollments.id', $enrollmentIds)
-            ->whereIn('parts.certification_id', $certificationIds)
-            ->where('parts.status', ContentStatus::Published->value)
-            ->where('chapters.status', ContentStatus::Published->value)
-            ->where('sections.status', ContentStatus::Published->value)
-            ->groupBy('enrollments.id')
-            ->selectRaw('enrollments.id AS enrollment_id, COUNT(sections.id) AS total, COUNT(section_progresses.id) AS done')
-            ->get();
-
-        $result = [];
-        foreach ($enrollmentIds as $id) {
-            $result[$id] = 0.0;
-        }
-
-        foreach ($rows as $row) {
-            $total = (int) $row->total;
-            $done = (int) $row->done;
-            $result[(string) $row->enrollment_id] = $total === 0 ? 0.0 : round($done / $total, 4);
-        }
-
-        return $result;
-    }
-*/
+    */
 
     private function buildCard(Enrollment $enrollment, ?float $progressRatio): StudentEnrollmentCard
     {

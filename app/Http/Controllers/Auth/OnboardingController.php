@@ -26,7 +26,7 @@ class OnboardingController extends Controller
         // ビューテンプレートを直接 return で呼び出し、ブラウザを完璧な製品クオリティで着地させます！！！
         if (! $invitation->isUsable()) {
             return view('auth.invitation-invalid', [
-                'errorMessage' => 'この招待リンクはすでに使用済みか、または無効化されています。'
+                'errorMessage' => 'この招待リンクはすでに使用済みか、または無効化されています。',
             ]);
         }
 

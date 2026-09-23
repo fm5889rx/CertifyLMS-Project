@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\QaBoard;
 
-use App\Models\User;
-use App\Models\Certification;
-use App\Models\QaThread;
-use App\Models\QaReply;
-use App\Enums\UserRole;
 use App\Enums\QaThreadStatus;
+use App\Enums\UserRole;
+use App\Enums\UserStatus;
+use App\Models\Certification;
+use App\Models\QaReply;
+use App\Models\QaThread;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 use Tests\TestCase;
@@ -19,7 +20,9 @@ class AdminQaBoardControllerTest extends TestCase
     use RefreshDatabase;
 
     private User $adminUser;
+
     private User $student;
+
     private Certification $certification;
 
     /**
@@ -33,16 +36,16 @@ class AdminQaBoardControllerTest extends TestCase
             'status' => 'published',
         ]);
 
-        $inProgressStatus = defined('\App\Enums\UserStatus::InProgress') ? \App\Enums\UserStatus::InProgress : 'in_progress';
+        $inProgressStatus = defined('\App\Enums\UserStatus::InProgress') ? UserStatus::InProgress : 'in_progress';
 
         // 管理者権限（UserRole::Admin）を持つアカウントを生成
         $this->adminUser = User::factory()->create([
-            'role'   => UserRole::Admin ?? 'admin',
+            'role' => UserRole::Admin ?? 'admin',
             'status' => $inProgressStatus,
         ]);
 
         $this->student = User::factory()->create([
-            'role'   => UserRole::Student,
+            'role' => UserRole::Student,
             'status' => $inProgressStatus,
         ]);
     }
@@ -62,24 +65,24 @@ class AdminQaBoardControllerTest extends TestCase
     public function test_管理権限により質問スレッドとそれに紐づく全回答を一括で強制物理削除できること(): void
     {
         $thread = QaThread::create([
-            'id'               => (string) Str::ulid(),
-            'user_id'          => $this->student->id,
+            'id' => (string) Str::ulid(),
+            'user_id' => $this->student->id,
             'certification_id' => $this->certification->id,
-            'title'            => '管理者が消去する不適切な質問',
-            'body'             => '本文',
-            'status'           => QaThreadStatus::Open->value,
+            'title' => '管理者が消去する不適切な質問',
+            'body' => '本文',
+            'status' => QaThreadStatus::Open->value,
         ]);
 
         $reply = QaReply::create([
-            'id'          => (string) Str::ulid(),
+            'id' => (string) Str::ulid(),
             'question_id' => $thread->id,
-            'user_id'     => $this->student->id,
-            'body'        => '巻き添えで消える回答テキスト',
+            'user_id' => $this->student->id,
+            'body' => '巻き添えで消える回答テキスト',
         ]);
 
         // route('admin.qa-board.destroy') を使って強制DELETE
         $response = $this->actingAs($this->adminUser)->delete(route('admin.qa-board.destroy', [
-            'thread' => $thread->id
+            'thread' => $thread->id,
         ]));
 
         $response->assertStatus(302);
@@ -97,25 +100,25 @@ class AdminQaBoardControllerTest extends TestCase
     public function test_管理権限によりスレッド内の不適切な回答をピンポイントでモデレーション削除できること(): void
     {
         $thread = QaThread::create([
-            'id'               => (string) Str::ulid(),
-            'user_id'          => $this->student->id,
+            'id' => (string) Str::ulid(),
+            'user_id' => $this->student->id,
             'certification_id' => $this->certification->id,
-            'title'            => '健全な親質問スレッド',
-            'body'             => '本文',
-            'status'           => QaThreadStatus::Open->value,
+            'title' => '健全な親質問スレッド',
+            'body' => '本文',
+            'status' => QaThreadStatus::Open->value,
         ]);
 
         $badReply = QaReply::create([
-            'id'          => (string) Str::ulid(),
+            'id' => (string) Str::ulid(),
             'question_id' => $thread->id,
-            'user_id'     => $this->student->id,
-            'body'        => '管理者によって削除される不適切な回答テキスト',
+            'user_id' => $this->student->id,
+            'body' => '管理者によって削除される不適切な回答テキスト',
         ]);
 
         // Bladeと同期した route名 と パラメータキー（reply）で送信
         $response = $this->actingAs($this->adminUser)->delete(route('admin.qa-board.replies.destroy', [
             'thread' => $thread->id,
-            'reply'  => $badReply->id,
+            'reply' => $badReply->id,
         ]));
 
         $response->assertStatus(302);

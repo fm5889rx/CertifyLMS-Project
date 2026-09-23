@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -18,7 +18,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * 同じ教材から相談を始めた場合は会話が乱立しないよう、物理・アプリケーション層で制御を行う。
  * 会話の見出し(title)は、最初の質問内容に応じて AI が自動生成（要約）する。
  * 受講生が過去の相談履歴をすぐに見返せるよう、最終メッセージ送信時刻(last_message_at)でソートされる。
- *
  */
 class AiChatConversation extends Model
 {

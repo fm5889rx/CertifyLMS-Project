@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <title>Dashboard for /var/www/html/app/UseCases</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../_css/bootstrap.min.css?v=10.1.16" rel="stylesheet" type="text/css">
+  <link href="../_css/nv.d3.min.css?v=10.1.16" rel="stylesheet" type="text/css">
+  <link href="../_css/style.css?v=10.1.16" rel="stylesheet" type="text/css">
+  <link href="../_css/custom.css" rel="stylesheet" type="text/css">
+ </head>
+ <body>
+  <header>
+   <div class="container-fluid">
+    <div class="row">
+     <div class="col-md-12">
+      <nav aria-label="breadcrumb">
+       <ol class="breadcrumb">
+         <li class="breadcrumb-item"><a href="../index.html">/var/www/html/app</a></li>
+         <li class="breadcrumb-item"><a href="index.html">UseCases</a></li>
+         <li class="breadcrumb-item active">(Dashboard)</li>
+
+       </ol>
+      </nav>
+     </div>
+    </div>
+   </div>
+  </header>
+  <div class="container-fluid">
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Classes</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="classCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="classComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Certification/ShowAction.php.html#13">App\UseCases\Certification\ShowAction</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CertificationCategory/IndexAction.php.html#13">App\UseCases\CertificationCategory\IndexAction</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CertificationCategory/UpdateAction.php.html#13">App\UseCases\CertificationCategory\UpdateAction</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Chapter/ReorderAction.php.html#15">App\UseCases\Chapter\ReorderAction</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Chapter/UpdateAction.php.html#13">App\UseCases\Chapter\UpdateAction</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="MockExam/ShowAction.php.html#12">App\UseCases\MockExam\ShowAction</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="MockExamQuestion/DestroyAction.php.html#16">App\UseCases\MockExamQuestion\DestroyAction</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="MockExamQuestion/UpdateAction.php.html#19">App\UseCases\MockExamQuestion\UpdateAction</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="MockExamSession/IndexAction.php.html#18">App\UseCases\MockExamSession\IndexAction</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="MockExamSession/ShowAction.php.html#17">App\UseCases\MockExamSession\ShowAction</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Part/UpdateAction.php.html#13">App\UseCases\Part\UpdateAction</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QuestionCategory/IndexAction.php.html#14">App\UseCases\QuestionCategory\IndexAction</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QuestionCategory/UpdateAction.php.html#13">App\UseCases\QuestionCategory\UpdateAction</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Section/DestroyAction.php.html#16">App\UseCases\Section\DestroyAction</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Section/PublishAction.php.html#15">App\UseCases\Section\PublishAction</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Section/ReorderAction.php.html#15">App\UseCases\Section\ReorderAction</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Section/ShowAction.php.html#12">App\UseCases\Section\ShowAction</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Section/UnpublishAction.php.html#15">App\UseCases\Section\UnpublishAction</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SectionImage/DestroyAction.php.html#17">App\UseCases\SectionImage\DestroyAction</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SectionQuestion/IndexAction.php.html#15">App\UseCases\SectionQuestion\IndexAction</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SectionQuestion/ShowAction.php.html#12">App\UseCases\SectionQuestion\ShowAction</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SectionQuestion/UnpublishAction.php.html#15">App\UseCases\SectionQuestion\UnpublishAction</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SectionQuiz/ShowQuestionAction.php.html#19">App\UseCases\SectionQuiz\ShowQuestionAction</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="WeakDrill/ShowCategoryAction.php.html#21">App\UseCases\WeakDrill\ShowCategoryAction</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="WeakDrill/ShowQuestionAction.php.html#21">App\UseCases\WeakDrill\ShowQuestionAction</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="WeakDrill/ShowResultAction.php.html#23">App\UseCases\WeakDrill\ShowResultAction</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Learning/ShowChapterAction.php.html#19">App\UseCases\Learning\ShowChapterAction</a></td><td class="text-right">20%</td></tr>
+       <tr><td><a href="Part/DestroyAction.php.html#17">App\UseCases\Part\DestroyAction</a></td><td class="text-right">42%</td></tr>
+       <tr><td><a href="Chapter/UnpublishAction.php.html#15">App\UseCases\Chapter\UnpublishAction</a></td><td class="text-right">55%</td></tr>
+       <tr><td><a href="Part/UnpublishAction.php.html#15">App\UseCases\Part\UnpublishAction</a></td><td class="text-right">55%</td></tr>
+       <tr><td><a href="MockExamSession/Monitor/IndexAction.php.html#20">App\UseCases\MockExamSession\Monitor\IndexAction</a></td><td class="text-right">57%</td></tr>
+       <tr><td><a href="Learning/ShowPartAction.php.html#20">App\UseCases\Learning\ShowPartAction</a></td><td class="text-right">60%</td></tr>
+       <tr><td><a href="MockExam/IndexAction.php.html#21">App\UseCases\MockExam\IndexAction</a></td><td class="text-right">65%</td></tr>
+       <tr><td><a href="Chapter/DestroyAction.php.html#15">App\UseCases\Chapter\DestroyAction</a></td><td class="text-right">66%</td></tr>
+       <tr><td><a href="Chapter/PublishAction.php.html#15">App\UseCases\Chapter\PublishAction</a></td><td class="text-right">66%</td></tr>
+       <tr><td><a href="SectionQuestion/PublishAction.php.html#18">App\UseCases\SectionQuestion\PublishAction</a></td><td class="text-right">73%</td></tr>
+       <tr><td><a href="QuizStats/IndexAction.php.html#19">App\UseCases\QuizStats\IndexAction</a></td><td class="text-right">73%</td></tr>
+       <tr><td><a href="LearningHourTarget/UpsertAction.php.html#20">App\UseCases\LearningHourTarget\UpsertAction</a></td><td class="text-right">81%</td></tr>
+       <tr><td><a href="Invitation/ResendAction.php.html#24">App\UseCases\Invitation\ResendAction</a></td><td class="text-right">83%</td></tr>
+       <tr><td><a href="SectionImage/StoreAction.php.html#21">App\UseCases\SectionImage\StoreAction</a></td><td class="text-right">84%</td></tr>
+       <tr><td><a href="Certification/IndexAction.php.html#18">App\UseCases\Certification\IndexAction</a></td><td class="text-right">85%</td></tr>
+       <tr><td><a href="User/IndexAction.php.html#18">App\UseCases\User\IndexAction</a></td><td class="text-right">86%</td></tr>
+       <tr><td><a href="Enrollment/DestroyAction.php.html#19">App\UseCases\Enrollment\DestroyAction</a></td><td class="text-right">87%</td></tr>
+       <tr><td><a href="SectionProgress/UnmarkReadAction.php.html#17">App\UseCases\SectionProgress\UnmarkReadAction</a></td><td class="text-right">88%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="MockExamSession/IndexAction.php.html#18">App\UseCases\MockExamSession\IndexAction</a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="Chapter/ReorderAction.php.html#15">App\UseCases\Chapter\ReorderAction</a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="Section/DestroyAction.php.html#16">App\UseCases\Section\DestroyAction</a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="Section/ReorderAction.php.html#15">App\UseCases\Section\ReorderAction</a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="Learning/ShowChapterAction.php.html#19">App\UseCases\Learning\ShowChapterAction</a></td><td class="text-right">23</td></tr>
+       <tr><td><a href="MockExamQuestion/UpdateAction.php.html#19">App\UseCases\MockExamQuestion\UpdateAction</a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="WeakDrill/ShowResultAction.php.html#23">App\UseCases\WeakDrill\ShowResultAction</a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Part/DestroyAction.php.html#17">App\UseCases\Part\DestroyAction</a></td><td class="text-right">16</td></tr>
+       <tr><td><a href="MockExamSession/Monitor/IndexAction.php.html#20">App\UseCases\MockExamSession\Monitor\IndexAction</a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="SectionQuiz/ShowQuestionAction.php.html#19">App\UseCases\SectionQuiz\ShowQuestionAction</a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="WeakDrill/ShowQuestionAction.php.html#21">App\UseCases\WeakDrill\ShowQuestionAction</a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="MockExam/IndexAction.php.html#21">App\UseCases\MockExam\IndexAction</a></td><td class="text-right">9</td></tr>
+       <tr><td><a href="User/IndexAction.php.html#18">App\UseCases\User\IndexAction</a></td><td class="text-right">7</td></tr>
+       <tr><td><a href="Learning/ShowPartAction.php.html#20">App\UseCases\Learning\ShowPartAction</a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Certification/IndexAction.php.html#18">App\UseCases\Certification\IndexAction</a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Section/PublishAction.php.html#15">App\UseCases\Section\PublishAction</a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Section/UnpublishAction.php.html#15">App\UseCases\Section\UnpublishAction</a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="SectionQuestion/UnpublishAction.php.html#15">App\UseCases\SectionQuestion\UnpublishAction</a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="WeakDrill/ShowCategoryAction.php.html#21">App\UseCases\WeakDrill\ShowCategoryAction</a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Invitation/ResendAction.php.html#24">App\UseCases\Invitation\ResendAction</a></td><td class="text-right">5</td></tr>
+       <tr><td><a href="SectionQuestion/PublishAction.php.html#18">App\UseCases\SectionQuestion\PublishAction</a></td><td class="text-right">4</td></tr>
+       <tr><td><a href="LearningHourTarget/UpsertAction.php.html#20">App\UseCases\LearningHourTarget\UpsertAction</a></td><td class="text-right">4</td></tr>
+       <tr><td><a href="QuizStats/IndexAction.php.html#19">App\UseCases\QuizStats\IndexAction</a></td><td class="text-right">3</td></tr>
+       <tr><td><a href="SectionImage/StoreAction.php.html#21">App\UseCases\SectionImage\StoreAction</a></td><td class="text-right">3</td></tr>
+       <tr><td><a href="Enrollment/DestroyAction.php.html#19">App\UseCases\Enrollment\DestroyAction</a></td><td class="text-right">3</td></tr>
+       <tr><td><a href="SectionProgress/UnmarkReadAction.php.html#17">App\UseCases\SectionProgress\UnmarkReadAction</a></td><td class="text-right">3</td></tr>
+       <tr><td><a href="Chapter/UnpublishAction.php.html#15">App\UseCases\Chapter\UnpublishAction</a></td><td class="text-right">2</td></tr>
+       <tr><td><a href="Part/UnpublishAction.php.html#15">App\UseCases\Part\UnpublishAction</a></td><td class="text-right">2</td></tr>
+       <tr><td><a href="Chapter/DestroyAction.php.html#15">App\UseCases\Chapter\DestroyAction</a></td><td class="text-right">2</td></tr>
+       <tr><td><a href="Chapter/PublishAction.php.html#15">App\UseCases\Chapter\PublishAction</a></td><td class="text-right">2</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Methods</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="methodCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="methodComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Certification/ShowAction.php.html#15"><abbr title="App\UseCases\Certification\ShowAction::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CertificationCategory/IndexAction.php.html#18"><abbr title="App\UseCases\CertificationCategory\IndexAction::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CertificationCategory/UpdateAction.php.html#18"><abbr title="App\UseCases\CertificationCategory\UpdateAction::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Chapter/ReorderAction.php.html#22"><abbr title="App\UseCases\Chapter\ReorderAction::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Chapter/UpdateAction.php.html#18"><abbr title="App\UseCases\Chapter\UpdateAction::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="MockExam/ShowAction.php.html#14"><abbr title="App\UseCases\MockExam\ShowAction::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="MockExamQuestion/DestroyAction.php.html#18"><abbr title="App\UseCases\MockExamQuestion\DestroyAction::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="MockExamQuestion/UpdateAction.php.html#32"><abbr title="App\UseCases\MockExamQuestion\UpdateAction::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="MockExamSession/IndexAction.php.html#20"><abbr title="App\UseCases\MockExamSession\IndexAction::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="MockExamSession/ShowAction.php.html#19"><abbr title="App\UseCases\MockExamSession\ShowAction::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Part/UpdateAction.php.html#18"><abbr title="App\UseCases\Part\UpdateAction::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QuestionCategory/IndexAction.php.html#19"><abbr title="App\UseCases\QuestionCategory\IndexAction::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="QuestionCategory/UpdateAction.php.html#18"><abbr title="App\UseCases\QuestionCategory\UpdateAction::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Section/DestroyAction.php.html#21"><abbr title="App\UseCases\Section\DestroyAction::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Section/PublishAction.php.html#20"><abbr title="App\UseCases\Section\PublishAction::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Section/ReorderAction.php.html#22"><abbr title="App\UseCases\Section\ReorderAction::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Section/ShowAction.php.html#14"><abbr title="App\UseCases\Section\ShowAction::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Section/UnpublishAction.php.html#20"><abbr title="App\UseCases\Section\UnpublishAction::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SectionImage/DestroyAction.php.html#19"><abbr title="App\UseCases\SectionImage\DestroyAction::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SectionQuestion/IndexAction.php.html#17"><abbr title="App\UseCases\SectionQuestion\IndexAction::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SectionQuestion/ShowAction.php.html#14"><abbr title="App\UseCases\SectionQuestion\ShowAction::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SectionQuestion/UnpublishAction.php.html#20"><abbr title="App\UseCases\SectionQuestion\UnpublishAction::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SectionQuiz/ShowQuestionAction.php.html#26"><abbr title="App\UseCases\SectionQuiz\ShowQuestionAction::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="WeakDrill/ShowCategoryAction.php.html#28"><abbr title="App\UseCases\WeakDrill\ShowCategoryAction::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="WeakDrill/ShowQuestionAction.php.html#29"><abbr title="App\UseCases\WeakDrill\ShowQuestionAction::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="WeakDrill/ShowResultAction.php.html#37"><abbr title="App\UseCases\WeakDrill\ShowResultAction::__invoke">__invoke</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Learning/ShowChapterAction.php.html#24"><abbr title="App\UseCases\Learning\ShowChapterAction::__invoke">__invoke</abbr></a></td><td class="text-right">20%</td></tr>
+       <tr><td><a href="QuizStats/IndexAction.php.html#61"><abbr title="App\UseCases\QuizStats\IndexAction::applySort">applySort</abbr></a></td><td class="text-right">23%</td></tr>
+       <tr><td><a href="Dashboard/FetchStudentDashboardAction.php.html#303"><abbr title="App\UseCases\Dashboard\FetchStudentDashboardAction::buildGoalTimeline">buildGoalTimeline</abbr></a></td><td class="text-right">25%</td></tr>
+       <tr><td><a href="Part/DestroyAction.php.html#22"><abbr title="App\UseCases\Part\DestroyAction::__invoke">__invoke</abbr></a></td><td class="text-right">42%</td></tr>
+       <tr><td><a href="Chapter/UnpublishAction.php.html#20"><abbr title="App\UseCases\Chapter\UnpublishAction::__invoke">__invoke</abbr></a></td><td class="text-right">55%</td></tr>
+       <tr><td><a href="Part/UnpublishAction.php.html#20"><abbr title="App\UseCases\Part\UnpublishAction::__invoke">__invoke</abbr></a></td><td class="text-right">55%</td></tr>
+       <tr><td><a href="MockExamSession/Monitor/IndexAction.php.html#22"><abbr title="App\UseCases\MockExamSession\Monitor\IndexAction::__invoke">__invoke</abbr></a></td><td class="text-right">57%</td></tr>
+       <tr><td><a href="Learning/ShowPartAction.php.html#25"><abbr title="App\UseCases\Learning\ShowPartAction::__invoke">__invoke</abbr></a></td><td class="text-right">60%</td></tr>
+       <tr><td><a href="MockExam/IndexAction.php.html#23"><abbr title="App\UseCases\MockExam\IndexAction::__invoke">__invoke</abbr></a></td><td class="text-right">65%</td></tr>
+       <tr><td><a href="Chapter/DestroyAction.php.html#20"><abbr title="App\UseCases\Chapter\DestroyAction::__invoke">__invoke</abbr></a></td><td class="text-right">66%</td></tr>
+       <tr><td><a href="Chapter/PublishAction.php.html#20"><abbr title="App\UseCases\Chapter\PublishAction::__invoke">__invoke</abbr></a></td><td class="text-right">66%</td></tr>
+       <tr><td><a href="SectionQuestion/PublishAction.php.html#24"><abbr title="App\UseCases\SectionQuestion\PublishAction::__invoke">__invoke</abbr></a></td><td class="text-right">73%</td></tr>
+       <tr><td><a href="Invitation/ResendAction.php.html#31"><abbr title="App\UseCases\Invitation\ResendAction::__invoke">__invoke</abbr></a></td><td class="text-right">80%</td></tr>
+       <tr><td><a href="LearningHourTarget/UpsertAction.php.html#25"><abbr title="App\UseCases\LearningHourTarget\UpsertAction::__invoke">__invoke</abbr></a></td><td class="text-right">81%</td></tr>
+       <tr><td><a href="SectionImage/StoreAction.php.html#26"><abbr title="App\UseCases\SectionImage\StoreAction::__invoke">__invoke</abbr></a></td><td class="text-right">84%</td></tr>
+       <tr><td><a href="Certification/IndexAction.php.html#20"><abbr title="App\UseCases\Certification\IndexAction::__invoke">__invoke</abbr></a></td><td class="text-right">85%</td></tr>
+       <tr><td><a href="Dashboard/FetchCoachDashboardAction.php.html#104"><abbr title="App\UseCases\Dashboard\FetchCoachDashboardAction::fetchUnansweredQaCount">fetchUnansweredQaCount</abbr></a></td><td class="text-right">85%</td></tr>
+       <tr><td><a href="Enrollment/DestroyAction.php.html#28"><abbr title="App\UseCases\Enrollment\DestroyAction::__invoke">__invoke</abbr></a></td><td class="text-right">85%</td></tr>
+       <tr><td><a href="User/IndexAction.php.html#20"><abbr title="App\UseCases\User\IndexAction::__invoke">__invoke</abbr></a></td><td class="text-right">86%</td></tr>
+       <tr><td><a href="SectionProgress/UnmarkReadAction.php.html#19"><abbr title="App\UseCases\SectionProgress\UnmarkReadAction::__invoke">__invoke</abbr></a></td><td class="text-right">88%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="MockExamSession/IndexAction.php.html#20"><abbr title="App\UseCases\MockExamSession\IndexAction::__invoke">__invoke</abbr></a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="Chapter/ReorderAction.php.html#22"><abbr title="App\UseCases\Chapter\ReorderAction::__invoke">__invoke</abbr></a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="Section/DestroyAction.php.html#21"><abbr title="App\UseCases\Section\DestroyAction::__invoke">__invoke</abbr></a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="Section/ReorderAction.php.html#22"><abbr title="App\UseCases\Section\ReorderAction::__invoke">__invoke</abbr></a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="Learning/ShowChapterAction.php.html#24"><abbr title="App\UseCases\Learning\ShowChapterAction::__invoke">__invoke</abbr></a></td><td class="text-right">23</td></tr>
+       <tr><td><a href="MockExamQuestion/UpdateAction.php.html#32"><abbr title="App\UseCases\MockExamQuestion\UpdateAction::__invoke">__invoke</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="WeakDrill/ShowResultAction.php.html#37"><abbr title="App\UseCases\WeakDrill\ShowResultAction::__invoke">__invoke</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Part/DestroyAction.php.html#22"><abbr title="App\UseCases\Part\DestroyAction::__invoke">__invoke</abbr></a></td><td class="text-right">16</td></tr>
+       <tr><td><a href="MockExamSession/Monitor/IndexAction.php.html#22"><abbr title="App\UseCases\MockExamSession\Monitor\IndexAction::__invoke">__invoke</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="SectionQuiz/ShowQuestionAction.php.html#26"><abbr title="App\UseCases\SectionQuiz\ShowQuestionAction::__invoke">__invoke</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="WeakDrill/ShowQuestionAction.php.html#29"><abbr title="App\UseCases\WeakDrill\ShowQuestionAction::__invoke">__invoke</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="MockExam/IndexAction.php.html#23"><abbr title="App\UseCases\MockExam\IndexAction::__invoke">__invoke</abbr></a></td><td class="text-right">9</td></tr>
+       <tr><td><a href="User/IndexAction.php.html#20"><abbr title="App\UseCases\User\IndexAction::__invoke">__invoke</abbr></a></td><td class="text-right">7</td></tr>
+       <tr><td><a href="Learning/ShowPartAction.php.html#25"><abbr title="App\UseCases\Learning\ShowPartAction::__invoke">__invoke</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Certification/IndexAction.php.html#20"><abbr title="App\UseCases\Certification\IndexAction::__invoke">__invoke</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Section/PublishAction.php.html#20"><abbr title="App\UseCases\Section\PublishAction::__invoke">__invoke</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Section/UnpublishAction.php.html#20"><abbr title="App\UseCases\Section\UnpublishAction::__invoke">__invoke</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="SectionQuestion/UnpublishAction.php.html#20"><abbr title="App\UseCases\SectionQuestion\UnpublishAction::__invoke">__invoke</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="WeakDrill/ShowCategoryAction.php.html#28"><abbr title="App\UseCases\WeakDrill\ShowCategoryAction::__invoke">__invoke</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="SectionQuestion/PublishAction.php.html#24"><abbr title="App\UseCases\SectionQuestion\PublishAction::__invoke">__invoke</abbr></a></td><td class="text-right">4</td></tr>
+       <tr><td><a href="Invitation/ResendAction.php.html#31"><abbr title="App\UseCases\Invitation\ResendAction::__invoke">__invoke</abbr></a></td><td class="text-right">4</td></tr>
+       <tr><td><a href="LearningHourTarget/UpsertAction.php.html#25"><abbr title="App\UseCases\LearningHourTarget\UpsertAction::__invoke">__invoke</abbr></a></td><td class="text-right">4</td></tr>
+       <tr><td><a href="Dashboard/FetchStudentDashboardAction.php.html#303"><abbr title="App\UseCases\Dashboard\FetchStudentDashboardAction::buildGoalTimeline">buildGoalTimeline</abbr></a></td><td class="text-right">3</td></tr>
+       <tr><td><a href="SectionImage/StoreAction.php.html#26"><abbr title="App\UseCases\SectionImage\StoreAction::__invoke">__invoke</abbr></a></td><td class="text-right">3</td></tr>
+       <tr><td><a href="SectionProgress/UnmarkReadAction.php.html#19"><abbr title="App\UseCases\SectionProgress\UnmarkReadAction::__invoke">__invoke</abbr></a></td><td class="text-right">3</td></tr>
+       <tr><td><a href="Chapter/UnpublishAction.php.html#20"><abbr title="App\UseCases\Chapter\UnpublishAction::__invoke">__invoke</abbr></a></td><td class="text-right">2</td></tr>
+       <tr><td><a href="Part/UnpublishAction.php.html#20"><abbr title="App\UseCases\Part\UnpublishAction::__invoke">__invoke</abbr></a></td><td class="text-right">2</td></tr>
+       <tr><td><a href="Chapter/DestroyAction.php.html#20"><abbr title="App\UseCases\Chapter\DestroyAction::__invoke">__invoke</abbr></a></td><td class="text-right">2</td></tr>
+       <tr><td><a href="Chapter/PublishAction.php.html#20"><abbr title="App\UseCases\Chapter\PublishAction::__invoke">__invoke</abbr></a></td><td class="text-right">2</td></tr>
+       <tr><td><a href="Dashboard/FetchCoachDashboardAction.php.html#104"><abbr title="App\UseCases\Dashboard\FetchCoachDashboardAction::fetchUnansweredQaCount">fetchUnansweredQaCount</abbr></a></td><td class="text-right">2</td></tr>
+       <tr><td><a href="Enrollment/DestroyAction.php.html#28"><abbr title="App\UseCases\Enrollment\DestroyAction::__invoke">__invoke</abbr></a></td><td class="text-right">2</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <footer>
+    <hr/>
+    <p>
+     <small>Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 10.1.16</a> using <a href="https://www.php.net/" target="_top">PHP 8.5.10</a> and <a href="https://phpunit.de/">PHPUnit 10.5.63</a> at Wed Sep 23 13:47:57 JST 2026.</small>
+    </p>
+   </footer>
+  </div>
+  <script src="../_js/jquery.min.js?v=10.1.16" type="text/javascript"></script>
+  <script src="../_js/d3.min.js?v=10.1.16" type="text/javascript"></script>
+  <script src="../_js/nv.d3.min.js?v=10.1.16" type="text/javascript"></script>
+  <script type="text/javascript">
+$(document).ready(function() {
+  nv.addGraph(function() {
+    var chart = nv.models.multiBarChart();
+    chart.tooltips(false)
+      .showControls(false)
+      .showLegend(false)
+      .reduceXTicks(false)
+      .staggerLabels(true)
+      .yAxis.tickFormat(d3.format('d'));
+
+    d3.select('#classCoverageDistribution svg')
+      .datum(getCoverageDistributionData([26,0,0,1,0,1,3,4,2,7,20,81], "Class Coverage"))
+      .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  nv.addGraph(function() {
+    var chart = nv.models.multiBarChart();
+    chart.tooltips(false)
+      .showControls(false)
+      .showLegend(false)
+      .reduceXTicks(false)
+      .staggerLabels(true)
+      .yAxis.tickFormat(d3.format('d'));
+
+    d3.select('#methodCoverageDistribution svg')
+      .datum(getCoverageDistributionData([26,0,0,3,0,1,3,4,1,8,21,128], "Method Coverage"))
+      .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  function getCoverageDistributionData(data, label) {
+    var labels = [
+      '0%',
+      '0-10%',
+      '10-20%',
+      '20-30%',
+      '30-40%',
+      '40-50%',
+      '50-60%',
+      '60-70%',
+      '70-80%',
+      '80-90%',
+      '90-100%',
+      '100%'
+    ];
+    var values = [];
+    $.each(labels, function(key) {
+      values.push({x: labels[key], y: data[key]});
+    });
+
+    return [
+      {
+        key: label,
+        values: values,
+        color: "#4572A7"
+      }
+    ];
+  }
+  nv.addGraph(function() {
+    var chart = nv.models.scatterChart()
+      .showDistX(true)
+      .showDistY(true)
+      .showLegend(false)
+      .forceX([0, 100]);
+    chart.tooltipContent(function(graph) {
+      return '<p>' + graph.point.class + '</p>';
+    });
+
+    chart.xAxis.axisLabel('Code Coverage (in percent)');
+    chart.yAxis.axisLabel('Cyclomatic Complexity');
+
+    d3.select('#classComplexity svg')
+      .datum(getComplexityData([[100,5,"<a href=\"Auth\/ExpireInvitationsAction.php.html#21\">App\\UseCases\\Auth\\ExpireInvitationsAction<\/a>"],[100,14,"<a href=\"Auth\/IssueInvitationAction.php.html#43\">App\\UseCases\\Auth\\IssueInvitationAction<\/a>"],[97.91666666666666,13,"<a href=\"Auth\/OnboardAction.php.html#31\">App\\UseCases\\Auth\\OnboardAction<\/a>"],[95.23809523809523,6,"<a href=\"Auth\/RevokeInvitationAction.php.html#26\">App\\UseCases\\Auth\\RevokeInvitationAction<\/a>"],[100,1,"<a href=\"Availability\/DestroyAction.php.html#16\">App\\UseCases\\Availability\\DestroyAction<\/a>"],[100,1,"<a href=\"Availability\/IndexAction.php.html#17\">App\\UseCases\\Availability\\IndexAction<\/a>"],[100,1,"<a href=\"Availability\/StoreAction.php.html#17\">App\\UseCases\\Availability\\StoreAction<\/a>"],[100,1,"<a href=\"Availability\/UpdateAction.php.html#16\">App\\UseCases\\Availability\\UpdateAction<\/a>"],[100,4,"<a href=\"Certificate\/IssueAction.php.html#24\">App\\UseCases\\Certificate\\IssueAction<\/a>"],[100,2,"<a href=\"Certification\/ArchiveAction.php.html#17\">App\\UseCases\\Certification\\ArchiveAction<\/a>"],[100,2,"<a href=\"Certification\/DestroyAction.php.html#15\">App\\UseCases\\Certification\\DestroyAction<\/a>"],[85.71428571428571,6,"<a href=\"Certification\/IndexAction.php.html#18\">App\\UseCases\\Certification\\IndexAction<\/a>"],[100,2,"<a href=\"Certification\/PublishAction.php.html#17\">App\\UseCases\\Certification\\PublishAction<\/a>"],[0,1,"<a href=\"Certification\/ShowAction.php.html#13\">App\\UseCases\\Certification\\ShowAction<\/a>"],[100,1,"<a href=\"Certification\/StoreAction.php.html#15\">App\\UseCases\\Certification\\StoreAction<\/a>"],[100,2,"<a href=\"Certification\/UnpublishAction.php.html#18\">App\\UseCases\\Certification\\UnpublishAction<\/a>"],[100,1,"<a href=\"Certification\/UpdateAction.php.html#14\">App\\UseCases\\Certification\\UpdateAction<\/a>"],[100,1,"<a href=\"CertificationCatalog\/IndexAction.php.html#20\">App\\UseCases\\CertificationCatalog\\IndexAction<\/a>"],[100,1,"<a href=\"CertificationCatalog\/ShowAction.php.html#12\">App\\UseCases\\CertificationCatalog\\ShowAction<\/a>"],[100,2,"<a href=\"CertificationCategory\/DestroyAction.php.html#14\">App\\UseCases\\CertificationCategory\\DestroyAction<\/a>"],[0,1,"<a href=\"CertificationCategory\/IndexAction.php.html#13\">App\\UseCases\\CertificationCategory\\IndexAction<\/a>"],[100,1,"<a href=\"CertificationCategory\/StoreAction.php.html#13\">App\\UseCases\\CertificationCategory\\StoreAction<\/a>"],[0,1,"<a href=\"CertificationCategory\/UpdateAction.php.html#13\">App\\UseCases\\CertificationCategory\\UpdateAction<\/a>"],[93.33333333333333,6,"<a href=\"CertificationCoachAssignment\/AttachAction.php.html#28\">App\\UseCases\\CertificationCoachAssignment\\AttachAction<\/a>"],[92.3076923076923,3,"<a href=\"CertificationCoachAssignment\/DetachAction.php.html#21\">App\\UseCases\\CertificationCoachAssignment\\DetachAction<\/a>"],[66.66666666666666,2,"<a href=\"Chapter\/DestroyAction.php.html#15\">App\\UseCases\\Chapter\\DestroyAction<\/a>"],[66.66666666666666,2,"<a href=\"Chapter\/PublishAction.php.html#15\">App\\UseCases\\Chapter\\PublishAction<\/a>"],[0,5,"<a href=\"Chapter\/ReorderAction.php.html#15\">App\\UseCases\\Chapter\\ReorderAction<\/a>"],[100,1,"<a href=\"Chapter\/ShowAction.php.html#13\">App\\UseCases\\Chapter\\ShowAction<\/a>"],[100,1,"<a href=\"Chapter\/StoreAction.php.html#15\">App\\UseCases\\Chapter\\StoreAction<\/a>"],[55.55555555555556,2,"<a href=\"Chapter\/UnpublishAction.php.html#15\">App\\UseCases\\Chapter\\UnpublishAction<\/a>"],[0,1,"<a href=\"Chapter\/UpdateAction.php.html#13\">App\\UseCases\\Chapter\\UpdateAction<\/a>"],[100,2,"<a href=\"Chat\/ShowAction.php.html#20\">App\\UseCases\\Chat\\ShowAction<\/a>"],[100,1,"<a href=\"Chat\/StoreMessageAction.php.html#22\">App\\UseCases\\Chat\\StoreMessageAction<\/a>"],[100,6,"<a href=\"ContentSearch\/SearchAction.php.html#23\">App\\UseCases\\ContentSearch\\SearchAction<\/a>"],[92.45283018867924,20,"<a href=\"Dashboard\/FetchAdminDashboardAction.php.html#28\">App\\UseCases\\Dashboard\\FetchAdminDashboardAction<\/a>"],[96.15384615384616,8,"<a href=\"Dashboard\/FetchCoachDashboardAction.php.html#32\">App\\UseCases\\Dashboard\\FetchCoachDashboardAction<\/a>"],[100,1,"<a href=\"Dashboard\/FetchGraduatedDashboardAction.php.html#21\">App\\UseCases\\Dashboard\\FetchGraduatedDashboardAction<\/a>"],[94.85294117647058,16,"<a href=\"Dashboard\/FetchStudentDashboardAction.php.html#48\">App\\UseCases\\Dashboard\\FetchStudentDashboardAction<\/a>"],[100,1,"<a href=\"Dashboard\/ViewModels\/AdminDashboardViewModel.php.html#15\">App\\UseCases\\Dashboard\\ViewModels\\AdminDashboardViewModel<\/a>"],[100,1,"<a href=\"Dashboard\/ViewModels\/CoachDashboardViewModel.php.html#20\">App\\UseCases\\Dashboard\\ViewModels\\CoachDashboardViewModel<\/a>"],[100,1,"<a href=\"Dashboard\/ViewModels\/GraduatedDashboardViewModel.php.html#16\">App\\UseCases\\Dashboard\\ViewModels\\GraduatedDashboardViewModel<\/a>"],[100,1,"<a href=\"Dashboard\/ViewModels\/PlanInfoPanel.php.html#16\">App\\UseCases\\Dashboard\\ViewModels\\PlanInfoPanel<\/a>"],[100,1,"<a href=\"Dashboard\/ViewModels\/ResumeCard.php.html#13\">App\\UseCases\\Dashboard\\ViewModels\\ResumeCard<\/a>"],[100,1,"<a href=\"Dashboard\/ViewModels\/StudentDashboardViewModel.php.html#21\">App\\UseCases\\Dashboard\\ViewModels\\StudentDashboardViewModel<\/a>"],[100,1,"<a href=\"Dashboard\/ViewModels\/StudentEnrollmentCard.php.html#21\">App\\UseCases\\Dashboard\\ViewModels\\StudentEnrollmentCard<\/a>"],[87.5,3,"<a href=\"Enrollment\/DestroyAction.php.html#19\">App\\UseCases\\Enrollment\\DestroyAction<\/a>"],[95,4,"<a href=\"Enrollment\/FailAction.php.html#24\">App\\UseCases\\Enrollment\\FailAction<\/a>"],[100,1,"<a href=\"Enrollment\/IndexAction.php.html#17\">App\\UseCases\\Enrollment\\IndexAction<\/a>"],[100,4,"<a href=\"Enrollment\/ReceiveCertificateAction.php.html#31\">App\\UseCases\\Enrollment\\ReceiveCertificateAction<\/a>"],[92.85714285714286,3,"<a href=\"Enrollment\/ResumeAction.php.html#19\">App\\UseCases\\Enrollment\\ResumeAction<\/a>"],[100,1,"<a href=\"Enrollment\/ShowAction.php.html#14\">App\\UseCases\\Enrollment\\ShowAction<\/a>"],[97.36842105263158,4,"<a href=\"Enrollment\/StoreAction.php.html#34\">App\\UseCases\\Enrollment\\StoreAction<\/a>"],[100,2,"<a href=\"Enrollment\/UpdateExamDateAction.php.html#17\">App\\UseCases\\Enrollment\\UpdateExamDateAction<\/a>"],[100,2,"<a href=\"Invitation\/DestroyAction.php.html#19\">App\\UseCases\\Invitation\\DestroyAction<\/a>"],[83.33333333333334,5,"<a href=\"Invitation\/ResendAction.php.html#24\">App\\UseCases\\Invitation\\ResendAction<\/a>"],[100,2,"<a href=\"Invitation\/StoreAction.php.html#20\">App\\UseCases\\Invitation\\StoreAction<\/a>"],[100,1,"<a href=\"Learning\/IndexAction.php.html#23\">App\\UseCases\\Learning\\IndexAction<\/a>"],[20.833333333333336,6,"<a href=\"Learning\/ShowChapterAction.php.html#19\">App\\UseCases\\Learning\\ShowChapterAction<\/a>"],[96.96969696969697,3,"<a href=\"Learning\/ShowEnrollmentAction.php.html#29\">App\\UseCases\\Learning\\ShowEnrollmentAction<\/a>"],[60.60606060606061,5,"<a href=\"Learning\/ShowPartAction.php.html#20\">App\\UseCases\\Learning\\ShowPartAction<\/a>"],[90.9090909090909,13,"<a href=\"Learning\/ShowSectionAction.php.html#21\">App\\UseCases\\Learning\\ShowSectionAction<\/a>"],[100,1,"<a href=\"LearningHourTarget\/DestroyAction.php.html#15\">App\\UseCases\\LearningHourTarget\\DestroyAction<\/a>"],[100,2,"<a href=\"LearningHourTarget\/ShowAction.php.html#14\">App\\UseCases\\LearningHourTarget\\ShowAction<\/a>"],[81.25,4,"<a href=\"LearningHourTarget\/UpsertAction.php.html#20\">App\\UseCases\\LearningHourTarget\\UpsertAction<\/a>"],[100,2,"<a href=\"LearningSession\/CloseStaleSessionsAction.php.html#13\">App\\UseCases\\LearningSession\\CloseStaleSessionsAction<\/a>"],[94.73684210526315,4,"<a href=\"LearningSession\/StartAction.php.html#25\">App\\UseCases\\LearningSession\\StartAction<\/a>"],[100,3,"<a href=\"Meeting\/AutoCompleteMeetingAction.php.html#23\">App\\UseCases\\Meeting\\AutoCompleteMeetingAction<\/a>"],[100,2,"<a href=\"MeetingQuota\/AdminGrantQuotaAction.php.html#20\">App\\UseCases\\MeetingQuota\\AdminGrantQuotaAction<\/a>"],[100,3,"<a href=\"MeetingQuota\/ConsumeQuotaAction.php.html#23\">App\\UseCases\\MeetingQuota\\ConsumeQuotaAction<\/a>"],[100,2,"<a href=\"MeetingQuota\/GrantInitialQuotaAction.php.html#20\">App\\UseCases\\MeetingQuota\\GrantInitialQuotaAction<\/a>"],[100,1,"<a href=\"MeetingQuota\/RefundQuotaAction.php.html#18\">App\\UseCases\\MeetingQuota\\RefundQuotaAction<\/a>"],[100,3,"<a href=\"MockExam\/DestroyAction.php.html#18\">App\\UseCases\\MockExam\\DestroyAction<\/a>"],[65,7,"<a href=\"MockExam\/IndexAction.php.html#21\">App\\UseCases\\MockExam\\IndexAction<\/a>"],[100,3,"<a href=\"MockExam\/PublishAction.php.html#18\">App\\UseCases\\MockExam\\PublishAction<\/a>"],[0,1,"<a href=\"MockExam\/ShowAction.php.html#12\">App\\UseCases\\MockExam\\ShowAction<\/a>"],[100,1,"<a href=\"MockExam\/StoreAction.php.html#14\">App\\UseCases\\MockExam\\StoreAction<\/a>"],[100,2,"<a href=\"MockExam\/UnpublishAction.php.html#17\">App\\UseCases\\MockExam\\UnpublishAction<\/a>"],[100,1,"<a href=\"MockExam\/UpdateAction.php.html#14\">App\\UseCases\\MockExam\\UpdateAction<\/a>"],[100,4,"<a href=\"MockExamAnswer\/UpdateAction.php.html#27\">App\\UseCases\\MockExamAnswer\\UpdateAction<\/a>"],[100,2,"<a href=\"MockExamCatalog\/IndexAction.php.html#21\">App\\UseCases\\MockExamCatalog\\IndexAction<\/a>"],[100,2,"<a href=\"MockExamCatalog\/ShowAction.php.html#17\">App\\UseCases\\MockExamCatalog\\ShowAction<\/a>"],[0,1,"<a href=\"MockExamQuestion\/DestroyAction.php.html#16\">App\\UseCases\\MockExamQuestion\\DestroyAction<\/a>"],[100,5,"<a href=\"MockExamQuestion\/StoreAction.php.html#22\">App\\UseCases\\MockExamQuestion\\StoreAction<\/a>"],[0,4,"<a href=\"MockExamQuestion\/UpdateAction.php.html#19\">App\\UseCases\\MockExamQuestion\\UpdateAction<\/a>"],[100,3,"<a href=\"MockExamSession\/DestroyAction.php.html#19\">App\\UseCases\\MockExamSession\\DestroyAction<\/a>"],[96.96969696969697,6,"<a href=\"MockExamSession\/GradeAction.php.html#18\">App\\UseCases\\MockExamSession\\GradeAction<\/a>"],[0,6,"<a href=\"MockExamSession\/IndexAction.php.html#18\">App\\UseCases\\MockExamSession\\IndexAction<\/a>"],[57.89473684210527,8,"<a href=\"MockExamSession\/Monitor\/IndexAction.php.html#20\">App\\UseCases\\MockExamSession\\Monitor\\IndexAction<\/a>"],[100,2,"<a href=\"MockExamSession\/Monitor\/ShowAction.php.html#21\">App\\UseCases\\MockExamSession\\Monitor\\ShowAction<\/a>"],[0,1,"<a href=\"MockExamSession\/ShowAction.php.html#17\">App\\UseCases\\MockExamSession\\ShowAction<\/a>"],[100,4,"<a href=\"MockExamSession\/StartAction.php.html#20\">App\\UseCases\\MockExamSession\\StartAction<\/a>"],[97.22222222222221,4,"<a href=\"MockExamSession\/StoreAction.php.html#28\">App\\UseCases\\MockExamSession\\StoreAction<\/a>"],[100,3,"<a href=\"MockExamSession\/SubmitAction.php.html#21\">App\\UseCases\\MockExamSession\\SubmitAction<\/a>"],[42.857142857142854,7,"<a href=\"Part\/DestroyAction.php.html#17\">App\\UseCases\\Part\\DestroyAction<\/a>"],[100,1,"<a href=\"Part\/IndexAction.php.html#15\">App\\UseCases\\Part\\IndexAction<\/a>"],[100,2,"<a href=\"Part\/PublishAction.php.html#15\">App\\UseCases\\Part\\PublishAction<\/a>"],[100,5,"<a href=\"Part\/ReorderAction.php.html#17\">App\\UseCases\\Part\\ReorderAction<\/a>"],[100,1,"<a href=\"Part\/ShowAction.php.html#13\">App\\UseCases\\Part\\ShowAction<\/a>"],[100,1,"<a href=\"Part\/StoreAction.php.html#15\">App\\UseCases\\Part\\StoreAction<\/a>"],[55.55555555555556,2,"<a href=\"Part\/UnpublishAction.php.html#15\">App\\UseCases\\Part\\UnpublishAction<\/a>"],[0,1,"<a href=\"Part\/UpdateAction.php.html#13\">App\\UseCases\\Part\\UpdateAction<\/a>"],[100,4,"<a href=\"Plan\/ExtendCourseAction.php.html#29\">App\\UseCases\\Plan\\ExtendCourseAction<\/a>"],[100,3,"<a href=\"Plan\/GraduateUserAction.php.html#23\">App\\UseCases\\Plan\\GraduateUserAction<\/a>"],[90,4,"<a href=\"QuestionCategory\/DestroyAction.php.html#20\">App\\UseCases\\QuestionCategory\\DestroyAction<\/a>"],[0,1,"<a href=\"QuestionCategory\/IndexAction.php.html#14\">App\\UseCases\\QuestionCategory\\IndexAction<\/a>"],[100,1,"<a href=\"QuestionCategory\/StoreAction.php.html#14\">App\\UseCases\\QuestionCategory\\StoreAction<\/a>"],[0,1,"<a href=\"QuestionCategory\/UpdateAction.php.html#13\">App\\UseCases\\QuestionCategory\\UpdateAction<\/a>"],[100,3,"<a href=\"QuizHistory\/IndexAction.php.html#18\">App\\UseCases\\QuizHistory\\IndexAction<\/a>"],[73.68421052631578,3,"<a href=\"QuizStats\/IndexAction.php.html#19\">App\\UseCases\\QuizStats\\IndexAction<\/a>"],[0,5,"<a href=\"Section\/DestroyAction.php.html#16\">App\\UseCases\\Section\\DestroyAction<\/a>"],[100,2,"<a href=\"Section\/PreviewAction.php.html#15\">App\\UseCases\\Section\\PreviewAction<\/a>"],[0,2,"<a href=\"Section\/PublishAction.php.html#15\">App\\UseCases\\Section\\PublishAction<\/a>"],[0,5,"<a href=\"Section\/ReorderAction.php.html#15\">App\\UseCases\\Section\\ReorderAction<\/a>"],[0,1,"<a href=\"Section\/ShowAction.php.html#12\">App\\UseCases\\Section\\ShowAction<\/a>"],[100,1,"<a href=\"Section\/StoreAction.php.html#15\">App\\UseCases\\Section\\StoreAction<\/a>"],[0,2,"<a href=\"Section\/UnpublishAction.php.html#15\">App\\UseCases\\Section\\UnpublishAction<\/a>"],[100,1,"<a href=\"Section\/UpdateAction.php.html#13\">App\\UseCases\\Section\\UpdateAction<\/a>"],[0,1,"<a href=\"SectionImage\/DestroyAction.php.html#17\">App\\UseCases\\SectionImage\\DestroyAction<\/a>"],[84.21052631578947,3,"<a href=\"SectionImage\/StoreAction.php.html#21\">App\\UseCases\\SectionImage\\StoreAction<\/a>"],[90.625,8,"<a href=\"SectionProgress\/MarkReadAction.php.html#27\">App\\UseCases\\SectionProgress\\MarkReadAction<\/a>"],[88.23529411764706,3,"<a href=\"SectionProgress\/UnmarkReadAction.php.html#17\">App\\UseCases\\SectionProgress\\UnmarkReadAction<\/a>"],[100,1,"<a href=\"SectionQuestion\/DestroyAction.php.html#13\">App\\UseCases\\SectionQuestion\\DestroyAction<\/a>"],[0,1,"<a href=\"SectionQuestion\/IndexAction.php.html#15\">App\\UseCases\\SectionQuestion\\IndexAction<\/a>"],[73.33333333333333,4,"<a href=\"SectionQuestion\/PublishAction.php.html#18\">App\\UseCases\\SectionQuestion\\PublishAction<\/a>"],[0,1,"<a href=\"SectionQuestion\/ShowAction.php.html#12\">App\\UseCases\\SectionQuestion\\ShowAction<\/a>"],[100,5,"<a href=\"SectionQuestion\/StoreAction.php.html#23\">App\\UseCases\\SectionQuestion\\StoreAction<\/a>"],[0,2,"<a href=\"SectionQuestion\/UnpublishAction.php.html#15\">App\\UseCases\\SectionQuestion\\UnpublishAction<\/a>"],[96.15384615384616,8,"<a href=\"SectionQuestion\/UpdateAction.php.html#22\">App\\UseCases\\SectionQuestion\\UpdateAction<\/a>"],[100,1,"<a href=\"SectionQuestionAnswer\/AnswerResult.php.html#17\">App\\UseCases\\SectionQuestionAnswer\\AnswerResult<\/a>"],[97.05882352941177,17,"<a href=\"SectionQuestionAnswer\/StoreAction.php.html#30\">App\\UseCases\\SectionQuestionAnswer\\StoreAction<\/a>"],[100,1,"<a href=\"SectionQuiz\/ShowAction.php.html#17\">App\\UseCases\\SectionQuiz\\ShowAction<\/a>"],[0,3,"<a href=\"SectionQuiz\/ShowQuestionAction.php.html#19\">App\\UseCases\\SectionQuiz\\ShowQuestionAction<\/a>"],[91.66666666666666,3,"<a href=\"SectionQuiz\/ShowResultAction.php.html#21\">App\\UseCases\\SectionQuiz\\ShowResultAction<\/a>"],[100,2,"<a href=\"User\/ExtendCourseAction.php.html#20\">App\\UseCases\\User\\ExtendCourseAction<\/a>"],[100,2,"<a href=\"User\/GrantMeetingQuotaAction.php.html#20\">App\\UseCases\\User\\GrantMeetingQuotaAction<\/a>"],[86.95652173913044,7,"<a href=\"User\/IndexAction.php.html#18\">App\\UseCases\\User\\IndexAction<\/a>"],[100,1,"<a href=\"User\/ShowAction.php.html#15\">App\\UseCases\\User\\ShowAction<\/a>"],[100,6,"<a href=\"User\/WithdrawAction.php.html#27\">App\\UseCases\\User\\WithdrawAction<\/a>"],[100,2,"<a href=\"UserPreference\/UpdateDefaultEnrollmentAction.php.html#23\">App\\UseCases\\UserPreference\\UpdateDefaultEnrollmentAction<\/a>"],[100,2,"<a href=\"WeakDrill\/IndexAction.php.html#23\">App\\UseCases\\WeakDrill\\IndexAction<\/a>"],[0,2,"<a href=\"WeakDrill\/ShowCategoryAction.php.html#21\">App\\UseCases\\WeakDrill\\ShowCategoryAction<\/a>"],[0,3,"<a href=\"WeakDrill\/ShowQuestionAction.php.html#21\">App\\UseCases\\WeakDrill\\ShowQuestionAction<\/a>"],[0,4,"<a href=\"WeakDrill\/ShowResultAction.php.html#23\">App\\UseCases\\WeakDrill\\ShowResultAction<\/a>"],[100,2,"<a href=\"Dashboard\/HasDashboardSafeFetch.php.html#17\">App\\UseCases\\Dashboard\\HasDashboardSafeFetch<\/a>"]], 'Class Complexity'))
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  nv.addGraph(function() {
+    var chart = nv.models.scatterChart()
+      .showDistX(true)
+      .showDistY(true)
+      .showLegend(false)
+      .forceX([0, 100]);
+    chart.tooltipContent(function(graph) {
+      return '<p>' + graph.point.class + '</p>';
+    });
+
+    chart.xAxis.axisLabel('Code Coverage (in percent)');
+    chart.yAxis.axisLabel('Method Complexity');
+
+    d3.select('#methodComplexity svg')
+      .datum(getComplexityData([[100,1,"<a href=\"Auth\/ExpireInvitationsAction.php.html#23\">App\\UseCases\\Auth\\ExpireInvitationsAction::__construct<\/a>"],[100,4,"<a href=\"Auth\/ExpireInvitationsAction.php.html#31\">App\\UseCases\\Auth\\ExpireInvitationsAction::__invoke<\/a>"],[100,1,"<a href=\"Auth\/IssueInvitationAction.php.html#45\">App\\UseCases\\Auth\\IssueInvitationAction::__construct<\/a>"],[100,13,"<a href=\"Auth\/IssueInvitationAction.php.html#60\">App\\UseCases\\Auth\\IssueInvitationAction::__invoke<\/a>"],[100,1,"<a href=\"Auth\/OnboardAction.php.html#33\">App\\UseCases\\Auth\\OnboardAction::__construct<\/a>"],[97.87234042553192,12,"<a href=\"Auth\/OnboardAction.php.html#43\">App\\UseCases\\Auth\\OnboardAction::__invoke<\/a>"],[100,1,"<a href=\"Auth\/RevokeInvitationAction.php.html#28\">App\\UseCases\\Auth\\RevokeInvitationAction::__construct<\/a>"],[95,5,"<a href=\"Auth\/RevokeInvitationAction.php.html#43\">App\\UseCases\\Auth\\RevokeInvitationAction::__invoke<\/a>"],[100,1,"<a href=\"Availability\/DestroyAction.php.html#18\">App\\UseCases\\Availability\\DestroyAction::__invoke<\/a>"],[100,1,"<a href=\"Availability\/IndexAction.php.html#22\">App\\UseCases\\Availability\\IndexAction::__invoke<\/a>"],[100,1,"<a href=\"Availability\/StoreAction.php.html#22\">App\\UseCases\\Availability\\StoreAction::__invoke<\/a>"],[100,1,"<a href=\"Availability\/UpdateAction.php.html#21\">App\\UseCases\\Availability\\UpdateAction::__invoke<\/a>"],[100,4,"<a href=\"Certificate\/IssueAction.php.html#30\">App\\UseCases\\Certificate\\IssueAction::__invoke<\/a>"],[100,2,"<a href=\"Certification\/ArchiveAction.php.html#22\">App\\UseCases\\Certification\\ArchiveAction::__invoke<\/a>"],[100,2,"<a href=\"Certification\/DestroyAction.php.html#20\">App\\UseCases\\Certification\\DestroyAction::__invoke<\/a>"],[85.71428571428571,6,"<a href=\"Certification\/IndexAction.php.html#20\">App\\UseCases\\Certification\\IndexAction::__invoke<\/a>"],[100,2,"<a href=\"Certification\/PublishAction.php.html#22\">App\\UseCases\\Certification\\PublishAction::__invoke<\/a>"],[0,1,"<a href=\"Certification\/ShowAction.php.html#15\">App\\UseCases\\Certification\\ShowAction::__invoke<\/a>"],[100,1,"<a href=\"Certification\/StoreAction.php.html#20\">App\\UseCases\\Certification\\StoreAction::__invoke<\/a>"],[100,2,"<a href=\"Certification\/UnpublishAction.php.html#23\">App\\UseCases\\Certification\\UnpublishAction::__invoke<\/a>"],[100,1,"<a href=\"Certification\/UpdateAction.php.html#19\">App\\UseCases\\Certification\\UpdateAction::__invoke<\/a>"],[100,1,"<a href=\"CertificationCatalog\/IndexAction.php.html#27\">App\\UseCases\\CertificationCatalog\\IndexAction::__invoke<\/a>"],[100,1,"<a href=\"CertificationCatalog\/ShowAction.php.html#14\">App\\UseCases\\CertificationCatalog\\ShowAction::__invoke<\/a>"],[100,2,"<a href=\"CertificationCategory\/DestroyAction.php.html#19\">App\\UseCases\\CertificationCategory\\DestroyAction::__invoke<\/a>"],[0,1,"<a href=\"CertificationCategory\/IndexAction.php.html#18\">App\\UseCases\\CertificationCategory\\IndexAction::__invoke<\/a>"],[100,1,"<a href=\"CertificationCategory\/StoreAction.php.html#18\">App\\UseCases\\CertificationCategory\\StoreAction::__invoke<\/a>"],[0,1,"<a href=\"CertificationCategory\/UpdateAction.php.html#18\">App\\UseCases\\CertificationCategory\\UpdateAction::__invoke<\/a>"],[93.33333333333333,6,"<a href=\"CertificationCoachAssignment\/AttachAction.php.html#33\">App\\UseCases\\CertificationCoachAssignment\\AttachAction::__invoke<\/a>"],[92.3076923076923,3,"<a href=\"CertificationCoachAssignment\/DetachAction.php.html#23\">App\\UseCases\\CertificationCoachAssignment\\DetachAction::__invoke<\/a>"],[66.66666666666666,2,"<a href=\"Chapter\/DestroyAction.php.html#20\">App\\UseCases\\Chapter\\DestroyAction::__invoke<\/a>"],[66.66666666666666,2,"<a href=\"Chapter\/PublishAction.php.html#20\">App\\UseCases\\Chapter\\PublishAction::__invoke<\/a>"],[0,5,"<a href=\"Chapter\/ReorderAction.php.html#22\">App\\UseCases\\Chapter\\ReorderAction::__invoke<\/a>"],[100,1,"<a href=\"Chapter\/ShowAction.php.html#15\">App\\UseCases\\Chapter\\ShowAction::__invoke<\/a>"],[100,1,"<a href=\"Chapter\/StoreAction.php.html#20\">App\\UseCases\\Chapter\\StoreAction::__invoke<\/a>"],[55.55555555555556,2,"<a href=\"Chapter\/UnpublishAction.php.html#20\">App\\UseCases\\Chapter\\UnpublishAction::__invoke<\/a>"],[0,1,"<a href=\"Chapter\/UpdateAction.php.html#18\">App\\UseCases\\Chapter\\UpdateAction::__invoke<\/a>"],[100,2,"<a href=\"Chat\/ShowAction.php.html#22\">App\\UseCases\\Chat\\ShowAction::__invoke<\/a>"],[100,1,"<a href=\"Chat\/StoreMessageAction.php.html#27\">App\\UseCases\\Chat\\StoreMessageAction::__invoke<\/a>"],[100,1,"<a href=\"ContentSearch\/SearchAction.php.html#25\">App\\UseCases\\ContentSearch\\SearchAction::__construct<\/a>"],[100,5,"<a href=\"ContentSearch\/SearchAction.php.html#30\">App\\UseCases\\ContentSearch\\SearchAction::__invoke<\/a>"],[92.45283018867924,20,"<a href=\"Dashboard\/FetchAdminDashboardAction.php.html#30\">App\\UseCases\\Dashboard\\FetchAdminDashboardAction::__invoke<\/a>"],[100,1,"<a href=\"Dashboard\/FetchCoachDashboardAction.php.html#36\">App\\UseCases\\Dashboard\\FetchCoachDashboardAction::__construct<\/a>"],[100,2,"<a href=\"Dashboard\/FetchCoachDashboardAction.php.html#40\">App\\UseCases\\Dashboard\\FetchCoachDashboardAction::__invoke<\/a>"],[100,1,"<a href=\"Dashboard\/FetchCoachDashboardAction.php.html#87\">App\\UseCases\\Dashboard\\FetchCoachDashboardAction::fetchRecentUnreadChatRooms<\/a>"],[85.71428571428571,2,"<a href=\"Dashboard\/FetchCoachDashboardAction.php.html#104\">App\\UseCases\\Dashboard\\FetchCoachDashboardAction::fetchUnansweredQaCount<\/a>"],[90.9090909090909,2,"<a href=\"Dashboard\/FetchCoachDashboardAction.php.html#125\">App\\UseCases\\Dashboard\\FetchCoachDashboardAction::fetchRecentUnansweredQaThreads<\/a>"],[100,1,"<a href=\"Dashboard\/FetchGraduatedDashboardAction.php.html#23\">App\\UseCases\\Dashboard\\FetchGraduatedDashboardAction::__invoke<\/a>"],[100,1,"<a href=\"Dashboard\/FetchStudentDashboardAction.php.html#52\">App\\UseCases\\Dashboard\\FetchStudentDashboardAction::__construct<\/a>"],[100,2,"<a href=\"Dashboard\/FetchStudentDashboardAction.php.html#63\">App\\UseCases\\Dashboard\\FetchStudentDashboardAction::__invoke<\/a>"],[100,1,"<a href=\"Dashboard\/FetchStudentDashboardAction.php.html#87\">App\\UseCases\\Dashboard\\FetchStudentDashboardAction::buildPlanInfo<\/a>"],[100,1,"<a href=\"Dashboard\/FetchStudentDashboardAction.php.html#105\">App\\UseCases\\Dashboard\\FetchStudentDashboardAction::buildEnrollmentCards<\/a>"],[93.75,2,"<a href=\"Dashboard\/FetchStudentDashboardAction.php.html#171\">App\\UseCases\\Dashboard\\FetchStudentDashboardAction::buildCard<\/a>"],[100,1,"<a href=\"Dashboard\/FetchStudentDashboardAction.php.html#195\">App\\UseCases\\Dashboard\\FetchStudentDashboardAction::buildPassedEnrollments<\/a>"],[100,3,"<a href=\"Dashboard\/FetchStudentDashboardAction.php.html#213\">App\\UseCases\\Dashboard\\FetchStudentDashboardAction::buildResumeCard<\/a>"],[100,2,"<a href=\"Dashboard\/FetchStudentDashboardAction.php.html#265\">App\\UseCases\\Dashboard\\FetchStudentDashboardAction::findNextUnreadSection<\/a>"],[25,2,"<a href=\"Dashboard\/FetchStudentDashboardAction.php.html#303\">App\\UseCases\\Dashboard\\FetchStudentDashboardAction::buildGoalTimeline<\/a>"],[100,1,"<a href=\"Dashboard\/FetchStudentDashboardAction.php.html#323\">App\\UseCases\\Dashboard\\FetchStudentDashboardAction::buildUpcomingMeetings<\/a>"],[100,1,"<a href=\"Dashboard\/ViewModels\/AdminDashboardViewModel.php.html#22\">App\\UseCases\\Dashboard\\ViewModels\\AdminDashboardViewModel::__construct<\/a>"],[100,1,"<a href=\"Dashboard\/ViewModels\/CoachDashboardViewModel.php.html#28\">App\\UseCases\\Dashboard\\ViewModels\\CoachDashboardViewModel::__construct<\/a>"],[100,1,"<a href=\"Dashboard\/ViewModels\/GraduatedDashboardViewModel.php.html#21\">App\\UseCases\\Dashboard\\ViewModels\\GraduatedDashboardViewModel::__construct<\/a>"],[100,1,"<a href=\"Dashboard\/ViewModels\/PlanInfoPanel.php.html#21\">App\\UseCases\\Dashboard\\ViewModels\\PlanInfoPanel::__construct<\/a>"],[100,1,"<a href=\"Dashboard\/ViewModels\/ResumeCard.php.html#15\">App\\UseCases\\Dashboard\\ViewModels\\ResumeCard::__construct<\/a>"],[100,1,"<a href=\"Dashboard\/ViewModels\/StudentDashboardViewModel.php.html#30\">App\\UseCases\\Dashboard\\ViewModels\\StudentDashboardViewModel::__construct<\/a>"],[100,1,"<a href=\"Dashboard\/ViewModels\/StudentEnrollmentCard.php.html#26\">App\\UseCases\\Dashboard\\ViewModels\\StudentEnrollmentCard::__construct<\/a>"],[100,1,"<a href=\"Enrollment\/DestroyAction.php.html#21\">App\\UseCases\\Enrollment\\DestroyAction::__construct<\/a>"],[85.71428571428571,2,"<a href=\"Enrollment\/DestroyAction.php.html#28\">App\\UseCases\\Enrollment\\DestroyAction::__invoke<\/a>"],[100,1,"<a href=\"Enrollment\/FailAction.php.html#26\">App\\UseCases\\Enrollment\\FailAction::__construct<\/a>"],[94.73684210526315,3,"<a href=\"Enrollment\/FailAction.php.html#35\">App\\UseCases\\Enrollment\\FailAction::__invoke<\/a>"],[100,1,"<a href=\"Enrollment\/IndexAction.php.html#22\">App\\UseCases\\Enrollment\\IndexAction::__invoke<\/a>"],[100,1,"<a href=\"Enrollment\/ReceiveCertificateAction.php.html#33\">App\\UseCases\\Enrollment\\ReceiveCertificateAction::__construct<\/a>"],[100,3,"<a href=\"Enrollment\/ReceiveCertificateAction.php.html#43\">App\\UseCases\\Enrollment\\ReceiveCertificateAction::__invoke<\/a>"],[100,1,"<a href=\"Enrollment\/ResumeAction.php.html#21\">App\\UseCases\\Enrollment\\ResumeAction::__construct<\/a>"],[92.3076923076923,2,"<a href=\"Enrollment\/ResumeAction.php.html#28\">App\\UseCases\\Enrollment\\ResumeAction::__invoke<\/a>"],[100,1,"<a href=\"Enrollment\/ShowAction.php.html#16\">App\\UseCases\\Enrollment\\ShowAction::__invoke<\/a>"],[100,1,"<a href=\"Enrollment\/StoreAction.php.html#36\">App\\UseCases\\Enrollment\\StoreAction::__construct<\/a>"],[97.2972972972973,3,"<a href=\"Enrollment\/StoreAction.php.html#47\">App\\UseCases\\Enrollment\\StoreAction::__invoke<\/a>"],[100,2,"<a href=\"Enrollment\/UpdateExamDateAction.php.html#24\">App\\UseCases\\Enrollment\\UpdateExamDateAction::__invoke<\/a>"],[100,1,"<a href=\"Invitation\/DestroyAction.php.html#21\">App\\UseCases\\Invitation\\DestroyAction::__construct<\/a>"],[100,1,"<a href=\"Invitation\/DestroyAction.php.html#23\">App\\UseCases\\Invitation\\DestroyAction::__invoke<\/a>"],[100,1,"<a href=\"Invitation\/ResendAction.php.html#26\">App\\UseCases\\Invitation\\ResendAction::__construct<\/a>"],[80,4,"<a href=\"Invitation\/ResendAction.php.html#31\">App\\UseCases\\Invitation\\ResendAction::__invoke<\/a>"],[100,1,"<a href=\"Invitation\/StoreAction.php.html#22\">App\\UseCases\\Invitation\\StoreAction::__construct<\/a>"],[100,1,"<a href=\"Invitation\/StoreAction.php.html#27\">App\\UseCases\\Invitation\\StoreAction::__invoke<\/a>"],[100,1,"<a href=\"Learning\/IndexAction.php.html#28\">App\\UseCases\\Learning\\IndexAction::__invoke<\/a>"],[20.833333333333336,6,"<a href=\"Learning\/ShowChapterAction.php.html#24\">App\\UseCases\\Learning\\ShowChapterAction::__invoke<\/a>"],[100,1,"<a href=\"Learning\/ShowEnrollmentAction.php.html#31\">App\\UseCases\\Learning\\ShowEnrollmentAction::__construct<\/a>"],[96.875,2,"<a href=\"Learning\/ShowEnrollmentAction.php.html#41\">App\\UseCases\\Learning\\ShowEnrollmentAction::__invoke<\/a>"],[60.60606060606061,5,"<a href=\"Learning\/ShowPartAction.php.html#25\">App\\UseCases\\Learning\\ShowPartAction::__invoke<\/a>"],[100,1,"<a href=\"Learning\/ShowSectionAction.php.html#23\">App\\UseCases\\Learning\\ShowSectionAction::__construct<\/a>"],[90.69767441860465,12,"<a href=\"Learning\/ShowSectionAction.php.html#31\">App\\UseCases\\Learning\\ShowSectionAction::__invoke<\/a>"],[100,1,"<a href=\"LearningHourTarget\/DestroyAction.php.html#17\">App\\UseCases\\LearningHourTarget\\DestroyAction::__invoke<\/a>"],[100,1,"<a href=\"LearningHourTarget\/ShowAction.php.html#16\">App\\UseCases\\LearningHourTarget\\ShowAction::__construct<\/a>"],[100,1,"<a href=\"LearningHourTarget\/ShowAction.php.html#23\">App\\UseCases\\LearningHourTarget\\ShowAction::__invoke<\/a>"],[81.25,4,"<a href=\"LearningHourTarget\/UpsertAction.php.html#25\">App\\UseCases\\LearningHourTarget\\UpsertAction::__invoke<\/a>"],[100,1,"<a href=\"LearningSession\/CloseStaleSessionsAction.php.html#15\">App\\UseCases\\LearningSession\\CloseStaleSessionsAction::__construct<\/a>"],[100,1,"<a href=\"LearningSession\/CloseStaleSessionsAction.php.html#19\">App\\UseCases\\LearningSession\\CloseStaleSessionsAction::__invoke<\/a>"],[100,1,"<a href=\"LearningSession\/StartAction.php.html#27\">App\\UseCases\\LearningSession\\StartAction::__construct<\/a>"],[94.44444444444444,3,"<a href=\"LearningSession\/StartAction.php.html#31\">App\\UseCases\\LearningSession\\StartAction::__invoke<\/a>"],[100,3,"<a href=\"Meeting\/AutoCompleteMeetingAction.php.html#25\">App\\UseCases\\Meeting\\AutoCompleteMeetingAction::__invoke<\/a>"],[100,2,"<a href=\"MeetingQuota\/AdminGrantQuotaAction.php.html#30\">App\\UseCases\\MeetingQuota\\AdminGrantQuotaAction::__invoke<\/a>"],[100,1,"<a href=\"MeetingQuota\/ConsumeQuotaAction.php.html#25\">App\\UseCases\\MeetingQuota\\ConsumeQuotaAction::__construct<\/a>"],[100,2,"<a href=\"MeetingQuota\/ConsumeQuotaAction.php.html#34\">App\\UseCases\\MeetingQuota\\ConsumeQuotaAction::__invoke<\/a>"],[100,2,"<a href=\"MeetingQuota\/GrantInitialQuotaAction.php.html#30\">App\\UseCases\\MeetingQuota\\GrantInitialQuotaAction::__invoke<\/a>"],[100,1,"<a href=\"MeetingQuota\/RefundQuotaAction.php.html#23\">App\\UseCases\\MeetingQuota\\RefundQuotaAction::__invoke<\/a>"],[100,3,"<a href=\"MockExam\/DestroyAction.php.html#23\">App\\UseCases\\MockExam\\DestroyAction::__invoke<\/a>"],[65,7,"<a href=\"MockExam\/IndexAction.php.html#23\">App\\UseCases\\MockExam\\IndexAction::__invoke<\/a>"],[100,3,"<a href=\"MockExam\/PublishAction.php.html#23\">App\\UseCases\\MockExam\\PublishAction::__invoke<\/a>"],[0,1,"<a href=\"MockExam\/ShowAction.php.html#14\">App\\UseCases\\MockExam\\ShowAction::__invoke<\/a>"],[100,1,"<a href=\"MockExam\/StoreAction.php.html#19\">App\\UseCases\\MockExam\\StoreAction::__invoke<\/a>"],[100,2,"<a href=\"MockExam\/UnpublishAction.php.html#22\">App\\UseCases\\MockExam\\UnpublishAction::__invoke<\/a>"],[100,1,"<a href=\"MockExam\/UpdateAction.php.html#19\">App\\UseCases\\MockExam\\UpdateAction::__invoke<\/a>"],[100,4,"<a href=\"MockExamAnswer\/UpdateAction.php.html#36\">App\\UseCases\\MockExamAnswer\\UpdateAction::__invoke<\/a>"],[100,1,"<a href=\"MockExamCatalog\/IndexAction.php.html#26\">App\\UseCases\\MockExamCatalog\\IndexAction::__invoke<\/a>"],[100,1,"<a href=\"MockExamCatalog\/IndexAction.php.html#45\">App\\UseCases\\MockExamCatalog\\IndexAction::activeSessionMap<\/a>"],[100,1,"<a href=\"MockExamCatalog\/ShowAction.php.html#19\">App\\UseCases\\MockExamCatalog\\ShowAction::__invoke<\/a>"],[100,1,"<a href=\"MockExamCatalog\/ShowAction.php.html#26\">App\\UseCases\\MockExamCatalog\\ShowAction::findActiveSession<\/a>"],[0,1,"<a href=\"MockExamQuestion\/DestroyAction.php.html#18\">App\\UseCases\\MockExamQuestion\\DestroyAction::__invoke<\/a>"],[100,5,"<a href=\"MockExamQuestion\/StoreAction.php.html#35\">App\\UseCases\\MockExamQuestion\\StoreAction::__invoke<\/a>"],[0,4,"<a href=\"MockExamQuestion\/UpdateAction.php.html#32\">App\\UseCases\\MockExamQuestion\\UpdateAction::__invoke<\/a>"],[100,1,"<a href=\"MockExamSession\/DestroyAction.php.html#21\">App\\UseCases\\MockExamSession\\DestroyAction::__construct<\/a>"],[100,2,"<a href=\"MockExamSession\/DestroyAction.php.html#28\">App\\UseCases\\MockExamSession\\DestroyAction::__invoke<\/a>"],[96.96969696969697,6,"<a href=\"MockExamSession\/GradeAction.php.html#20\">App\\UseCases\\MockExamSession\\GradeAction::__invoke<\/a>"],[0,6,"<a href=\"MockExamSession\/IndexAction.php.html#20\">App\\UseCases\\MockExamSession\\IndexAction::__invoke<\/a>"],[57.89473684210527,8,"<a href=\"MockExamSession\/Monitor\/IndexAction.php.html#22\">App\\UseCases\\MockExamSession\\Monitor\\IndexAction::__invoke<\/a>"],[100,1,"<a href=\"MockExamSession\/Monitor\/ShowAction.php.html#23\">App\\UseCases\\MockExamSession\\Monitor\\ShowAction::__construct<\/a>"],[100,1,"<a href=\"MockExamSession\/Monitor\/ShowAction.php.html#34\">App\\UseCases\\MockExamSession\\Monitor\\ShowAction::__invoke<\/a>"],[0,1,"<a href=\"MockExamSession\/ShowAction.php.html#19\">App\\UseCases\\MockExamSession\\ShowAction::__invoke<\/a>"],[100,1,"<a href=\"MockExamSession\/StartAction.php.html#22\">App\\UseCases\\MockExamSession\\StartAction::__construct<\/a>"],[100,3,"<a href=\"MockExamSession\/StartAction.php.html#30\">App\\UseCases\\MockExamSession\\StartAction::__invoke<\/a>"],[97.22222222222221,4,"<a href=\"MockExamSession\/StoreAction.php.html#35\">App\\UseCases\\MockExamSession\\StoreAction::__invoke<\/a>"],[100,1,"<a href=\"MockExamSession\/SubmitAction.php.html#23\">App\\UseCases\\MockExamSession\\SubmitAction::__construct<\/a>"],[100,2,"<a href=\"MockExamSession\/SubmitAction.php.html#31\">App\\UseCases\\MockExamSession\\SubmitAction::__invoke<\/a>"],[42.857142857142854,7,"<a href=\"Part\/DestroyAction.php.html#22\">App\\UseCases\\Part\\DestroyAction::__invoke<\/a>"],[100,1,"<a href=\"Part\/IndexAction.php.html#20\">App\\UseCases\\Part\\IndexAction::__invoke<\/a>"],[100,2,"<a href=\"Part\/PublishAction.php.html#20\">App\\UseCases\\Part\\PublishAction::__invoke<\/a>"],[100,5,"<a href=\"Part\/ReorderAction.php.html#24\">App\\UseCases\\Part\\ReorderAction::__invoke<\/a>"],[100,1,"<a href=\"Part\/ShowAction.php.html#15\">App\\UseCases\\Part\\ShowAction::__invoke<\/a>"],[100,1,"<a href=\"Part\/StoreAction.php.html#20\">App\\UseCases\\Part\\StoreAction::__invoke<\/a>"],[55.55555555555556,2,"<a href=\"Part\/UnpublishAction.php.html#20\">App\\UseCases\\Part\\UnpublishAction::__invoke<\/a>"],[0,1,"<a href=\"Part\/UpdateAction.php.html#18\">App\\UseCases\\Part\\UpdateAction::__invoke<\/a>"],[100,1,"<a href=\"Plan\/ExtendCourseAction.php.html#31\">App\\UseCases\\Plan\\ExtendCourseAction::__construct<\/a>"],[100,3,"<a href=\"Plan\/ExtendCourseAction.php.html#40\">App\\UseCases\\Plan\\ExtendCourseAction::__invoke<\/a>"],[100,1,"<a href=\"Plan\/GraduateUserAction.php.html#25\">App\\UseCases\\Plan\\GraduateUserAction::__construct<\/a>"],[100,2,"<a href=\"Plan\/GraduateUserAction.php.html#30\">App\\UseCases\\Plan\\GraduateUserAction::__invoke<\/a>"],[90,4,"<a href=\"QuestionCategory\/DestroyAction.php.html#25\">App\\UseCases\\QuestionCategory\\DestroyAction::__invoke<\/a>"],[0,1,"<a href=\"QuestionCategory\/IndexAction.php.html#19\">App\\UseCases\\QuestionCategory\\IndexAction::__invoke<\/a>"],[100,1,"<a href=\"QuestionCategory\/StoreAction.php.html#19\">App\\UseCases\\QuestionCategory\\StoreAction::__invoke<\/a>"],[0,1,"<a href=\"QuestionCategory\/UpdateAction.php.html#18\">App\\UseCases\\QuestionCategory\\UpdateAction::__invoke<\/a>"],[100,3,"<a href=\"QuizHistory\/IndexAction.php.html#25\">App\\UseCases\\QuizHistory\\IndexAction::__invoke<\/a>"],[100,2,"<a href=\"QuizStats\/IndexAction.php.html#26\">App\\UseCases\\QuizStats\\IndexAction::__invoke<\/a>"],[23.076923076923077,1,"<a href=\"QuizStats\/IndexAction.php.html#61\">App\\UseCases\\QuizStats\\IndexAction::applySort<\/a>"],[0,5,"<a href=\"Section\/DestroyAction.php.html#21\">App\\UseCases\\Section\\DestroyAction::__invoke<\/a>"],[100,1,"<a href=\"Section\/PreviewAction.php.html#17\">App\\UseCases\\Section\\PreviewAction::__construct<\/a>"],[100,1,"<a href=\"Section\/PreviewAction.php.html#19\">App\\UseCases\\Section\\PreviewAction::__invoke<\/a>"],[0,2,"<a href=\"Section\/PublishAction.php.html#20\">App\\UseCases\\Section\\PublishAction::__invoke<\/a>"],[0,5,"<a href=\"Section\/ReorderAction.php.html#22\">App\\UseCases\\Section\\ReorderAction::__invoke<\/a>"],[0,1,"<a href=\"Section\/ShowAction.php.html#14\">App\\UseCases\\Section\\ShowAction::__invoke<\/a>"],[100,1,"<a href=\"Section\/StoreAction.php.html#20\">App\\UseCases\\Section\\StoreAction::__invoke<\/a>"],[0,2,"<a href=\"Section\/UnpublishAction.php.html#20\">App\\UseCases\\Section\\UnpublishAction::__invoke<\/a>"],[100,1,"<a href=\"Section\/UpdateAction.php.html#18\">App\\UseCases\\Section\\UpdateAction::__invoke<\/a>"],[0,1,"<a href=\"SectionImage\/DestroyAction.php.html#19\">App\\UseCases\\SectionImage\\DestroyAction::__invoke<\/a>"],[84.21052631578947,3,"<a href=\"SectionImage\/StoreAction.php.html#26\">App\\UseCases\\SectionImage\\StoreAction::__invoke<\/a>"],[90.625,8,"<a href=\"SectionProgress\/MarkReadAction.php.html#29\">App\\UseCases\\SectionProgress\\MarkReadAction::__invoke<\/a>"],[88.23529411764706,3,"<a href=\"SectionProgress\/UnmarkReadAction.php.html#19\">App\\UseCases\\SectionProgress\\UnmarkReadAction::__invoke<\/a>"],[100,1,"<a href=\"SectionQuestion\/DestroyAction.php.html#15\">App\\UseCases\\SectionQuestion\\DestroyAction::__invoke<\/a>"],[0,1,"<a href=\"SectionQuestion\/IndexAction.php.html#17\">App\\UseCases\\SectionQuestion\\IndexAction::__invoke<\/a>"],[73.33333333333333,4,"<a href=\"SectionQuestion\/PublishAction.php.html#24\">App\\UseCases\\SectionQuestion\\PublishAction::__invoke<\/a>"],[0,1,"<a href=\"SectionQuestion\/ShowAction.php.html#14\">App\\UseCases\\SectionQuestion\\ShowAction::__invoke<\/a>"],[100,5,"<a href=\"SectionQuestion\/StoreAction.php.html#36\">App\\UseCases\\SectionQuestion\\StoreAction::__invoke<\/a>"],[0,2,"<a href=\"SectionQuestion\/UnpublishAction.php.html#20\">App\\UseCases\\SectionQuestion\\UnpublishAction::__invoke<\/a>"],[96.15384615384616,8,"<a href=\"SectionQuestion\/UpdateAction.php.html#35\">App\\UseCases\\SectionQuestion\\UpdateAction::__invoke<\/a>"],[100,1,"<a href=\"SectionQuestionAnswer\/AnswerResult.php.html#19\">App\\UseCases\\SectionQuestionAnswer\\AnswerResult::__construct<\/a>"],[100,4,"<a href=\"SectionQuestionAnswer\/StoreAction.php.html#37\">App\\UseCases\\SectionQuestionAnswer\\StoreAction::__invoke<\/a>"],[90.9090909090909,8,"<a href=\"SectionQuestionAnswer\/StoreAction.php.html#101\">App\\UseCases\\SectionQuestionAnswer\\StoreAction::assertQuestionAvailable<\/a>"],[91.66666666666666,3,"<a href=\"SectionQuestionAnswer\/StoreAction.php.html#123\">App\\UseCases\\SectionQuestionAnswer\\StoreAction::assertEnrollmentActive<\/a>"],[100,2,"<a href=\"SectionQuestionAnswer\/StoreAction.php.html#146\">App\\UseCases\\SectionQuestionAnswer\\StoreAction::assertOptionBelongsToQuestion<\/a>"],[100,1,"<a href=\"SectionQuiz\/ShowAction.php.html#19\">App\\UseCases\\SectionQuiz\\ShowAction::__invoke<\/a>"],[0,3,"<a href=\"SectionQuiz\/ShowQuestionAction.php.html#26\">App\\UseCases\\SectionQuiz\\ShowQuestionAction::__invoke<\/a>"],[91.66666666666666,3,"<a href=\"SectionQuiz\/ShowResultAction.php.html#34\">App\\UseCases\\SectionQuiz\\ShowResultAction::__invoke<\/a>"],[100,1,"<a href=\"User\/ExtendCourseAction.php.html#22\">App\\UseCases\\User\\ExtendCourseAction::__construct<\/a>"],[100,1,"<a href=\"User\/ExtendCourseAction.php.html#26\">App\\UseCases\\User\\ExtendCourseAction::__invoke<\/a>"],[100,1,"<a href=\"User\/GrantMeetingQuotaAction.php.html#22\">App\\UseCases\\User\\GrantMeetingQuotaAction::__construct<\/a>"],[100,1,"<a href=\"User\/GrantMeetingQuotaAction.php.html#26\">App\\UseCases\\User\\GrantMeetingQuotaAction::__invoke<\/a>"],[86.95652173913044,7,"<a href=\"User\/IndexAction.php.html#20\">App\\UseCases\\User\\IndexAction::__invoke<\/a>"],[100,1,"<a href=\"User\/ShowAction.php.html#20\">App\\UseCases\\User\\ShowAction::__invoke<\/a>"],[100,1,"<a href=\"User\/WithdrawAction.php.html#29\">App\\UseCases\\User\\WithdrawAction::__construct<\/a>"],[100,3,"<a href=\"User\/WithdrawAction.php.html#40\">App\\UseCases\\User\\WithdrawAction::__invoke<\/a>"],[100,2,"<a href=\"User\/WithdrawAction.php.html#58\">App\\UseCases\\User\\WithdrawAction::wouldRemoveLastAdmin<\/a>"],[100,2,"<a href=\"UserPreference\/UpdateDefaultEnrollmentAction.php.html#28\">App\\UseCases\\UserPreference\\UpdateDefaultEnrollmentAction::__invoke<\/a>"],[100,1,"<a href=\"WeakDrill\/IndexAction.php.html#25\">App\\UseCases\\WeakDrill\\IndexAction::__construct<\/a>"],[100,1,"<a href=\"WeakDrill\/IndexAction.php.html#37\">App\\UseCases\\WeakDrill\\IndexAction::__invoke<\/a>"],[0,2,"<a href=\"WeakDrill\/ShowCategoryAction.php.html#28\">App\\UseCases\\WeakDrill\\ShowCategoryAction::__invoke<\/a>"],[0,3,"<a href=\"WeakDrill\/ShowQuestionAction.php.html#29\">App\\UseCases\\WeakDrill\\ShowQuestionAction::__invoke<\/a>"],[0,4,"<a href=\"WeakDrill\/ShowResultAction.php.html#37\">App\\UseCases\\WeakDrill\\ShowResultAction::__invoke<\/a>"],[100,2,"<a href=\"Dashboard\/HasDashboardSafeFetch.php.html#22\">App\\UseCases\\Dashboard\\HasDashboardSafeFetch::safe<\/a>"]], 'Method Complexity'))
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  function getComplexityData(data, label) {
+    var values = [];
+    $.each(data, function(key) {
+      var value = Math.round(data[key][0]*100) / 100;
+      values.push({
+        x: value,
+        y: data[key][1],
+        class: data[key][2],
+        size: 0.05,
+        shape: 'diamond'
+      });
+    });
+
+    return [
+      {
+        key: label,
+        values: values,
+        color: "#4572A7"
+      }
+    ];
+  }
+});
+  </script>
+ </body>
+</html>

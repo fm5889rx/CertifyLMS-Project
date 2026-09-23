@@ -36,6 +36,7 @@ class LearningGoal extends Model
      * 主キーが自動増分の数値（INT）ではなく「文字列（ULID）」であることを定義
      */
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     /**

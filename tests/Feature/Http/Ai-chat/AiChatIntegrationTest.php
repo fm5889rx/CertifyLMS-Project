@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
-use App\Models\User;
-use App\Models\AiChatConversation;
-use App\Models\AiChatMessage;
 use App\Enums\AiChatMessageRole;
 use App\Enums\AiChatMessageStatus;
 use App\Enums\UserRole;
 use App\Enums\UserStatus;
+use App\Models\AiChatConversation;
+use App\Models\AiChatMessage;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Carbon;
@@ -26,6 +26,7 @@ class AiChatIntegrationTest extends TestCase
     use RefreshDatabase;
 
     private User $student;
+
     private AiChatConversation $conversation;
 
     protected function setUp(): void
@@ -41,16 +42,16 @@ class AiChatIntegrationTest extends TestCase
 
         // 学習中の受講生を生成
         $this->student = User::factory()->create([
-            'role'               => UserRole::Student,
-            'status'             => UserStatus::InProgress,
+            'role' => UserRole::Student,
+            'status' => UserStatus::InProgress,
         ]);
 
         // 認可監査用の会話スレッドを生成
         $this->conversation = AiChatConversation::create([
-            'user_id'            => $this->student->id,
-            'title'              => '本番検証用テスト相談スレッド',
+            'user_id' => $this->student->id,
+            'title' => '本番検証用テスト相談スレッド',
             'auto_title_enabled' => true,
-            'last_message_at'    => now(),
+            'last_message_at' => now(),
         ]);
     }
 
@@ -83,28 +84,28 @@ class AiChatIntegrationTest extends TestCase
     /**
      * 2. store ➡ sendMessage メソッドの正常系検証
      */
-    public function test_メッセージ送信成功時にジェミニAPIと同期通信しフロント期待値のJSON構造を完璧に返却すること(): void
+    public function test_メッセージ送信成功時にジェミニ_ap_iと同期通信しフロント期待値の_jso_n構造を完璧に返却すること(): void
     {
         Http::fake([
             '*' => Http::response([
                 'candidates' => [
                     [
                         'content' => [
-                            'parts' => [['text' => 'これは最新の自動テスト用の本物模擬アドバイス応答文です。']]
+                            'parts' => [['text' => 'これは最新の自動テスト用の本物模擬アドバイス応答文です。']],
                         ],
-                        'finishReason' => 'STOP'
-                    ]
+                        'finishReason' => 'STOP',
+                    ],
                 ],
                 'usageMetadata' => [
-                    'promptTokenCount'    => 50,
+                    'promptTokenCount' => 50,
                     'candidatesTokenCount' => 30,
-                ]
-            ], 200)
+                ],
+            ], 200),
         ]);
 
         $response = $this->actingAs($this->student)
             ->postJson(route('ai-chat.conversations.messages.store', $this->conversation), [
-                'content' => '教材の効率的な復習方法についてアドバイスをください。'
+                'content' => '教材の効率的な復習方法についてアドバイスをください。',
             ]);
 
         $response->assertStatus(200)
@@ -112,14 +113,14 @@ class AiChatIntegrationTest extends TestCase
                 'status',
                 'user_message' => ['id', 'role', 'content', 'status', 'created_at'],
                 'assistant_message' => ['id', 'role', 'content', 'status', 'response_time_ms', 'output_tokens', 'created_at'],
-                'conversation' => ['id', 'title', 'auto_title_enabled', 'last_message_at']
+                'conversation' => ['id', 'title', 'auto_title_enabled', 'last_message_at'],
             ]);
 
         $this->assertDatabaseHas('ai_chat_messages', [
             'ai_chat_conversation_id' => $this->conversation->id,
-            'role'                    => AiChatMessageRole::Assistant->value,
-            'status'                  => AiChatMessageStatus::Completed->value,
-            'content'                 => 'これは最新の自動テスト用の本物模擬アドバイス応答文です。',
+            'role' => AiChatMessageRole::Assistant->value,
+            'status' => AiChatMessageStatus::Completed->value,
+            'content' => 'これは最新の自動テスト用の本物模擬アドバイス応答文です。',
         ]);
     }
 
@@ -133,10 +134,10 @@ class AiChatIntegrationTest extends TestCase
 
         AiChatMessage::create([
             'ai_chat_conversation_id' => $this->conversation->id,
-            'role'                    => AiChatMessageRole::Model,
-            'status'                  => AiChatMessageStatus::Completed,
-            'model_name'              => config('services.gemini.model'),
-            'content'                 => '過去のアドバイス履歴です。',
+            'role' => AiChatMessageRole::Model,
+            'status' => AiChatMessageStatus::Completed,
+            'model_name' => config('services.gemini.model'),
+            'content' => '過去のアドバイス履歴です。',
         ]);
 
         $response = $this->actingAs($this->student)
@@ -145,8 +146,8 @@ class AiChatIntegrationTest extends TestCase
         $response->assertStatus(200)
             ->assertJsonStructure(['messages'])
             ->assertJsonFragment([
-                'role'    => 'assistant',
-                'content' => '過去のアドバイス履歴です。'
+                'role' => 'assistant',
+                'content' => '過去のアドバイス履歴です。',
             ]);
     }
 
@@ -157,12 +158,12 @@ class AiChatIntegrationTest extends TestCase
     {
         $response = $this->actingAs($this->student)
             ->patchJson(route('ai-chat.conversations.update', $this->conversation), [
-                'title' => 'アジャスト済みの新しい見出しタイトル'
+                'title' => 'アジャスト済みの新しい見出しタイトル',
             ]);
 
         $response->assertStatus(200)
             ->assertJson([
-                'title' => 'アジャスト済みの新しい見出しタイトル'
+                'title' => 'アジャスト済みの新しい見出しタイトル',
             ]);
     }
 
@@ -176,10 +177,10 @@ class AiChatIntegrationTest extends TestCase
 
         $message = AiChatMessage::create([
             'ai_chat_conversation_id' => $this->conversation->id,
-            'role'                    => AiChatMessageRole::User,
-            'status'                  => AiChatMessageStatus::Completed,
-            'model_name'              => config('services.gemini.model'),
-            'content'                 => '消去されるセリフ',
+            'role' => AiChatMessageRole::User,
+            'status' => AiChatMessageStatus::Completed,
+            'model_name' => config('services.gemini.model'),
+            'content' => '消去されるセリフ',
         ]);
 
         $response = $this->actingAs($this->student)
@@ -194,15 +195,15 @@ class AiChatIntegrationTest extends TestCase
     /**
      * 6. 【T-A-04 追加：Gemini 500系通信エラー検証】
      */
-    public function test_ジェミニAPIが500系一時的エラーを返した際にコントローラーが502へアジャストして受講生メッセージのログを安全に残存フォールバック永続化すること(): void
+    public function test_ジェミニ_ap_iが500系一時的エラーを返した際にコントローラーが502へアジャストして受講生メッセージのログを安全に残存フォールバック永続化すること(): void
     {
         Http::fake([
-            '*' => Http::response(['error' => 'Internal Server Error'], 500)
+            '*' => Http::response(['error' => 'Internal Server Error'], 500),
         ]);
 
         $response = $this->actingAs($this->student)
             ->postJson(route('ai-chat.conversations.messages.store', $this->conversation), [
-                'content' => '通信エラー時の挙動をテストします。'
+                'content' => '通信エラー時の挙動をテストします。',
             ]);
 
         $response->assertStatus(502)
@@ -210,38 +211,38 @@ class AiChatIntegrationTest extends TestCase
                 'status' => 'error',
                 'assistant_message' => [
                     'content' => 'AIからの応答取得に失敗しました。',
-                    'status'  => 'error'
-                ]
+                    'status' => 'error',
+                ],
             ]);
 
         // 物理層防衛線監査：通信が失敗しても、受講生の質問（ログ）はデータベースに確実に残っていること
         $this->assertDatabaseHas('ai_chat_messages', [
             'ai_chat_conversation_id' => $this->conversation->id,
-            'role'                    => AiChatMessageRole::User->value,
-            'content'                 => '通信エラー時の挙動をテストします。',
+            'role' => AiChatMessageRole::User->value,
+            'content' => '通信エラー時の挙動をテストします。',
         ]);
     }
 
     /**
      * 7. 【T-A-04 追加：Gemini 空応答・パーツ欠落境界値検証】
      */
-    public function test_ジェミニAPIからの応答が空文字やパーツ欠落の不正な空応答であった場合もシステムが502エラーとして安全に検閲ハンドリングすること(): void
+    public function test_ジェミニ_ap_iからの応答が空文字やパーツ欠落の不正な空応答であった場合もシステムが502エラーとして安全に検閲ハンドリングすること(): void
     {
         Http::fake([
             '://googleapis.com*' => Http::response([
                 'candidates' => [
                     [
                         'content' => [
-                            'parts' => []
-                        ]
-                    ]
-                ]
-            ], 200)
+                            'parts' => [],
+                        ],
+                    ],
+                ],
+            ], 200),
         ]);
 
         $response = $this->actingAs($this->student)
             ->postJson(route('ai-chat.conversations.messages.store', $this->conversation), [
-                'content' => '空応答のテスト。'
+                'content' => '空応答のテスト。',
             ]);
 
         $response->assertStatus(502);
@@ -250,7 +251,7 @@ class AiChatIntegrationTest extends TestCase
     /**
      * 8. 【T-A-04 追加：送信内容プロンプト構造検証】
      */
-    public function test_ジェミニAPI送信時のプロンプト構造が他メンバーの指定したシステム指示および受講生情報文脈を完璧に内包してパッキングされていること(): void
+    public function test_ジェミニ_ap_i送信時のプロンプト構造が他メンバーの指定したシステム指示および受講生情報文脈を完璧に内包してパッキングされていること(): void
     {
         Http::fake([
             '*' => function (Request $request) {
@@ -262,65 +263,66 @@ class AiChatIntegrationTest extends TestCase
 
                 return Http::response([
                     'candidates' => [[
-                        'content' => ['parts' => [['text' => 'アドバイス文']]]
-                    ]]
+                        'content' => ['parts' => [['text' => 'アドバイス文']]],
+                    ]],
                 ], 200);
-            }
+            },
         ]);
 
         $this->actingAs($this->student)
             ->postJson(route('ai-chat.conversations.messages.store', $this->conversation), [
-                'content' => 'プロンプト構造検証。'
+                'content' => 'プロンプト構造検証。',
             ]);
     }
 
     /**
      * 9. 【T-A-04 追加：日次レート制限（429）超過境界値検証】
      */
-    public function test_受講生の日次AI相談回数が設定された上限値に達した場合はGeminiへパケットを発射する前に429エラーで強制遮断すること(): void
+    public function test_受講生の日次_a_i相談回数が設定された上限値に達した場合は_geminiへパケットを発射する前に429エラーで強制遮断すること(): void
     {
         // デフォルト制限値（50回分）のUserメッセージを一括で作成
         for ($i = 0; $i < 50; $i++) {
             AiChatMessage::create([
                 'ai_chat_conversation_id' => $this->conversation->id,
-                'role'                    => AiChatMessageRole::User,
-                'status'                  => AiChatMessageStatus::Completed,
-                'content'                 => "ダミー質問 {$i}",
-                'created_at'              => now(), // Carbon::today()の判定を確実に満たします
+                'role' => AiChatMessageRole::User,
+                'status' => AiChatMessageStatus::Completed,
+                'content' => "ダミー質問 {$i}",
+                'model_name' => config('services.gemini.model'),
+                'created_at' => now(), // Carbon::today()の判定を確実に満たします
             ]);
         }
 
         $response = $this->actingAs($this->student)
             ->postJson(route('ai-chat.conversations.messages.store', $this->conversation), [
-                'content' => '制限を超えた51回目の質問。'
+                'content' => '制限を超えた51回目の質問。',
             ]);
 
         $response->assertStatus(429)
             ->assertJsonFragment([
-                'error' => "本日のAI相談回数の上限（50回）に達しました。明日再度お試しください。"
+                'error' => '本日のAI相談回数の上限（50回）に達しました。明日再度お試しください。',
             ]);
     }
 
     /**
      * 10. 【S-A-02追加要件適合検証】
      */
-    public function test_環境変数で指定されたGeminiのモデル名がハードコーディングされずにデータベースのmodel_nameカラムへ動的に完全同期して永続化されること(): void
+    public function test_環境変数で指定された_geminiのモデル名がハードコーディングされずにデータベースのmodel_nameカラムへ動的に完全同期して永続化されること(): void
     {
         $configuredModel = config('services.gemini.model', 'gemini-2.5-flash');
 
         Http::fake([
             '*' => Http::response([
                 'candidates' => [[
-                    'content' => ['parts' => [['text' => '環境変数連動テストの応答文']]]
+                    'content' => ['parts' => [['text' => '環境変数連動テストの応答文']]],
                 ]],
-                'usageMetadata' => ['candidatesTokenCount' => 10]
-            ], 200)
+                'usageMetadata' => ['candidatesTokenCount' => 10],
+            ], 200),
         ]);
 
         // メッセージを送信
         $this->actingAs($this->student)
             ->postJson(route('ai-chat.conversations.messages.store', $this->conversation), [
-                'content' => 'モデル名の環境変数連動テストです。'
+                'content' => 'モデル名の環境変数連動テストです。',
             ]);
 
         // 【運営要件の自動テスト証明アサーション】
@@ -328,8 +330,8 @@ class AiChatIntegrationTest extends TestCase
         // 寸分の歪みもなくデータベース物理層に刻まれているか確認
         $this->assertDatabaseHas('ai_chat_messages', [
             'ai_chat_conversation_id' => $this->conversation->id,
-            'role'                    => AiChatMessageRole::Assistant,
-            'model_name'              => $configuredModel,
+            'role' => AiChatMessageRole::Assistant,
+            'model_name' => $configuredModel,
         ]);
     }
 }

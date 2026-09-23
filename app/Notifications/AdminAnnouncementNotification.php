@@ -21,6 +21,7 @@ class AdminAnnouncementNotification extends Notification implements ShouldQueue
 
     // T-A-05：一時的な送信失敗時に30秒の段階的待機を挟んで自動リトライさせる鉄壁の動的プロパティ
     public int $tries = 3;    // 最大3回リトライ
+
     public int $backoff = 30; // 失敗時は30秒バックオフを挟んで安全に再試行
 
     private Announcement $announcement;
@@ -38,8 +39,8 @@ class AdminAnnouncementNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('【運営連絡】' . $this->announcement->title)
-            ->greeting($notifiable->name . ' 様')
+            ->subject('【運営連絡】'.$this->announcement->title)
+            ->greeting($notifiable->name.' 様')
             ->line($this->announcement->body);
     }
 
@@ -57,15 +58,15 @@ class AdminAnnouncementNotification extends Notification implements ShouldQueue
 
         return [
             // 💡 ⭕ 82行目の要求を120点満点でクリアする両建て直球プレーンパッキング！
-            'url'               => $targetUrl,
-            'path'              => $targetUrl,
+            'url' => $targetUrl,
+            'path' => $targetUrl,
 
             // 提供済みBlade（show.blade.php）が14〜17行目で要求しているキー名も同一階層にマウント！
-            'title'             => $this->announcement->title,
-            'body'              => $this->announcement->body,
-            'message'           => $this->announcement->body,
+            'title' => $this->announcement->title,
+            'body' => $this->announcement->body,
+            'message' => $this->announcement->body,
             'notification_type' => 'admin_announcement', // メガホンアイコン用区分
-            'announcement_id'   => $this->announcement->id,
+            'announcement_id' => $this->announcement->id,
         ];
     }
 

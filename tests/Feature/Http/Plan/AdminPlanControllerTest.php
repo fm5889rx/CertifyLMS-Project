@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Plan;
 
-use App\Models\User;
-use App\Models\Plan; // 💡 実際のモデル名に合わせて置換してください
 use App\Enums\UserRole;
+use App\Enums\UserStatus; // 💡 実際のモデル名に合わせて置換してください
+use App\Models\Plan;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 use Tests\TestCase;
@@ -16,7 +17,9 @@ class AdminPlanControllerTest extends TestCase
     use RefreshDatabase;
 
     private User $adminUser;
+
     private User $student;
+
     private User $coach;
 
     /**
@@ -26,24 +29,24 @@ class AdminPlanControllerTest extends TestCase
     {
         parent::setUp();
 
-        $inProgressStatus = defined('\App\Enums\UserStatus::InProgress') 
-            ? \App\Enums\UserStatus::InProgress 
+        $inProgressStatus = defined('\App\Enums\UserStatus::InProgress')
+            ? UserStatus::InProgress
             : 'in_progress';
 
         // 1. 本物の管理者（Admin）アカウントを生成
         $this->adminUser = User::factory()->create([
-            'role'   => UserRole::Admin ?? 'admin',
+            'role' => UserRole::Admin ?? 'admin',
             'status' => $inProgressStatus,
         ]);
 
         // 2. アクセス拒否検証用の 受講生 と コーチ を生成
         $this->student = User::factory()->create([
-            'role'   => UserRole::Student,
+            'role' => UserRole::Student,
             'status' => $inProgressStatus,
         ]);
 
         $this->coach = User::factory()->create([
-            'role'   => UserRole::Coach,
+            'role' => UserRole::Coach,
             'status' => $inProgressStatus,
         ]);
     }
@@ -55,34 +58,34 @@ class AdminPlanControllerTest extends TestCase
     {
         // ターゲットとなるプランを生成
         $targetPlan = Plan::create([
-            'id'                    => (string) Str::ulid(),
-            'name'                  => '注目ターゲットプラン',
-            'description'           => '説明文',
-            'duration_days'         => 90,
+            'id' => (string) Str::ulid(),
+            'name' => '注目ターゲットプラン',
+            'description' => '説明文',
+            'duration_days' => 90,
             'default_meeting_quota' => 4,
-            'status'                => 'published',
-            'created_by_user_id'    => $this->adminUser->id,
-            'updated_by_user_id'    => $this->adminUser->id,
-            'sort_order'            => 1,
+            'status' => 'published',
+            'created_by_user_id' => $this->adminUser->id,
+            'updated_by_user_id' => $this->adminUser->id,
+            'sort_order' => 1,
         ]);
 
         // ノイズとなる下書きプランを生成
         Plan::create([
-            'id'                    => (string) Str::ulid(),
-            'name'                  => '無関係なダミー計画',
-            'description'           => '説明文',
-            'duration_days'         => 30,
+            'id' => (string) Str::ulid(),
+            'name' => '無関係なダミー計画',
+            'description' => '説明文',
+            'duration_days' => 30,
             'default_meeting_quota' => 2,
-            'status'                => 'draft',
-            'created_by_user_id'    => $this->adminUser->id,
-            'updated_by_user_id'    => $this->adminUser->id,
-            'sort_order'          => 2,
+            'status' => 'draft',
+            'created_by_user_id' => $this->adminUser->id,
+            'updated_by_user_id' => $this->adminUser->id,
+            'sort_order' => 2,
         ]);
 
         // 検索とフィルタを指定してGETリクエスト
         $response = $this->actingAs($this->adminUser)->get(route('admin.plans.index', [
             'keyword' => '注目',
-            'status'  => 'published',
+            'status' => 'published',
         ]));
 
         $response->assertStatus(200);
@@ -96,11 +99,11 @@ class AdminPlanControllerTest extends TestCase
     public function test_管理者は新しいプランを初期状態下書きとして正常に作成できること(): void
     {
         $postData = [
-            'name'                  => '新規プレミアム受講プラン',
-            'description'           => '充実したプランです。',
-            'duration_days'         => 180,
+            'name' => '新規プレミアム受講プラン',
+            'description' => '充実したプランです。',
+            'duration_days' => 180,
             'default_meeting_quota' => 12,
-            'sort_order'            => 3,
+            'sort_order' => 3,
         ];
 
         $response = $this->actingAs($this->adminUser)->post(route('admin.plans.store'), $postData);
@@ -111,12 +114,12 @@ class AdminPlanControllerTest extends TestCase
 
         // データベースに初期ステータス 'draft' で、本物マイグレーションのカラム名通りに保存されていること
         $this->assertDatabaseHas('plans', [
-            'name'                  => '新規プレミアム受講プラン',
-            'status'                => 'draft',
-            'duration_days'         => 180,
+            'name' => '新規プレミアム受講プラン',
+            'status' => 'draft',
+            'duration_days' => 180,
             'default_meeting_quota' => 12,
-            'created_by_user_id'    => $this->adminUser->id,
-            'updated_by_user_id'    => $this->adminUser->id,
+            'created_by_user_id' => $this->adminUser->id,
+            'updated_by_user_id' => $this->adminUser->id,
         ]);
     }
 
@@ -126,8 +129,8 @@ class AdminPlanControllerTest extends TestCase
     public function test_プラン新設時に必須項目や文字数上限を満たさない場合はバリデーションエラーになること(): void
     {
         $invalidData = [
-            'name'                  => str_repeat('P', 101), // 💡 マイグレーション制限の100文字をオーバー
-            'duration_days'         => '',                   // 必須項目欠落
+            'name' => str_repeat('P', 101), // 💡 マイグレーション制限の100文字をオーバー
+            'duration_days' => '',                   // 必須項目欠落
             'default_meeting_quota' => -1,                   // 不正な範囲の整数
         ];
 
@@ -145,13 +148,13 @@ class AdminPlanControllerTest extends TestCase
     public function test_管理者はプランの詳細表示およびステータスを維持したままの基本情報更新ができること(): void
     {
         $plan = Plan::create([
-            'id'                    => (string) Str::ulid(),
-            'name'                  => '更新前のプラン名',
-            'duration_days'         => 30,
+            'id' => (string) Str::ulid(),
+            'name' => '更新前のプラン名',
+            'duration_days' => 30,
             'default_meeting_quota' => 1,
-            'status'                => 'draft',
-            'created_by_user_id'    => $this->adminUser->id,
-            'updated_by_user_id'    => $this->adminUser->id,
+            'status' => 'draft',
+            'created_by_user_id' => $this->adminUser->id,
+            'updated_by_user_id' => $this->adminUser->id,
         ]);
 
         // 詳細画面の表示検証
@@ -160,8 +163,8 @@ class AdminPlanControllerTest extends TestCase
 
         // 基本情報のPUT更新（Bladeの要求するPUT指定に完全適合）
         $updateData = [
-            'name'                  => '完全に直したプラン名',
-            'duration_days'         => 45,
+            'name' => '完全に直したプラン名',
+            'duration_days' => 45,
             'default_meeting_quota' => 2,
         ];
 
@@ -170,12 +173,12 @@ class AdminPlanControllerTest extends TestCase
 
         // ステータスは「draft」のまま維持され、基本情報が更新されていること
         $this->assertDatabaseHas('plans', [
-            'id'                    => $plan->id,
-            'name'                  => '完全に直したプラン名',
-            'duration_days'         => 45,
+            'id' => $plan->id,
+            'name' => '完全に直したプラン名',
+            'duration_days' => 45,
             'default_meeting_quota' => 2,
-            'status'                => 'draft',
-            'updated_by_user_id'    => $this->adminUser->id,
+            'status' => 'draft',
+            'updated_by_user_id' => $this->adminUser->id,
         ]);
     }
 
@@ -186,13 +189,13 @@ class AdminPlanControllerTest extends TestCase
     {
         // 1. 削除可能な下書きプランの検証
         $draftPlan = Plan::create([
-            'id'                    => (string) Str::ulid(),
-            'name'                  => '消去していい下書きプラン',
-            'duration_days'         => 30,
+            'id' => (string) Str::ulid(),
+            'name' => '消去していい下書きプラン',
+            'duration_days' => 30,
             'default_meeting_quota' => 1,
-            'status'                => 'draft',
-            'created_by_user_id'    => $this->adminUser->id,
-            'updated_by_user_id'    => $this->adminUser->id,
+            'status' => 'draft',
+            'created_by_user_id' => $this->adminUser->id,
+            'updated_by_user_id' => $this->adminUser->id,
         ]);
 
         // 作成した下書きプランに対して削除リクエストを送信
@@ -201,13 +204,13 @@ class AdminPlanControllerTest extends TestCase
 
         // 2. ガード検証①：公開中（published）パックの削除不可
         $publishedPlan = Plan::create([
-            'id'                    => (string) Str::ulid(),
-            'name'                  => '公開中につき削除不可プラン',
-            'duration_days'         => 30,
+            'id' => (string) Str::ulid(),
+            'name' => '公開中につき削除不可プラン',
+            'duration_days' => 30,
             'default_meeting_quota' => 1,
-            'status'                => 'published',
-            'created_by_user_id'    => $this->adminUser->id,
-            'updated_by_user_id'    => $this->adminUser->id,
+            'status' => 'published',
+            'created_by_user_id' => $this->adminUser->id,
+            'updated_by_user_id' => $this->adminUser->id,
         ]);
 
         // 作成した公開中プランに対して削除リクエストを送信
@@ -221,13 +224,13 @@ class AdminPlanControllerTest extends TestCase
 
         // 3. ガード検証②：受講中ユーザーが参照しているプランの削除不可
         $referredPlan = Plan::create([
-            'id'                    => (string) Str::ulid(),
-            'name'                  => '受講生が紐づいているため削除不可プラン',
-            'duration_days'         => 30,
+            'id' => (string) Str::ulid(),
+            'name' => '受講生が紐づいているため削除不可プラン',
+            'duration_days' => 30,
             'default_meeting_quota' => 1,
-            'status'                => 'draft', // ステータスは下書きでも、参照がある
-            'created_by_user_id'    => $this->adminUser->id,
-            'updated_by_user_id'    => $this->adminUser->id,
+            'status' => 'draft', // ステータスは下書きでも、参照がある
+            'created_by_user_id' => $this->adminUser->id,
+            'updated_by_user_id' => $this->adminUser->id,
         ]);
 
         // テスト用受講生の plan_id カラムにこのプランのIDをセットして紐づける
@@ -249,13 +252,13 @@ class AdminPlanControllerTest extends TestCase
     public function test_プランのライフサイクルに沿ってステータスが正しく更新されること(): void
     {
         $plan = Plan::create([
-            'id'                    => (string) Str::ulid(),
-            'name'                  => '状態遷移テストプラン',
-            'duration_days'         => 30,
+            'id' => (string) Str::ulid(),
+            'name' => '状態遷移テストプラン',
+            'duration_days' => 30,
             'default_meeting_quota' => 1,
-            'status'                => 'draft',
-            'created_by_user_id'    => $this->adminUser->id,
-            'updated_by_user_id'    => $this->adminUser->id,
+            'status' => 'draft',
+            'created_by_user_id' => $this->adminUser->id,
+            'updated_by_user_id' => $this->adminUser->id,
         ]);
 
         // 1. 公開にする (publish)

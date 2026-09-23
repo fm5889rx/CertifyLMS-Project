@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Policies;
 
-use App\Models\User;
-use App\Models\Certificate;
 use App\Enums\UserRole;
+use App\Models\Certificate;
 use App\Models\Certification;
 use App\Models\Enrollment;
+use App\Models\User;
 
 class UserCertificatePolicy
 {
@@ -32,7 +32,7 @@ class UserCertificatePolicy
             $enrollment = Enrollment::findOrFail($certificate->enrollment_id);
             $certification = Certification::FindOrFail($enrollment?->certification_id);
 
-            if (!$certification) {
+            if (! $certification) {
                 return false;
             }
 

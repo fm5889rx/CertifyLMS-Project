@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Policies;
 
-use App\Enums\ContentStatus;
-use App\Enums\CertificationStatus;      // 追加：B-B-03
+use App\Enums\CertificationStatus;
+use App\Enums\ContentStatus;      // 追加：B-B-03
 use App\Enums\UserRole;
 use App\Models\Certification;
 use App\Models\Chapter;

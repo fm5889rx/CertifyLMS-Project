@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Notifications;
 
-use App\Models\User;
-use App\Models\Enrollment;
-use App\Models\Announcement;
-use App\Models\Certification;
-use App\Models\CertificationCategory;
-use App\Enums\UserRole;
-use App\Enums\UserStatus;
 use App\Enums\AnnouncementTargetType;
 use App\Enums\CertificationDifficulty;
 use App\Enums\CertificationStatus;
 use App\Enums\EnrollmentStatus;
 use App\Enums\TermType;
+use App\Enums\UserRole;
+use App\Enums\UserStatus;
+use App\Models\Announcement;
+use App\Models\Certification;
+use App\Models\CertificationCategory;
+use App\Models\Enrollment;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 use Tests\TestCase;
@@ -25,10 +25,15 @@ class AnnouncementControllerTest extends TestCase
     use RefreshDatabase;
 
     private User $studentA;
+
     private User $studentB;
+
     private User $coach;
+
     private User $adminUser;
+
     private Certification $certification;
+
     private Enrollment $enrollmentA;
 
     /**
@@ -44,34 +49,34 @@ class AnnouncementControllerTest extends TestCase
         // すべてのロールデータを準備
         $inProgressStatus = UserStatus::InProgress;
 
-        $this->studentA  = User::factory()->create(['role' => UserRole::Student, 'status' => $inProgressStatus]);
-        $this->studentB  = User::factory()->create(['role' => UserRole::Student, 'status' => $inProgressStatus]);
-        $this->coach     = User::factory()->create(['role' => UserRole::Coach, 'status' => $inProgressStatus]);
+        $this->studentA = User::factory()->create(['role' => UserRole::Student, 'status' => $inProgressStatus]);
+        $this->studentB = User::factory()->create(['role' => UserRole::Student, 'status' => $inProgressStatus]);
+        $this->coach = User::factory()->create(['role' => UserRole::Coach, 'status' => $inProgressStatus]);
         $this->adminUser = User::factory()->create(['role' => UserRole::Admin, 'status' => $inProgressStatus]);
 
         $category = CertificationCategory::create([
-            'id'   => (string) Str::ulid(),
-            'slug' => 'test-announcement-slug-' . Str::random(5),
+            'id' => (string) Str::ulid(),
+            'slug' => 'test-announcement-slug-'.Str::random(5),
             'name' => 'テストお知らせカテゴリ',
         ]);
 
         $this->certification = Certification::create([
-            'id'                  => (string) Str::ulid(),
-            'category_id'         => $category->id,
-            'name'                => 'テスト対象資格マスター',
-            'difficulty'          => CertificationDifficulty::Intermediate,
-            'status'              => CertificationStatus::Published,
-            'created_by_user_id'  => $this->adminUser->id,
-            'updated_by_user_id'  => $this->adminUser->id,
+            'id' => (string) Str::ulid(),
+            'category_id' => $category->id,
+            'name' => 'テスト対象資格マスター',
+            'difficulty' => CertificationDifficulty::Intermediate,
+            'status' => CertificationStatus::Published,
+            'created_by_user_id' => $this->adminUser->id,
+            'updated_by_user_id' => $this->adminUser->id,
         ]);
 
         $this->enrollmentA = Enrollment::create([
-            'id'               => (string) Str::ulid(),
-            'user_id'          => $this->studentA->id,
+            'id' => (string) Str::ulid(),
+            'user_id' => $this->studentA->id,
             'certification_id' => $this->certification->id,
-            'status'           => EnrollmentStatus::Learning,
-            'current_term'     => TermType::BasicLearning,
-            'exam_date'        => now()->addMonths(3)->toDateString(),
+            'status' => EnrollmentStatus::Learning,
+            'current_term' => TermType::BasicLearning,
+            'exam_date' => now()->addMonths(3)->toDateString(),
         ]);
     }
 
@@ -82,8 +87,8 @@ class AnnouncementControllerTest extends TestCase
     {
         // 配信データを準備
         $postData = [
-            'title'       => 'サーバーメンテナンスのお知らせ',
-            'body'        => '今週末の日曜日の午前2時から4時までシステムメンテナンスを行います。',
+            'title' => 'サーバーメンテナンスのお知らせ',
+            'body' => '今週末の日曜日の午前2時から4時までシステムメンテナンスを行います。',
             'target_type' => AnnouncementTargetType::AllStudents->value, // 💡本物のバリュー 'all'
         ];
 
@@ -96,16 +101,16 @@ class AnnouncementControllerTest extends TestCase
 
         // テーブルに新規追加されているか検証
         $this->assertDatabaseHas('announcements', [
-            'title'              => 'サーバーメンテナンスのお知らせ',
-            'target_type'        => AnnouncementTargetType::AllStudents->value,
-            'dispatched_count'   => 2,
+            'title' => 'サーバーメンテナンスのお知らせ',
+            'target_type' => AnnouncementTargetType::AllStudents->value,
+            'dispatched_count' => 2,
             'created_by_user_id' => $this->adminUser->id,
         ]);
 
         // 通知基盤へのリレー連動を検証
         $this->assertDatabaseHas('notifications', [
             'notifiable_id' => $this->studentA->id,
-            'type'          => 'App\Notifications\AdminAnnouncementNotification',
+            'type' => 'App\Notifications\AdminAnnouncementNotification',
         ]);
     }
 
@@ -116,9 +121,9 @@ class AnnouncementControllerTest extends TestCase
     {
         // 配信データを準備
         $postData = [
-            'title'                   => '教材アップデートの告知',
-            'body'                    => '指定資格の新しい模擬試験問題を追加しました。確認してください。',
-            'target_type'             => AnnouncementTargetType::Certification->value,
+            'title' => '教材アップデートの告知',
+            'body' => '指定資格の新しい模擬試験問題を追加しました。確認してください。',
+            'target_type' => AnnouncementTargetType::Certification->value,
             'target_certification_id' => $this->certification->id,
         ];
 
@@ -130,8 +135,8 @@ class AnnouncementControllerTest extends TestCase
 
         // 配信先が資格指定かどうか検証
         $this->assertDatabaseHas('announcements', [
-            'title'            => '教材アップデートの告知',
-            'target_type'      => AnnouncementTargetType::Certification->value,
+            'title' => '教材アップデートの告知',
+            'target_type' => AnnouncementTargetType::Certification->value,
             'dispatched_count' => 1,
         ]);
 
@@ -147,9 +152,9 @@ class AnnouncementControllerTest extends TestCase
     {
         // 配信データを準備
         $postData = [
-            'title'          => '個別フォローアップ連絡',
-            'body'           => '最近の学習進捗について個別に確認したい事項があります。',
-            'target_type'    => AnnouncementTargetType::User->value,
+            'title' => '個別フォローアップ連絡',
+            'body' => '最近の学習進捗について個別に確認したい事項があります。',
+            'target_type' => AnnouncementTargetType::User->value,
             'target_user_id' => $this->studentA->id,
         ];
 
@@ -161,7 +166,7 @@ class AnnouncementControllerTest extends TestCase
 
         // 配信先がユーザ指定になっているか検証
         $this->assertDatabaseHas('announcements', [
-            'target_type'      => AnnouncementTargetType::User->value,
+            'target_type' => AnnouncementTargetType::User->value,
             'dispatched_count' => 1,
         ]);
 
@@ -177,13 +182,13 @@ class AnnouncementControllerTest extends TestCase
     {
         // 配信データを作成
         $announcement = Announcement::create([
-            'id'                 => (string) Str::ulid(),
-            'title'              => '過去の配信履歴タイトル',
-            'body'               => '過去の本文内容です。',
-            'target_type'        => AnnouncementTargetType::AllStudents, // 💡Enumキャスト
-            'dispatched_count'   => 5,
+            'id' => (string) Str::ulid(),
+            'title' => '過去の配信履歴タイトル',
+            'body' => '過去の本文内容です。',
+            'target_type' => AnnouncementTargetType::AllStudents, // 💡Enumキャスト
+            'dispatched_count' => 5,
             'created_by_user_id' => $this->adminUser->id,
-            'dispatched_at'      => now(),
+            'dispatched_at' => now(),
         ]);
 
         // 配信一覧取得のGETリクエスト
@@ -213,8 +218,8 @@ class AnnouncementControllerTest extends TestCase
 
         // 受講生が配信しようとするPOSTリクエスト
         $response = $this->actingAs($this->studentA)->post(route('admin.announcements.store'), [
-            'title'       => '受講生が勝手に送るタイトル',
-            'body'        => '本文',
+            'title' => '受講生が勝手に送るタイトル',
+            'body' => '本文',
             'target_type' => AnnouncementTargetType::AllStudents->value,
         ]);
         // 権限エラー403が返ってくるか検証

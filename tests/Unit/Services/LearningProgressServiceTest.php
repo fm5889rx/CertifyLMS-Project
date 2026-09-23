@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Services\Learning;
 
-use App\Services\Learning\LearningProgressService;
-use App\Services\Learning\ProgressSummary;
-use App\Models\User;
-use App\Models\Enrollment;
+use App\Enums\CertificationDifficulty;
+use App\Enums\EnrollmentStatus;
+use App\Enums\UserRole;
 use App\Models\Certification;
 use App\Models\CertificationCategory;
-use App\Enums\UserRole;
-use App\Enums\EnrollmentStatus;
-use App\Enums\CertificationDifficulty;
+use App\Models\Enrollment;
+use App\Models\User;
+use App\Services\Learning\LearningProgressService;
+use App\Services\Learning\ProgressSummary;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -36,7 +36,7 @@ class LearningProgressServiceTest extends TestCase
      * 進捗マスタが空の境界値状態であっても、型破綻（Null等）を起こさずに
      * 進捗率 0.0 の ProgressSummary インスタンスが正しく組み立てられて返却されるかを検証する。
      */
-    public function test_LearningProgressServiceが単一の受講登録から4階層の進捗サマリを型安全に算出できること(): void
+    public function test_learning_progress_serviceが単一の受講登録から4階層の進捗サマリを型安全に算出できること(): void
     {
         // 1. 物理層外部キー制約を満たす最低限の親マスタを Eloquent 生成
         $student = User::factory()->create(['role' => UserRole::Student]);
@@ -47,18 +47,18 @@ class LearningProgressServiceTest extends TestCase
         ]);
 
         $certification = Certification::create([
-            'name'               => '進捗検証用資格',
-            'category_id'        => $category->id,
-            'difficulty'         => CertificationDifficulty::Intermediate,
-            'status'             => 'published',
+            'name' => '進捗検証用資格',
+            'category_id' => $category->id,
+            'difficulty' => CertificationDifficulty::Intermediate,
+            'status' => 'published',
             'created_by_user_id' => $student->id,
             'updated_by_user_id' => $student->id,
         ]);
 
         $enrollment = Enrollment::create([
-            'user_id'          => $student->id,
+            'user_id' => $student->id,
             'certification_id' => $certification->id,
-            'status'           => EnrollmentStatus::Learning->value,
+            'status' => EnrollmentStatus::Learning->value,
         ]);
 
         // 2. 集約サービスのインスタンスをコンテナからクリーンロード
@@ -83,7 +83,7 @@ class LearningProgressServiceTest extends TestCase
      * 各 Enrollment.id をキーとした完了率（0.0〜1.0）の連想配列を正確に生成できるかを検証する。
      * （N+1回避の担保）
      */
-    public function test_LearningProgressServiceがダッシュボード用に複数の受講登録からSection単位の完了率を一括算出できること(): void
+    public function test_learning_progress_serviceがダッシュボード用に複数の受講登録から_section単位の完了率を一括算出できること(): void
     {
         // 1. 物理層外部キー制約を満たす最低限の親マスタを Eloquent 生成
         $student = User::factory()->create(['role' => UserRole::Student]);
@@ -94,18 +94,18 @@ class LearningProgressServiceTest extends TestCase
         ]);
 
         $certification = Certification::create([
-            'name'               => 'ダッシュボード用資格',
-            'category_id'        => $category->id,
-            'difficulty'         => CertificationDifficulty::Intermediate,
-            'status'             => 'published',
+            'name' => 'ダッシュボード用資格',
+            'category_id' => $category->id,
+            'difficulty' => CertificationDifficulty::Intermediate,
+            'status' => 'published',
             'created_by_user_id' => $student->id,
             'updated_by_user_id' => $student->id,
         ]);
 
         $enrollment = Enrollment::create([
-            'user_id'          => $student->id,
+            'user_id' => $student->id,
             'certification_id' => $certification->id,
-            'status'           => EnrollmentStatus::Learning->value,
+            'status' => EnrollmentStatus::Learning->value,
         ]);
 
         // 2. 集約サービスのインスタンスをコンテナからクリーンロード

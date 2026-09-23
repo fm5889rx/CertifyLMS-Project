@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\Api\v1;
 
-use App\Models\User;
 use App\Enums\UserRole;
 use App\Enums\UserStatus;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 use Tests\TestCase;
@@ -19,7 +19,9 @@ class NotificationApiIntegrationTest extends TestCase
     use RefreshDatabase;
 
     private User $studentA;
+
     private User $studentB;
+
     private User $adminUser;
 
     /**
@@ -39,7 +41,7 @@ class NotificationApiIntegrationTest extends TestCase
      * @test
      * 👑 1. 未認証クライアントの 401 瞬殺ブロック検証
      */
-    public function test_未認証クライアントが通知_JSON_APIに直叩きすると401エラーを返すこと(): void
+    public function test_未認証クライアントが通知_jso_n_ap_iに直叩きすると401エラーを返すこと(): void
     {
         $response = $this->getJson('/api/v1/notifications');
         $response->assertStatus(401);
@@ -49,7 +51,7 @@ class NotificationApiIntegrationTest extends TestCase
      * @test
      * 👑 2. 認証済受講生による、自らの通知一覧 JSON の正常取得検証（時系列降順）
      */
-    public function test_認証済受講生は自分の通知一覧_JSON_を正常取得できること(): void
+    public function test_認証済受講生は自分の通知一覧_jso_n_を正常取得できること(): void
     {
         // 受講生A宛ての通知をインサート
         $this->studentA->notifications()->create([
@@ -64,8 +66,8 @@ class NotificationApiIntegrationTest extends TestCase
             ->assertJsonStructure([
                 'unread_count',
                 'notifications' => [
-                    '*' => ['id', 'title', 'message', 'time', 'is_unread', 'action_url']
-                ]
+                    '*' => ['id', 'title', 'message', 'time', 'is_unread', 'action_url'],
+                ],
             ]);
     }
 
@@ -73,7 +75,7 @@ class NotificationApiIntegrationTest extends TestCase
      * @test
      * 👑 3. 認証済ユーザー A による、他者 B の通知 ID 既読化操作に対する 403 窒息遮断検証
      */
-    public function test_認証済ユーザーAが他者Bの通知IDを指定して既読化APIを叩くと403エラーが返ること(): void
+    public function test_認証済ユーザー_aが他者_bの通知_i_dを指定して既読化_ap_iを叩くと403エラーが返ること(): void
     {
         // 受講生B宛ての通知をインサート
         $notifB = $this->studentB->notifications()->create([
@@ -94,14 +96,14 @@ class NotificationApiIntegrationTest extends TestCase
      * @test
      * 👑 4. 管理者（admin）アクセス時の空状態（0件）解決のフォールバック検証
      */
-    public function test_認証済の管理者アクセス時は0件の空配列JSONを安全に200成功で返すこと(): void
+    public function test_認証済の管理者アクセス時は0件の空配列_jso_nを安全に200成功で返すこと(): void
     {
         $response = $this->actingAs($this->adminUser, 'sanctum')->getJson('/api/v1/notifications');
 
         $response->assertStatus(200)
             ->assertJson([
                 'notifications' => [],
-                'unread_count' => 0
+                'unread_count' => 0,
             ]);
     }
 

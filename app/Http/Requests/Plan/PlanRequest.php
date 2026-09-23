@@ -16,11 +16,11 @@ class PlanRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'                  => ['required', 'string', 'max:100'],
-            'description'           => ['nullable', 'string', 'max:1000'],
-            'duration_days'         => ['required', 'integer', 'min:1'],
+            'name' => ['required', 'string', 'max:100'],
+            'description' => ['nullable', 'string', 'max:1000'],
+            'duration_days' => ['required', 'integer', 'min:1'],
             'default_meeting_quota' => ['required', 'integer', 'min:0'],
-            'sort_order'            => ['nullable', 'integer', 'min:0'],
+            'sort_order' => ['nullable', 'integer', 'min:0'],
         ];
     }
 }

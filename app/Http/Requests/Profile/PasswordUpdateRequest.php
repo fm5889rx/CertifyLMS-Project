@@ -27,7 +27,7 @@ class PasswordUpdateRequest extends FormRequest
             'current_password' => ['required', 'string', 'current_password'],
 
             // 新しいパスワード：必須 / 確認用入力との一致（confirmed）/ 最低8文字制限
-            'password'         => ['required', 'string', 'confirmed', Password::min(8)],
+            'password' => ['required', 'string', 'confirmed', Password::min(8)],
         ];
     }
 }

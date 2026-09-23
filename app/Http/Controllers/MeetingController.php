@@ -4,25 +4,25 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Actions\Meeting\CancelMeetingAction;
+use App\Actions\Meeting\FetchAvailabilityAction;
+use App\Actions\Meeting\IndexCoachMeetingAction;
+use App\Actions\Meeting\IndexMeetingAction;
+use App\Actions\Meeting\ShowMeetingAction;
+use App\Actions\Meeting\StoreMeetingAction;
+use App\Actions\Meeting\UpsertMeetingMemoAction;
 use App\Enums\EnrollmentStatus;
 use App\Enums\MeetingStatus;
 use App\Http\Requests\Meeting\AvailabilityRequest;
 use App\Http\Requests\Meeting\IndexAsCoachRequest;
 use App\Http\Requests\Meeting\IndexRequest;
-use App\Http\Requests\Meeting\StoreRequest;
-use App\Http\Requests\Meeting\UpsertMemoRequest;
-use App\Models\Certification;
-use App\Models\Enrollment;
-use App\Models\Meeting;
-use App\Models\User;
-use App\Services\MeetingQuotaService;
-use App\Actions\Meeting\IndexMeetingAction;             // T-A-02：追加
-use App\Actions\Meeting\IndexCoachMeetingAction;        // T-A-02：追加
-use App\Actions\Meeting\ShowMeetingAction;              // T-A-02：追加
-use App\Actions\Meeting\StoreMeetingAction;             // T-A-02：追加
-use App\Actions\Meeting\CancelMeetingAction;            // T-A-02：追加
-use App\Actions\Meeting\UpsertMeetingMemoAction;        // T-A-02：追加
-use App\Actions\Meeting\FetchAvailabilityAction;        // T-A-02：追加
+use App\Http\Requests\Meeting\StoreRequest;             // T-A-02：追加
+use App\Http\Requests\Meeting\UpsertMemoRequest;        // T-A-02：追加
+use App\Models\Certification;              // T-A-02：追加
+use App\Models\Enrollment;             // T-A-02：追加
+use App\Models\Meeting;            // T-A-02：追加
+use App\Models\User;        // T-A-02：追加
+use App\Services\MeetingQuotaService;        // T-A-02：追加
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -80,6 +80,7 @@ class MeetingController extends Controller
     public function show(Meeting $meeting, ShowMeetingAction $action): View
     {
         $this->authorize('view', $meeting);
+
         return view('meeting.show', ['meeting' => $action($meeting)]);
     }
 
@@ -147,9 +148,9 @@ class MeetingController extends Controller
     public function upsertMemo(Meeting $meeting, UpsertMemoRequest $request, UpsertMeetingMemoAction $action): RedirectResponse
     {
         $action($meeting, $request->validated('body'));
+
         return redirect()->route('meetings.show', $meeting)->with('success', '面談メモを保存しました。');
     }
-
 
     /**
      * 予約画面が呼ぶ空き枠取得 JSON エンドポイント。
@@ -162,7 +163,7 @@ class MeetingController extends Controller
 
         return response()->json([
             'date' => $date->toDateString(),
-            'slots' => $slots->map(fn(array $slot) => [
+            'slots' => $slots->map(fn (array $slot) => [
                 'slot_start' => $slot['slot_start']->toIso8601String(),
                 'slot_end' => $slot['slot_end']->toIso8601String(),
                 'available_coach_count' => $slot['available_coach_count'],
