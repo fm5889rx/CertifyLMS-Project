@@ -79,6 +79,7 @@ class MeetingPack extends Model
     {
         return $query->orderBy('sort_order')->orderByDesc('created_at');
     }
+
     /**
      * 面談パックに紐づく購入決済履歴一覧
      *

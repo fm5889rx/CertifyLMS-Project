@@ -41,7 +41,7 @@ class FetchAdminDashboardAction
                 return $statsService->adminKpi();
             });
         } catch (\Throwable $e) {
-            $kpi = null; 
+            $kpi = null;
         }
 
         // View側の配列ブラケットアクセス規約を満たすため、連想配列型へ均一化
@@ -54,7 +54,7 @@ class FetchAdminDashboardAction
             $byCertificationTop10 = cache()->remember('admin_dashboard_top10_cache_key', $ttl, function () use ($statsService) {
                 try {
                     $res = $statsService->byCertificationTop10();
-                    if ($res !== null && !$res->isEmpty()) {
+                    if ($res !== null && ! $res->isEmpty()) {
                         return $res;
                     }
                 } catch (\Throwable $e) {
@@ -70,22 +70,23 @@ class FetchAdminDashboardAction
 
                     if ($learningCount > 0 || $passedCount > 0 || $failedCount > 0) {
                         $rawTop10[] = [
-                            'certification_id'   => $cert->id,
+                            'certification_id' => $cert->id,
                             'certification_name' => $cert->name,
-                            'learning'           => $learningCount,
-                            'passed'             => $passedCount,
-                            'failed'             => $failedCount,
+                            'learning' => $learningCount,
+                            'passed' => $passedCount,
+                            'failed' => $failedCount,
                         ];
                     }
                 }
                 // 受講中（learning）の件数が多い順にソートして上位 10 件をスライス抽出
-                usort($rawTop10, fn($a, $b) => $b['learning'] <=> $a['learning']);
+                usort($rawTop10, fn ($a, $b) => $b['learning'] <=> $a['learning']);
+
                 return collect(array_slice($rawTop10, 0, 10));
             });
         } catch (\Throwable $e) {
             $byCertificationTop10 = collect([]);
         }
-        if (!$byCertificationTop10 instanceof Collection) {
+        if (! $byCertificationTop10 instanceof Collection) {
             $byCertificationTop10 = collect($byCertificationTop10);
         }
 
@@ -97,7 +98,7 @@ class FetchAdminDashboardAction
         } catch (\Throwable $e) {
             $completionRateByCertification = collect([]);
         }
-        if (!$completionRateByCertification instanceof Collection) {
+        if (! $completionRateByCertification instanceof Collection) {
             $completionRateByCertification = collect($completionRateByCertification);
         }
 

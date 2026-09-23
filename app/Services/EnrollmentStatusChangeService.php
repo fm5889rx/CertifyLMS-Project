@@ -6,8 +6,6 @@ namespace App\Services;
 
 use App\Models\Enrollment;
 use App\Models\User;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
 
 /**
  * Enrollment 状態遷移の監査ログ(`EnrollmentStatusLog`)を INSERT する Service。
@@ -38,11 +36,11 @@ final class EnrollmentStatusChangeService
     {
         // データベースへのログ保存
         $enrollment->statusLogs()->create([
-            'from_status'        => is_object($fromStatus) ? $fromStatus->value : $fromStatus,
-            'to_status'          => is_object($toStatus) ? $toStatus->value : $toStatus,
+            'from_status' => is_object($fromStatus) ? $fromStatus->value : $fromStatus,
+            'to_status' => is_object($toStatus) ? $toStatus->value : $toStatus,
             'changed_by_user_id' => $changedBy ? $changedBy->id : null,
-            'changed_reason'     => is_object($reason) ? $reason->value : $reason,
-            'changed_at'         => now(),
+            'changed_reason' => is_object($reason) ? $reason->value : $reason,
+            'changed_at' => now(),
         ]);
 
         // 【T-A-06核心要件：受講状態の遷移に伴うダッシュボードキャッシュの即時無効化（パージ）】

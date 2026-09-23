@@ -6,7 +6,6 @@ namespace App\Models;
 
 use App\Enums\EnrollmentStatus;
 use App\Enums\TermType;
-use App\Enums\UserRole;
 use Database\Factories\EnrollmentFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
@@ -178,6 +177,7 @@ class Enrollment extends Model
                     $q->whereNotNull('id');
                 });
         }
+
         return $query->where('user_id', $user->id);
     }
 }

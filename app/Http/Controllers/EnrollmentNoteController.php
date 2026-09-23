@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\EnrollmentNote\EnrollmentNoteRequest;
 use App\Models\Enrollment;
 use App\Models\EnrollmentNote;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -19,7 +20,7 @@ class EnrollmentNoteController extends Controller
      */
     public function store(EnrollmentNoteRequest $request, string $enrollmentId): RedirectResponse
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
         // 受講生からのアクセスは一律で403エラーで排除
@@ -48,7 +49,7 @@ class EnrollmentNoteController extends Controller
     {
         $note = EnrollmentNote::where('id', $id)->firstOrFail();
 
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
         // ロールが受講生なら403エラーを返して排除
@@ -57,7 +58,7 @@ class EnrollmentNoteController extends Controller
         }
 
         // 管理者ではない、かつ自分が書いたメモではない場合は403で排除
-        if (!$user->isAdmin() && (string) $note->user_id !== (string) $user->id) {
+        if (! $user->isAdmin() && (string) $note->user_id !== (string) $user->id) {
             abort(403, '他人が作成したメモを編集する権限がありません。');
         }
 
@@ -72,7 +73,7 @@ class EnrollmentNoteController extends Controller
     {
         $note = EnrollmentNote::where('id', $id)->firstOrFail();
 
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
         // ロールが受講生なら403エラーで排除
@@ -81,7 +82,7 @@ class EnrollmentNoteController extends Controller
         }
 
         // ロールが管理者でない、かつ自分以外がアクセスした時は403エラーで排除
-        if (!$user->isAdmin() && (string) $note->user_id !== (string) $user->id) {
+        if (! $user->isAdmin() && (string) $note->user_id !== (string) $user->id) {
             abort(403, '他人が作成したメモを編集する権限がありません。');
         }
 
@@ -101,7 +102,7 @@ class EnrollmentNoteController extends Controller
     {
         $note = EnrollmentNote::where('id', $id)->firstOrFail();
 
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
         // 受講生は403エラーで排除
@@ -110,7 +111,7 @@ class EnrollmentNoteController extends Controller
         }
 
         // ロールが管理者でない、かつメモの所有者が自分以外の場合403エラーで排除
-        if (!$user->isAdmin() && (string) $note->user_id !== (string) $user->id) {
+        if (! $user->isAdmin() && (string) $note->user_id !== (string) $user->id) {
             abort(403, '他人が作成したメモを削除する権限がありません。');
         }
 

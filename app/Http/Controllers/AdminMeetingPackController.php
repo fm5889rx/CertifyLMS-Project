@@ -91,11 +91,11 @@ class AdminMeetingPackController extends Controller
      */
     public function update(MeetingPackRequest $request, string $id): RedirectResponse
     {
-//        $pack = MeetingPack::where('id', $id)->firstOrFail();
+        //        $pack = MeetingPack::where('id', $id)->firstOrFail();
         $plan = MeetingPack::where('id', $id)->firstOrFail();
         $data['updated_by_user_id'] = Auth::id();
 
-//        $pack->update($request->validated());
+        //        $pack->update($request->validated());
         $plan->update(array_merge($request->validated(), [
             'updated_by_user_id' => Auth::id(),
         ]));

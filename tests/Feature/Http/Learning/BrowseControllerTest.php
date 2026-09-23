@@ -92,7 +92,7 @@ class BrowseControllerTest extends TestCase
         $student = User::factory()->student()->inProgress()->create();
         $cert = Certification::factory()->published()->create();
         $part = Part::factory()->for($cert)->create([
-            'status' => ContentStatus::Published->value
+            'status' => ContentStatus::Published->value,
         ]);
 
         $response = $this->actingAs($student)->get(route('learning.parts.show', $part));
