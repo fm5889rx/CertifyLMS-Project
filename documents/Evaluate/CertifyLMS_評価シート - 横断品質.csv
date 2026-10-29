@@ -1,0 +1,11 @@
+大項目,中項目,評価基準,評価点,可否,点数
+横断品質,コード品質,プロジェクト一式が Laravel Pint で整形されている（sail bin pint --test を実行し「No fixable issues were found」と表示される）,3,TRUE,3
+横断品質,コード品質,追加・変更されたコードが既存の設計パターンに倣っている（Controller を薄く保ち業務ロジックを Action / Service へ切り出す / namespace は Controller=App\Http\Controllers・API=App\Http\Controllers\Api\V1・テスト=Tests\Feature\Http\... の規約に従う。確認は主に Controller）,8,FALSE,0
+横断品質,コード品質,追加・変更されたコードに明らかな規約逸脱がない（変数名に a / x 等の無意味な名前やローマ字を用いない / 不要な use・コメントアウトを残さない / DB 操作は Eloquent・バリデーションは FormRequest で統一）,5,FALSE,0
+横断品質,コード品質,追加された一覧・集計取得に N+1 の新規混入がない（Eager Loading〈with / withCount〉で回避）。客観担保＝パフォーマンス Task の同梱クエリ数テスト、加えて代表箇所（質問一覧 / ダッシュボード集計 / お知らせ履歴）を目視で確認（全 PR の精査は不要）,6,FALSE,0
+横断品質,コード品質,（応用）追加・変更されたコードの型・ドキュメント作法が既存と同水準（引数・戻り値の型宣言 / declare(strict_types=1) / 主要メソッドの PHPDoc に処理内容を記述、引数・戻り値は型宣言で担保）,5,FALSE,0
+横断品質,コード品質,（応用）外部 API キー・シークレット（Google / Gemini / Stripe）が .env で管理され、コードにハードコードされていない,4,TRUE,4
+横断品質,テスト,sail artisan test で全テストが pass する（同梱の赤テスト＝全 Bug・パフォーマンス Task を解消 + 既存テストを壊さない + 追加されたテストが緑）,10,TRUE,10
+横断品質,テスト,追加されたテストがスモークでなく振る舞い（DB 反映 / 画面表示 / 認可 / 計算結果）を検証している,6,TRUE,6
+横断品質,テスト,（応用）追加実装分を含めてテストカバレッジが目標値（80% 以上）を満たす（Story 実装にテストを伴わせないと割り込む水準）,5,TRUE,5
+横断品質,README,README に外部 API 連携の .env 設定等、新規に必要な設定が追記され、その手順で環境構築できる,5,TRUE,5

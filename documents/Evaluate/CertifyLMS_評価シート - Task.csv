@@ -1,0 +1,22 @@
+大項目,中項目,評価基準,評価点,可否,点数
+チケット要件,T-B-01 コーチダッシュボードの担当受講生一覧の N+1 解消,"コーチダッシュボードの担当受講生一覧で受講生情報・担当資格・最終活動日時が一括取得され N+1 が解消されている
+確認方法（テスト）: 同梱の tests/Feature/Http/Dashboard/DashboardQueryCountTest.php::test_coach_dashboard_does_not_explode_with_more_enrollments（修正前は失敗）が pass する（担当受講生を増やしても発行クエリ数が増えないことを検証）",2,TRUE,2
+チケット要件,T-B-02 大量レコードを扱う定期実行処理のメモリ最適化（chunk 処理）,"対象 3 件の定期実行コマンドが、1 回の読み込み件数を超える件数（例: 数百件）を投入してもコマンドが完走し、処理中に絞り込み条件となる状態を更新しても取りこぼしが起きず、対象全件が期待どおり状態遷移する
+確認方法（テスト）: 同梱の tests/Feature/Commands/ScheduleCommandChunkTest.php（対象 3 コマンドの全件処理を検証、修正前は失敗）が pass する",2,TRUE,2
+チケット要件,T-A-01 模試マスタ一覧の N+1 解消,"模試マスタ一覧で、模試の件数が増えても発行クエリ数が増えない（所属資格 / 作成者 / 更新者 / 問題数が一括取得される）
+確認方法（テスト）: 同梱の tests/Feature/Http/MockExam/MockExamIndexQueryCountTest.php::test_index_query_count_does_not_grow_with_mock_exam_count（修正前は失敗）が pass する",2,TRUE,2
+チケット要件,T-A-02 面談機能のロジックを Action へ分離,MeetingController の受講生予約 / 当事者キャンセル / コーチメモ upsert の状態変更 3 操作の業務ロジックが単一責務 Action（例: Meeting\StoreAction / CancelAction / UpsertMemoAction）に切り出され、各 Controller メソッドが Action 呼出 + 認可委譲 + レスポンス整形のみの薄いラッパー（業務ロジックの if / 計算 0 行）になっている,2,TRUE,2
+チケット要件,T-A-02 面談機能のロジックを Action へ分離,MeetingController の受講生向け一覧 / コーチ向け一覧 / 面談詳細 / 空き枠取得の取得系 4 メソッドのデータ取得処理が対応する Action（例: Meeting\IndexAction / IndexAsCoachAction / ShowAction / FetchAvailabilityAction）に切り出され、各 Controller メソッドがクエリ組み立てを持たず Action 呼出 + レスポンス整形のみになっている（予約フォーム表示の create / createFallback は対象外）,1,TRUE,1
+チケット要件,T-A-02 面談機能のロジックを Action へ分離,状態変更を伴う Action がトランザクション境界で全副作用を囲み、整合性違反（残面談回数 0 / 枠外 / 候補コーチ 0 名 / 状態遷移不可 / 開始時刻超過 等）を Action 内で面談ドメインの専用例外（例: app/Exceptions/Mentoring/* + InsufficientMeetingQuotaException。クラス名・配置は例で、完全一致は不要）で throw してロールバックする,1,TRUE,1
+チケット要件,T-A-02 面談機能のロジックを Action へ分離,本チケットの機能に対するテスト（Unit / Feature 等）が実装されている（状態変更系 Action の単体テスト + 取得系の振る舞いテストを含む。模範解答: StoreActionTest / CancelActionTest / UpsertMemoActionTest + MeetingControllerTest）,1,TRUE,1
+チケット要件,T-A-03 学習進捗の集計ロジックを Service へ集約,学習進捗の集計処理（EnrollmentController::show / ShowEnrollmentAction / FetchStudentDashboardAction で利用）が専用 Service（例: ProgressService）に集約されており、各 Controller / Action 側に進捗集計の重複ロジックが残っていない,2,TRUE,2
+チケット要件,T-A-03 学習進捗の集計ロジックを Service へ集約,本チケットの機能に対するテスト（Unit / Feature 等）が実装されている（集約した Service の単体テストを含む。模範解答: ProgressServiceTest）,1,TRUE,1
+チケット要件,T-A-04 外部 API 連携のモックテスト追加,3 つの外部 API 連携（Google Calendar / Gemini AI / Stripe Webhook）それぞれに外部 API へ実接続しないモックテストが追加され、正常系に加えて異常系・境界系（HTTP エラー / 一時エラーからのリトライ / トークン期限切れ・リフレッシュ / 空応答 / 署名の有効・無効・欠落 / 二重配信の冪等性 等）を検証している,2,TRUE,2
+チケット要件,T-A-04 外部 API 連携のモックテスト追加,利用側（面談予約 / キャンセル / 空き枠集計 / 連携設定）のテストが外部ライブラリの低レベル呼出ではなく外部連携のまとまり単位でスタブ化されている,1,FALSE,0
+チケット要件,T-A-04 外部 API 連携のモックテスト追加,テスト実行時に外部 API への実通信が発生せず、外部 API 依存テストをグループ指定で分離実行できる（例: #[Group('external')] + sail bin phpunit --exclude-group external で分離実行でき、通常実行では実通信が起きない）,1,FALSE,0
+チケット要件,T-A-05 通知・メール配信の非同期化（キュー + worker）,"一斉配信が非同期化され、配信処理がリクエストをブロックせず即座に完了し（送信はバックグラウンド、worker 稼働後に各受講生へ届く）、送信が一時失敗した場合は自動リトライ・上限超過は失敗ジョブとして記録される
+確認方法（テスト）: 同梱 tests/Unit/Mail/InvitationMailTest.php::test_mailable_implements_should_queue_for_async_delivery（修正前は赤）が pass する",2,TRUE,2
+チケット要件,T-A-06 管理者ダッシュボード集計のキャッシュ化,"全体 KPI と資格別修了率が一定時間キャッシュされ、短時間に連続表示しても重い集計クエリが再実行されない（保存中はデータを直接増やしても表示件数・修了率が変わらない）
+確認方法（テスト）: 同梱 tests/Feature/UseCases/Dashboard/AdminDashboardCacheTest.php の test_admin_kpi_is_served_from_cache_on_second_fetch / test_completion_rate_is_served_from_cache_on_second_fetch（キャッシュ未実装では赤）が pass する",1,TRUE,1
+チケット要件,T-A-06 管理者ダッシュボード集計のキャッシュ化,"受講状態の遷移後にダッシュボードを開くと全体 KPI と資格別修了率がともに無効化され最新の集計値が表示される（古い件数・古い修了率が残らない）
+確認方法（テスト）: 同梱 AdminDashboardCacheTest.php の test_admin_kpi_cache_is_invalidated_on_enrollment_status_change / test_completion_rate_cache_is_invalidated_on_enrollment_status_change（無効化未実装だと赤）が pass する",1,TRUE,1
