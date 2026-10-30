@@ -31,6 +31,7 @@ class DatabaseSeeder extends Seeder
             ChatSeeder::class,
             CertificateSeeder::class,
             QaThreadSeeder::class,                      // 追加：S-B-01
+            PaymentSeeder::class,                       // 追加：S-B-02
             NotificationSeeder::class,                  // 追加：S-B-04
             LearningGoalSeeder::class,                  // 追加：S-B-05
             EnrollmentNoteSeeder::class,                // 追加：S-B-07
