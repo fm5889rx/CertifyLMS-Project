@@ -69,7 +69,7 @@ class ProfileControllerTest extends TestCase
     {
         $patchData = [
             'name' => '新しき受講生氏名',
-            'introduction' => '新しく書き換えた最高の自己紹介文（bio）です。',
+            'bio'  => '新しく書き換えた最高の自己紹介文（bio）です。',
         ];
 
         $response = $this->actingAs($this->student)
