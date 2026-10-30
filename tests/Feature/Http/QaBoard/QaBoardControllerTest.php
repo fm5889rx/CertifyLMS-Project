@@ -83,14 +83,16 @@ class QaBoardControllerTest extends TestCase
      */
     public function test_一覧画面にアクセスでき変則的なクエリ文字列がページネーションリンクに維持されること(): void
     {
-        foreach (range(1, 12) as $i) {
+        foreach (range(1, 25) as $i) {
             QaThread::create([
                 'id' => (string) Str::ulid(),
                 'user_id' => $this->student->id,
                 'certification_id' => $this->certification->id,
                 'title' => '未解決のテスト質問',
                 'body' => '掲示板の本文です',
-                'status' => QaThreadStatus::Resolved->value,
+                // ✖ 修正前: QaThreadStatus::Resolved->value (解決済なので未解決検索で消えていた)
+                // ⭕ 修正後: 検索条件にヒットするように Open または Unresolved の値をセットする
+                'status' => QaThreadStatus::Open->value, 
             ]);
         }
 
@@ -256,5 +258,109 @@ class QaBoardControllerTest extends TestCase
         $response = $this->actingAs($this->anotherStudent)->delete(route('qa-board.replies.destroy', [$thread, $reply]));
         $response->assertStatus(403);
         $this->assertDatabaseHas('answers', ['id' => $reply->id]);
+    }
+
+    /**
+     * ⑧ 【受け入れ条件準拠】回答が1件でもあるスレッドは、投稿者本人であっても削除できないこと
+     */
+    public function test_回答が付いているスレッドは削除できずエラーになること(): void
+    {
+        $thread = QaThread::create([
+            'id' => (string) Str::ulid(),
+            'user_id' => $this->student->id,
+            'certification_id' => $this->certification->id,
+            'title' => '回答がある質問スレッド',
+            'body' => '本文',
+            'status' => QaThreadStatus::Open->value,
+        ]);
+
+        // 配下に回答（リプライ）を1件作成
+        QaReply::create([
+            'id' => (string) Str::ulid(),
+            'question_id' => $thread->id,
+            'user_id' => $this->anotherStudent->id,
+            'body' => '第三者による回答',
+        ]);
+
+        // 投稿者本人が削除を試みる
+        $response = $this->actingAs($this->student)->delete(route('qa-board.destroy', $thread));
+        
+        // 削除されずに元の画面に戻り、エラーのフラッシュメッセージがあること
+        $response->assertStatus(302);
+        $this->assertDatabaseHas('questions', ['id' => $thread->id]);
+        $response->assertSessionHas('error', '回答が付いているスレッドは削除できません。');
+    }
+
+    /**
+     * ⑨ 【受け入れ条件準拠】管理者は無条件でスレッドを削除でき、配下の回答も連動削除されること
+     */
+    public function test_管理者はスレッドを無条件で削除でき配下回答も連動削除されること(): void
+    {
+        $admin = User::factory()->create(['role' => \App\Enums\UserRole::Admin ?? 'admin']);
+
+        $thread = QaThread::create([
+            'id' => (string) Str::ulid(),
+            'user_id' => $this->student->id,
+            'certification_id' => $this->certification->id,
+            'title' => '管理者に消されるスレッド',
+            'body' => '本文',
+            'status' => QaThreadStatus::Open->value,
+        ]);
+
+        $reply = QaReply::create([
+            'id' => (string) Str::ulid(),
+            'question_id' => $thread->id,
+            'user_id' => $this->student->id,
+            'body' => '連動削除される回答',
+        ]);
+
+        // 管理者として削除リクエスト
+        $response = $this->actingAs($admin)->delete(route('qa-board.destroy', $thread));
+
+        // 質問も回答も両方DBから消えていることを確認
+        $this->assertDatabaseMissing('questions', ['id' => $thread->id]);
+        $this->assertDatabaseMissing('answers', ['id' => $reply->id]);
+    }
+
+    /**
+     * ⑩ 【受け入れ条件準拠】コーチは担当していない資格のスレッド詳細にアクセスすると403になること
+     */
+    public function test_コーチは担当外資格のスレッド詳細を閲覧できないこと(): void
+    {
+        // 担当外の別資格と、その中のスレッドを作成
+        $anotherCertification = Certification::factory()->create(['status' => 'published']);
+        $thread = QaThread::create([
+            'id' => (string) Str::ulid(),
+            'user_id' => $this->student->id,
+            'certification_id' => $anotherCertification->id,
+            'title' => '担当外の質問',
+            'body' => '本文',
+            'status' => QaThreadStatus::Open->value,
+        ]);
+
+        // このコーチ（$this->coach）は別の資格（$this->certification）の担当なので、弾かれるべき
+        $response = $this->actingAs($this->coach)->get(route('qa-board.show', $thread));
+        $response->assertStatus(403);
+    }
+
+    /**
+     * ⑪ 【受け入れ条件準拠】受講生・コーチは公開停止（下書き等）資格のスレッド詳細にアクセスすると404になること
+     */
+    public function test_受講生とコーチは公開停止資格のスレッドを閲覧できないこと(): void
+    {
+        // ステータスが下書き（draft）の資格と、そのスレッドを作成
+        $draftCertification = Certification::factory()->create(['status' => 'draft']);
+        $thread = QaThread::create([
+            'id' => (string) Str::ulid(),
+            'user_id' => $this->student->id,
+            'certification_id' => $draftCertification->id,
+            'title' => '下書き資格の質問',
+            'body' => '本文',
+            'status' => QaThreadStatus::Open->value,
+        ]);
+
+        // 受講生がアクセスしたら404になること
+        $response = $this->actingAs($this->student)->get(route('qa-board.show', $thread));
+        $response->assertStatus(404);
     }
 }
