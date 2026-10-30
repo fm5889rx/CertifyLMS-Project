@@ -112,8 +112,9 @@ class EnrollmentController extends Controller
     public function show(
         Enrollment $enrollment,
         ShowAction $action,
-        LearningProgressService $progressService,       // T-A-03で追加
+        LearningProgressService $progressService,
     ): View {
+        // 他人の詳細へのアクセス制御
         $this->authorize('view', $enrollment);
 
         $action($enrollment);
@@ -121,22 +122,30 @@ class EnrollmentController extends Controller
         $user = auth()->user();
         $progress = null;
 
-        // staff(admin / coach)時のみ進捗集計を行う
         if (in_array($user->role, [UserRole::Coach, UserRole::Admin], true)) {
             $enrollment->loadMissing(['user']);
-            $progress = $progressService->summarizeProgress($enrollment);       // T-A-03で変更
+            $progress = $progressService->summarizeProgress($enrollment);
         }
 
-        // admin 時のみ状態遷移ログを eager-load(管理画面の監査ビュー)
         if ($user->role === UserRole::Admin) {
             $enrollment->loadMissing([
                 'statusLogs' => fn ($q) => $q->with('changedBy')->orderByDesc('changed_at'),
             ]);
         }
 
+        // ========================================================
+        // ✨ 【追加】目標一覧の「未達成優先 ➔ 期日が近い順」ソートロジック ✨
+        // ========================================================
+        $goals = \App\Models\LearningGoal::where('enrollment_id', $enrollment->id)
+            ->orderByRaw('CASE WHEN achieved_at IS NULL THEN 0 ELSE 1 END') // 未達成(null)を上に、達成済を末尾に
+            ->orderBy('target_date', 'asc') // 目標期日が近い順
+            ->get();
+
         return view('enrollment.show', [
             'enrollment' => $enrollment,
             'progress' => $progress,
+            'learningGoals' => $goals, // Blade側にソート済みの目標変数を確実に渡す
+            'goals' => $goals,         // どちらの変数名でも動くように互換性担保
         ]);
     }
 

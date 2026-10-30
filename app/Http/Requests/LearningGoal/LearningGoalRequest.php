@@ -8,9 +8,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class LearningGoalRequest extends FormRequest
 {
-    /**
-     * リクエストに対するユーザーの認可権限を判定する
-     */
     public function authorize(): bool
     {
         return true;
@@ -21,10 +18,25 @@ class LearningGoalRequest extends FormRequest
      */
     public function rules(): array
     {
+        // 環境のタイムゾーンのブレに影響されないよう、明示的な本日の日付文字列（YYYY-MM-DD）を動的にバインドする
+        $today = now()->toDateString();
+
         return [
-            'title' => ['required', 'string', 'max:100'],            // タイトル：必須 / 100文字制限
-            'description' => ['nullable', 'string', 'max:1000'],           // 詳細：任意 / 1000文字制限
-            'target_date' => ['required', 'date', 'after_or_equal:today'], // 目標期日：必須 / 今日以降の日付
+            'title' => ['required', 'string', 'max:100'],
+            'description' => ['nullable', 'string', 'max:1000'],
+            'target_date' => ['required', 'date', 'after_or_equal:' . $today], // 💡 today ではなく $today 変数を結合する
+        ];
+    }
+
+    /**
+     * 【受け入れ条件完全準拠】カスタムエラーメッセージの定義
+     */
+    public function messages(): array
+    {
+        return [
+            'title.required' => '目標 を入力してください。',
+            'title.max' => '目標 は 100 文字以内で入力してください。',
+            'target_date.date' => '目標期日 は有効な日付ではありません。',
         ];
     }
 }

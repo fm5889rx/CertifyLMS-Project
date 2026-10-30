@@ -21,6 +21,7 @@ class LearningGoalController extends Controller
     {
         $enrollment = Enrollment::where('id', $enrollmentId)->firstOrFail();
 
+        // 厳格な本人認可チェック
         if ((string) $enrollment->user_id !== (string) Auth::id()) {
             abort(403, '個人目標を追加する権限がありません。');
         }
@@ -31,12 +32,15 @@ class LearningGoalController extends Controller
             'id' => (string) Str::ulid(),
             'enrollment_id' => $enrollmentId,
             'title' => $data['title'],
-            'description' => $data['description'],
+            'description' => $data['description'] ?? null,
             'target_date' => $data['target_date'],
             'achieved_at' => null,
         ]);
 
-        return redirect()->back()->with('success', '新しい学習目標を追加しました。');
+        // 【仕様準拠】受講登録詳細画面へリダイレクト
+        return redirect()
+            ->route('enrollments.show', $enrollmentId)
+            ->with('success', '目標を追加しました。'); // 文言完全一致
     }
 
     /**
@@ -47,6 +51,7 @@ class LearningGoalController extends Controller
         $goal = LearningGoal::where('id', $id)->firstOrFail();
         $enrollment = Enrollment::where('id', $goal->enrollment_id)->firstOrFail();
 
+        // 受講生本人以外（コーチ・管理者含む）はアクセス不可
         if ((string) $enrollment->user_id !== (string) Auth::id()) {
             abort(403, 'この目標を編集する権限がありません。');
         }
@@ -68,8 +73,10 @@ class LearningGoalController extends Controller
 
         $goal->update($request->validated());
 
-        // back() で安全に route マッピングを保証
-        return redirect()->back()->with('success', '学習目標を更新しました。');
+        // 【仕様準拠】受講登録詳細画面へリダイレクト
+        return redirect()
+            ->route('enrollments.show', $goal->enrollment_id)
+            ->with('success', '目標を更新しました。'); // 文言完全一致
     }
 
     /**
@@ -84,10 +91,13 @@ class LearningGoalController extends Controller
             abort(403, 'この目標を削除する権限がありません。');
         }
 
-        $goal->forceDelete();
+        $enrollmentId = $goal->enrollment_id;
+        $goal->delete(); // 通常の論理または物理削除
 
-        // back() で安全に route マッピングを保証
-        return redirect()->back()->with('danger', '学習目標を削除しました。');
+        // 【仕様準拠】受講登録詳細画面へリダイレクト
+        return redirect()
+            ->route('enrollments.show', $enrollmentId)
+            ->with('success', '目標を削除しました。'); // 文言完全一致
     }
 
     /**
@@ -104,7 +114,10 @@ class LearningGoalController extends Controller
 
         $goal->update(['achieved_at' => now()]);
 
-        return redirect()->back()->with('success', '目標を達成済みにマークしました！');
+        // 【仕様準拠】受講登録詳細画面へリダイレクト
+        return redirect()
+            ->route('enrollments.show', $goal->enrollment_id)
+            ->with('success', '目標を達成済にしました。'); // 文言完全一致
     }
 
     /**
@@ -121,6 +134,9 @@ class LearningGoalController extends Controller
 
         $goal->update(['achieved_at' => null]);
 
-        return redirect()->back()->with('success', '目標の達成マークを解除しました。');
+        // 【仕様準拠】受講登録詳細画面へリダイレクト
+        return redirect()
+            ->route('enrollments.show', $goal->enrollment_id)
+            ->with('success', '目標を未達成に戻しました。'); // 文言完全一致
     }
 }

@@ -73,8 +73,9 @@ class LearningGoalControllerTest extends TestCase
         ]);
     }
 
-    /**
+     /**
      * ① 目標の追加
+     * 仕様：成功時に「受講登録詳細画面」へリダイレクトし、フラッシュメッセージを表示する
      */
     public function test_受講生本人は自分の受講登録に対して新しい学習目標を未達成状態で追加できること(): void
     {
@@ -85,10 +86,12 @@ class LearningGoalControllerTest extends TestCase
         ];
 
         $response = $this->actingAs($this->student)
-            ->from(route('enrollment-goals.store', $this->enrollment->id))
+            ->from(route('enrollments.show', $this->enrollment->id)) // 受講登録詳細画面からPOST
             ->post(route('enrollment-goals.store', $this->enrollment->id), $postData);
 
-        $response->assertRedirect(route('enrollment-goals.store', $this->enrollment->id));
+        // ⭕ 【仕様準拠に修正】正しいリダイレクト先は「受講登録詳細画面」です
+        $response->assertRedirect(route('enrollments.show', $this->enrollment->id));
+        $response->assertSessionHas('success', '目標を追加しました。');
 
         $this->assertDatabaseHas('learning_goals', [
             'enrollment_id' => $this->enrollment->id,
@@ -108,13 +111,17 @@ class LearningGoalControllerTest extends TestCase
         ];
 
         $response = $this->actingAs($this->student)
+            ->from(route('enrollments.show', $this->enrollment->id))
             ->post(route('enrollment-goals.store', $this->enrollment->id), $invalidData);
 
-        $response->assertSessionHasErrors(['title', 'target_date']);
+        // ⭕ バリデーションエラーがセッションに存在することを確認
+        $response->assertSessionHasErrors('title');
+        $response->assertSessionHasErrors('target_date');
     }
 
     /**
      * ③ 目標の編集画面表示 ＆ 基本情報更新
+     * 仕様：成功時に「受講登録詳細画面」へリダイレクトする
      */
     public function test_受講生本人は自分の目標の編集画面を表示し基本情報を_patc_hメソッドで更新できること(): void
     {
@@ -140,7 +147,9 @@ class LearningGoalControllerTest extends TestCase
             ->from(route('enrollment-goals.edit', $goal->id))
             ->patch(route('enrollment-goals.update', $goal->id), $updateData);
 
-        $response->assertRedirect(route('enrollment-goals.edit', $goal->id));
+        // ⭕ 【仕様準拠に修正】更新成功後も「受講登録詳細画面」へリダイレクトします
+        $response->assertRedirect(route('enrollments.show', $this->enrollment->id));
+        $response->assertSessionHas('success', '目標を更新しました。');
 
         $this->assertDatabaseHas('learning_goals', [
             'id' => $goal->id,
@@ -150,6 +159,7 @@ class LearningGoalControllerTest extends TestCase
 
     /**
      * ④ 目標の削除
+     * 仕様：成功時に「受講登録詳細画面」へリダイレクトする
      */
     public function test_受講生本人は自分の目標を履歴を残さずに物理削除できること(): void
     {
@@ -165,7 +175,9 @@ class LearningGoalControllerTest extends TestCase
             ->from(route('enrollment-goals.edit', $goal->id))
             ->delete(route('enrollment-goals.destroy', $goal->id));
 
-        $response->assertRedirect(route('enrollment-goals.edit', $goal->id));
+        // ⭕ 【仕様準拠に修正】削除成功後も「受講登録詳細画面」へリダイレクトします
+        $response->assertRedirect(route('enrollments.show', $this->enrollment->id));
+        $response->assertSessionHas('success', '目標を削除しました。');
 
         $this->assertDatabaseMissing('learning_goals', ['id' => $goal->id]);
     }
