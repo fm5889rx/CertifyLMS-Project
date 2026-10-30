@@ -606,7 +606,7 @@ Route::middleware(['web', 'auth'])->group(function () {
 // 担当コーチ / 管理者専用: 受講生メモの管理 (S-B-07 最終適合版)
 // ============================================================
 Route::middleware(['web', 'auth'])->group(function () {
-    Route::post('/enrollments/{enrollment}/notes', [EnrollmentNoteController::class, 'store'])->name('enrollment-notes.store');
+    Route::post('/enrollments/{enrollment}/notes', [EnrollmentNoteController::class, 'store'])->name('enrollments.notes.store');
     Route::get('/enrollment-notes/{note}/edit', [EnrollmentNoteController::class, 'edit'])->name('enrollment-notes.edit');
     Route::patch('/enrollment-notes/{note}', [EnrollmentNoteController::class, 'update'])->name('enrollment-notes.update');
     Route::delete('/enrollment-notes/{note}', [EnrollmentNoteController::class, 'destroy'])->name('enrollment-notes.destroy');

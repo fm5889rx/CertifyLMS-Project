@@ -12,6 +12,7 @@ use App\Http\Requests\Enrollment\UpdateExamDateRequest;
 use App\Models\Certification;
 use App\Models\Chapter;
 use App\Models\Enrollment;
+use App\Models\LearningGoal;
 use App\Models\Part;
 use App\Services\Learning\LearningProgressService;      // T-A-03で追加
 use App\Services\Learning\ProgressSummary;
@@ -133,19 +134,32 @@ class EnrollmentController extends Controller
             ]);
         }
 
+       // ========================================================
+        // ✨ 【追加済】目標一覧の「未達成優先 ➔ 期日が近い順」ソートロジック ✨
         // ========================================================
-        // ✨ 【追加】目標一覧の「未達成優先 ➔ 期日が近い順」ソートロジック ✨
-        // ========================================================
-        $goals = \App\Models\LearningGoal::where('enrollment_id', $enrollment->id)
-            ->orderByRaw('CASE WHEN achieved_at IS NULL THEN 0 ELSE 1 END') // 未達成(null)を上に、達成済を末尾に
-            ->orderBy('target_date', 'asc') // 目標期日が近い順
+        $goals = LearningGoal::where('enrollment_id', $enrollment->id)
+            ->orderByRaw('CASE WHEN achieved_at IS NULL THEN 0 ELSE 1 END') 
+            ->orderBy('target_date', 'asc') 
             ->get();
 
+        // ========================================================
+        // ✨ 【新規追加】メモ一覧を新しい順（時系列降順）で取得（S-B-07用） ✨
+        // ========================================================
+        $notes = \App\Models\EnrollmentNote::where('enrollment_id', $enrollment->id)
+            ->with('user')          // 執筆したコーチ情報をN+1問題なしで一括ロード
+            ->latest('created_at')  // 時系列降順の指定をクリア
+            ->get();
+
+        // 両方のデータをひとつのビューに引き渡します
         return view('enrollment.show', [
             'enrollment' => $enrollment,
             'progress' => $progress,
-            'learningGoals' => $goals, // Blade側にソート済みの目標変数を確実に渡す
-            'goals' => $goals,         // どちらの変数名でも動くように互換性担保
+            // --- S-B-05 目標管理データ ---
+            'learningGoals' => $goals, 
+            'goals' => $goals,         
+            // --- S-B-07 メモ管理データ ---
+            'enrollmentNotes' => $notes, 
+            'notes' => $notes,           
         ]);
     }
 

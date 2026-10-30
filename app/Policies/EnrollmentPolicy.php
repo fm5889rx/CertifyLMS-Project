@@ -88,10 +88,21 @@ class EnrollmentPolicy
         return $user->role === UserRole::Student;
     }
 
+    /**
+     * ログイン中のコーチが、当該受講生の資格を「現役で担当しているか」をモデルを介して型安全に判定する
+     */
     private function isAssignedCoach(Enrollment $enrollment, User $coach): bool
     {
-        $enrollment->loadMissing('certification.coaches');
+        if (empty($enrollment->certification_id)) {
+            return false;
+        }
 
-        return $enrollment->certification?->coaches->contains('id', $coach->id) ?? false;
+        // ⭕ 生クエリは一切排除。
+        // 中間テーブルのカラム名（certification_coach_assignments.certification_id）を明示することで、
+        // 実環境のDBクエリにおける「カラムの曖昧さ」を100%回避し、確実に現役判定を成功させます。
+        return $coach->assignedCertifications()
+            ->where('certification_coach_assignments.certification_id', $enrollment->certification_id)
+            ->exists();
     }
+
 }
