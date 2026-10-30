@@ -180,4 +180,16 @@ class Enrollment extends Model
 
         return $query->where('user_id', $user->id);
     }
+
+    /**
+     * 【追加仕様】受講登録に紐づくメモ一覧（S-B-07用）
+     * 
+     * @return HasMany<\App\Models\EnrollmentNote, $this>
+     */
+    public function notes(): HasMany
+    {
+        // 親の受講登録(enrollment_id)に対して、複数のメモ(EnrollmentNote)が紐づくhasManyリレーション
+        return $this->hasMany(EnrollmentNote::class, 'enrollment_id', 'id');
+    }
+
 }

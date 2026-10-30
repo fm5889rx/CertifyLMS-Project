@@ -82,12 +82,13 @@ class EnrollmentNoteControllerTest extends TestCase
         $postData = ['body' => '最近Slackの反応が24時間以上遅れている。次回面談で体調を確認する。'];
 
         $response = $this->actingAs($this->coachA)
-            ->from(route('enrollment-notes.store', $this->enrollment->id))
-            ->post(route('enrollment-notes.store', $this->enrollment->id), $postData);
+            ->from(route('enrollments.show', $this->enrollment->id)) // ⭕ 詳細画面からPOST
+            ->post(route('enrollments.notes.store', $this->enrollment->id), $postData);
 
-        $response->assertStatus(302);
+        // ⭕ 【仕様に完全同期】詳細画面へリダイレクトされること
+        $response->assertRedirect(route('enrollments.show', $this->enrollment->id));
+        $response->assertSessionHas('success', 'メモを追加しました。');
 
-        // データベースに執筆者ID付きで正しく実在することを証明
         $this->assertDatabaseHas('enrollment_notes', [
             'enrollment_id' => $this->enrollment->id,
             'user_id' => $this->coachA->id,
@@ -138,12 +139,14 @@ class EnrollmentNoteControllerTest extends TestCase
             ->from(route('enrollment-notes.edit', $note->id))
             ->patch(route('enrollment-notes.update', $note->id), ['body' => '管理者が修正したクリーンな本文']);
 
-        $response->assertStatus(302);
+        $response->assertStatus(302)
+            ->assertRedirect(route('enrollments.show', $this->enrollment->id));
         $this->assertDatabaseHas('enrollment_notes', ['id' => $note->id, 'body' => '管理者が修正したクリーンな本文']);
 
         // 2. 管理者は他人のメモでも安全に物理削除可能
         $response = $this->actingAs($this->adminUser)->delete(route('enrollment-notes.destroy', $note->id));
-        $response->assertStatus(302);
+        $response->assertStatus(302)
+            ->assertRedirect(route('enrollments.show', $this->enrollment->id));
 
         // 物理削除のため missing を厳格に証明
         $this->assertDatabaseMissing('enrollment_notes', ['id' => $note->id]);
@@ -155,7 +158,7 @@ class EnrollmentNoteControllerTest extends TestCase
     public function test_受講生本人は自分の受講登録に対するメモの追加や変更を一切実行できず403拒否されること(): void
     {
         // 1. 受講生による勝手な追加の遮断検証
-        $response = $this->actingAs($this->student)->post(route('enrollment-notes.store', $this->enrollment->id), ['body' => '自分で書いたメモ']);
+        $response = $this->actingAs($this->student)->post(route('enrollments.notes.store', $this->enrollment->id), ['body' => '自分で書いたメモ']);
         $response->assertStatus(403);
 
         $note = EnrollmentNote::create([

@@ -23,14 +23,12 @@ class EnrollmentNoteController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
-        // 受講生からのアクセスは一律で403エラーで排除
         if ($user->isStudent()) {
             abort(403, '受講生は業務メモを追加できません。');
         }
 
-        $enrollment = Enrollment::where('id', $enrollmentId)->firstOrFail();
+        Enrollment::where('id', $enrollmentId)->firstOrFail();
 
-        // EnrollmentNoteを新規作成する
         EnrollmentNote::create([
             'id' => (string) Str::ulid(),
             'enrollment_id' => $enrollmentId,
@@ -38,8 +36,10 @@ class EnrollmentNoteController extends Controller
             'body' => $request->input('body'),
         ]);
 
-        // フラッシュメッセージを出して前画面に戻る
-        return redirect()->back()->with('success', '受講生メモを追加しました。');
+        // 【仕様準拠】受講登録詳細画面へ明示的にリダイレクト
+        return redirect()
+            ->route('enrollments.show', $enrollmentId)
+            ->with('success', 'メモを追加しました。'); // 文言完全一致
     }
 
     /**
@@ -52,17 +52,14 @@ class EnrollmentNoteController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
-        // ロールが受講生なら403エラーを返して排除
         if ($user->isStudent()) {
             abort(403, '権限がありません。');
         }
 
-        // 管理者ではない、かつ自分が書いたメモではない場合は403で排除
         if (! $user->isAdmin() && (string) $note->user_id !== (string) $user->id) {
             abort(403, '他人が作成したメモを編集する権限がありません。');
         }
 
-        // bladeに引き渡し
         return view('enrollment-note.edit', compact('note'));
     }
 
@@ -76,23 +73,22 @@ class EnrollmentNoteController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
-        // ロールが受講生なら403エラーで排除
         if ($user->isStudent()) {
             abort(403, '権限がありません。');
         }
 
-        // ロールが管理者でない、かつ自分以外がアクセスした時は403エラーで排除
         if (! $user->isAdmin() && (string) $note->user_id !== (string) $user->id) {
             abort(403, '他人が作成したメモを編集する権限がありません。');
         }
 
-        // 入力したメモを上書き更新
         $note->update([
             'body' => $request->input('body'),
         ]);
 
-        // フラッシュメッセージを出して前画面に戻る
-        return redirect()->back()->with('success', '受講生メモを更新しました。');
+        // 【仕様準拠】編集画面にループさせず、元の受講登録詳細画面へ戻す
+        return redirect()
+            ->route('enrollments.show', $note->enrollment_id)
+            ->with('success', 'メモを更新しました。'); // 文言完全一致
     }
 
     /**
@@ -105,20 +101,20 @@ class EnrollmentNoteController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
-        // 受講生は403エラーで排除
         if ($user->isStudent()) {
             abort(403, '権限がありません。');
         }
 
-        // ロールが管理者でない、かつメモの所有者が自分以外の場合403エラーで排除
         if (! $user->isAdmin() && (string) $note->user_id !== (string) $user->id) {
             abort(403, '他人が作成したメモを削除する権限がありません。');
         }
 
-        // ノートを削除
+        $enrollmentId = $note->enrollment_id;
         $note->delete();
 
-        // フラッシュメッセージを出して前画面に戻る
-        return redirect()->back()->with('danger', '受講生メモを削除しました。');
+        // 【仕様準拠】元の受講登録詳細画面へ戻す
+        return redirect()
+            ->route('enrollments.show', $enrollmentId)
+            ->with('success', 'メモを削除しました。'); // 文言完全一致
     }
 }
