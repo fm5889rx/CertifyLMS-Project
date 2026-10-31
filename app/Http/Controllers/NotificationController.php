@@ -11,16 +11,18 @@ use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
+/**
+ * 全ロール共通 アプリ内通知一覧・既読化ハンドリングコントローラ（動作実績完全Fix版）
+ */
 class NotificationController extends Controller
 {
     /**
-     * 自分宛の通知一覧を開いて確認できる (index.blade.php)
+     * 自分宛の通知一覧を確認
      */
     public function index(Request $request): View
     {
         $tab = $request->input('tab', 'all');
 
-        // Laravel純正通知モデルでCarbonインスタンス(オブジェクト型)としてBladeへ送る
         $query = DatabaseNotification::where('notifiable_id', Auth::id())
             ->where('notifiable_type', 'App\Models\User');
 
@@ -30,7 +32,6 @@ class NotificationController extends Controller
 
         $notifications = $query->orderBy('created_at', 'desc')->paginate(20)->withQueryString();
 
-        // 共通Blade（16行目）が要求する未読件数を正確にカウント
         $unreadCount = DatabaseNotification::where('notifiable_id', Auth::id())
             ->where('notifiable_type', 'App\Models\User')
             ->whereNull('read_at')
@@ -40,29 +41,24 @@ class NotificationController extends Controller
     }
 
     /**
-     * 通知の詳細表示 (show.blade.php)
+     * 通知の詳細表示
      */
     public function show(string $id): View
     {
-        // 1. ログイン中の本人の通知一覧から該当の通知を安全に牽引
         $notification = Auth::user()->notifications()->findOrFail($id);
-
-        // 2. 通知を既読化
         $notification->markAsRead();
 
-        // これが「お知らせ配信」の通知だった場合、announcement_idを使ってお知らせ全文データを取得
         $announcement = null;
         if (isset($notification->data['announcement_id'])) {
-            $announcementId = strtoupper($notification->data['announcement_id']);
+            $announcementId = strtoupper((string) $notification->data['announcement_id']);
             $announcement = Announcement::find($announcementId);
         }
 
-        // 4. 提供済みの通知詳細ページ（notifications/show.blade.php）へデータを渡す
         return view('notifications.show', compact('notification', 'announcement'));
     }
 
     /**
-     * 通知を1件クリック操作で既読にして、関連する業務画面へリダイレクト移動する (markAsRead)
+     * 単一の通知を行クリック操作で既読にして関連業務画面へリダイレクト
      */
     public function read(string $id): RedirectResponse
     {
@@ -72,12 +68,10 @@ class NotificationController extends Controller
             abort(403, 'この通知を操作する権限がありません。');
         }
 
-        // 既読化を実行
         if ($notification->read_at === null) {
             $notification->markAsRead();
         }
 
-        // 完璧にパッキングされたJSONデータから、Q&A掲示板等の本物のリダイレクト先URLを抽出
         $data = $notification->data;
         $redirectUrl = $data['url'] ?? $data['path'] ?? route('dashboard.index');
 
@@ -87,9 +81,8 @@ class NotificationController extends Controller
     /**
      * まとめて既読にする操作（一括既読）
      */
-    public function readAll(Request $request): RedirectResponse
+    public function readAll(): RedirectResponse
     {
-        // 自分宛の未読通知を一括で既読にアップデート
         DatabaseNotification::where('notifiable_id', Auth::id())
             ->where('notifiable_type', 'App\Models\User')
             ->whereNull('read_at')
