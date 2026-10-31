@@ -110,10 +110,9 @@ class NotificationControllerTest extends TestCase
         $this->student->notify(new QaReplyPostedNotification($this->thread));
         $notification = DatabaseNotification::where('notifiable_id', $this->student->id)->first();
 
-        // 共通Bladeが要求する POST（markAsRead）ルートへリクエストを送信
-        $response = $this->actingAs($this->student)->post(route('notifications.markAsRead', $notification->id));
+        $response = $this->actingAs($this->student)
+            ->post(route('notifications.markAsRead', $notification->id));
 
-        // 💡 UX要件：Q&A掲示板の詳細画面（qa-board.show）へ美しくリダイレクトされることを保証！
         $response->assertRedirect(route('qa-board.show', ['thread' => $this->thread->id]));
         $this->assertNotNull($notification->refresh()->read_at);
     }
@@ -142,16 +141,16 @@ class NotificationControllerTest extends TestCase
      */
     public function test_他人宛の通知の詳細表示や既読化を試みた場合は一律で認可拒否エラーになること(): void
     {
-        // 受講生A宛の通知を作成
         $this->student->notify(new QaReplyPostedNotification($this->thread));
         $notification = DatabaseNotification::where('notifiable_id', $this->student->id)->first();
 
-        // 別の受講生Bアカウントによる、他人宛の通知詳細（show）への侵入をブロック検証
         $response = $this->actingAs($this->anotherStudent)->get(route('notifications.show', $notification->id));
-        $response->assertStatus(404); // T-A-05：ステータス 403 → 404 に変更
+        $response->assertStatus(404); 
 
-        // コーチアカウントによる、他人宛の通知既読（markAsRead）への侵入をブロック検証
-        $response = $this->actingAs($this->coach)->post(route('notifications.markAsRead', $notification->id));
+        // ⭕ 【本番Fixに完全同期】プレーンなID形式で他人宛の操作をポスト
+        $response = $this->actingAs($this->coach)
+            ->post(route('notifications.markAsRead', $notification->id));
+            
         $response->assertStatus(403);
     }
 }
