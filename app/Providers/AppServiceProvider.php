@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Actions\Stripe\PrepareCheckoutAction;
+use App\Actions\Stripe\ProcessStripeWebhookAction;
 use App\Models\Answer;
 use App\Models\QaReply;
 use App\Models\QaThread;
@@ -22,7 +24,10 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        //
+        // 💡 サービスコンテナへActionをシンクロ登録
+        $this->app->singleton(PrepareCheckoutAction::class, fn ($app) => new PrepareCheckoutAction());
+        $this->app->singleton(ProcessStripeWebhookAction::class, fn ($app) => new ProcessStripeWebhookAction());
+
     }
 
     public function boot(): void
