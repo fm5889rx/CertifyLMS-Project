@@ -12,15 +12,12 @@ use App\Models\Certification;
 use App\Models\CertificationCategory;
 use App\Models\Enrollment;
 use App\Models\User;
-use App\Services\MeetingAvailabilityService;
+use App\Services\MeetingAvailabilityService; // 💡 本物
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
 use Tests\TestCase;
 
-/**
- * 👑 【T-A-02：1対1適合】FetchAvailabilityAction 専用の単体テスト。
- */
 class FetchAvailabilityActionTest extends TestCase
 {
     use RefreshDatabase;
@@ -54,6 +51,8 @@ class FetchAvailabilityActionTest extends TestCase
         $mockService = app(MeetingAvailabilityService::class);
 
         $action = new FetchAvailabilityAction($mockService);
+
+        // 💡【解決】本番コードが完成したため、正しい __invoke 形式（$action($enrollment, $date)）で同期実行！
         $result = $action($enrollment, $date);
 
         $this->assertInstanceOf(Collection::class, $result);

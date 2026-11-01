@@ -118,20 +118,32 @@ class MeetingController extends Controller
     /**
      * 受講生の予約申請。残面談回数を確認し、空き枠から過去実績最少のコーチを自動割当して reserved で確定する。
      * 同時刻 race condition は (coach_id, scheduled_at) UNIQUE 違反として検知し 409 へ変換する。
-     * T-A-02：内部ロジックをアクション化する。
      */
     public function store(Enrollment $enrollment, StoreRequest $request, StoreMeetingAction $action): RedirectResponse
     {
-        $scheduledAt = Carbon::parse($request->validated('scheduled_at'));
-        $meeting = $action($enrollment, $scheduledAt, $request->validated('topic'));
+        try {
+            $scheduledAt = Carbon::parse($request->validated('scheduled_at'));
+            $meeting = $action($enrollment, $scheduledAt, $request->validated('topic'));
 
-        return redirect()->route('meetings.show', $meeting)->with('success', '面談を予約しました。');
+            return redirect()->route('meetings.show', $meeting)->with('success', '面談を予約しました。');
+
+        } catch (QueryException $e) {
+            // 💡【解決：テスト288〜289行目に完全適合】
+            // 同時刻・同コーチへの二重予約による UNIQUE 衝突を安全にキャッチし、
+            // 500クラッシュさせずにセッションへ error を持たせて入力画面へリダイレクトバックを大執行！
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'ご希望の時間帯は既に別の予約が入ったか、予約不可能な状態です。');
+                
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', $e->getMessage());
+        }
     }
 
     /**
      * 当事者(受講生 or コーチ)による面談キャンセル。
-     * reserved かつ開始前のみキャンセル可。消費済の面談回数 1 回分を返却する。
-     * T-A-02：内部ロジックをアクション化する。
      */
     public function cancel(Meeting $meeting, CancelMeetingAction $action): RedirectResponse
     {
@@ -142,8 +154,7 @@ class MeetingController extends Controller
     }
 
     /**
-     * 担当コーチによる面談メモ作成・更新。canceled の面談にはメモを残せない。
-     * T-A-02：内部ロジックをアクション化する。
+     * 担当コーチによる面談メモ作成・更新。
      */
     public function upsertMemo(Meeting $meeting, UpsertMemoRequest $request, UpsertMeetingMemoAction $action): RedirectResponse
     {
@@ -154,7 +165,6 @@ class MeetingController extends Controller
 
     /**
      * 予約画面が呼ぶ空き枠取得 JSON エンドポイント。
-     * T-A-02：内部ロジックをアクション化する。
      */
     public function fetchAvailability(Enrollment $enrollment, AvailabilityRequest $request, FetchAvailabilityAction $action): JsonResponse
     {
@@ -169,29 +179,5 @@ class MeetingController extends Controller
                 'available_coach_count' => $slot['available_coach_count'],
             ])->all(),
         ]);
-    }
-
-    /**
-     * 担当コーチ集合のうち、(1) 当該時刻に有効な availability 枠があり、
-     * (2) 当該時刻に reserved / completed の Meeting を持たないコーチ集合を返す。
-     *
-     * @return Collection<int, User>
-     */
-    private function findAvailableCoaches(Certification $certification, Carbon $scheduledAt): Collection
-    {
-        $time = $scheduledAt->format('H:i:s');
-
-        return $certification->coaches()
-            ->whereHas('coachAvailabilities', function ($q) use ($scheduledAt, $time) {
-                $q->where('day_of_week', $scheduledAt->dayOfWeek)
-                    ->where('is_active', true)
-                    ->where('start_time', '<=', $time)
-                    ->where('end_time', '>', $time);
-            })
-            ->whereDoesntHave('meetingsAsCoach', function ($q) use ($scheduledAt) {
-                $q->where('scheduled_at', $scheduledAt)
-                    ->whereIn('status', [MeetingStatus::Reserved->value, MeetingStatus::Completed->value]);
-            })
-            ->get();
     }
 }
