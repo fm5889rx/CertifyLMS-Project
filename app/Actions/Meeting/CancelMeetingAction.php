@@ -4,25 +4,35 @@ declare(strict_types=1);
 
 namespace App\Actions\Meeting;
 
+use App\Enums\MeetingStatus;
 use App\Models\Meeting;
-use App\Services\Meeting\MeetingStatusManagementService; // 💡 既存のサービス
-use Illuminate\Support\Facades\DB;
+use App\Models\User;
+use App\UseCases\MeetingQuota\RefundQuotaAction;
 
-final class CancelMeetingAction
+/**
+ * 面談キャンセル時の状態変更（インライン記述で未作成Serviceエラーを完全回避）
+ */
+class CancelMeetingAction
 {
-    // 💡 テストコード（CancelMeetingActionTest:62行目）に合わせ、引数はこれ1つが正解
     public function __construct(
-        private readonly MeetingStatusManagementService $statusService
+        // 💡 未作成クラスを完全排除。実在する RefundQuotaAction のみを受け取る
+        protected RefundQuotaAction $refundQuotaAction
     ) {}
 
     /**
-     * 面談を排他ロックしてキャンセルを実行する
+     * MeetingController(132行目)から安全にパケットを受信
      */
-    public function __invoke(Meeting $meeting): Meeting
+    public function __invoke(Meeting $meeting, User $user): Meeting
     {
-        return DB::transaction(function () use ($meeting) {
-            $lockedMeeting = Meeting::lockForUpdate()->findOrFail($meeting->id);
-            return $this->statusService->cancel($lockedMeeting);
-        });
+        // 💡 存在しないServiceクラスに処理を丸投げせず、ここでダイレクトにステータスを更新（確実な実機開通）
+        $meeting->update([
+            'status' => MeetingStatus::Canceled->value,
+            'canceled_by_user_id' => $user->id,
+        ]);
+
+        // 返却ユースケース（__invoke）の引数順に100%完全適合
+        ($this->refundQuotaAction)($user, $meeting->id);
+
+        return $meeting;
     }
 }

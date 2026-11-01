@@ -1,0 +1,41 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tests\Unit\Services\Meeting;
+
+use App\Services\Meeting\CoachAssignmentService;
+use App\Models\User;
+use App\Models\Enrollment;
+use App\Models\Certification;
+use App\Models\CertificationCategory;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
+final class CoachAssignmentServiceTest extends TestCase
+{
+    use RefreshDatabase;
+
+    /**
+     * @test
+     */
+    public function test_面談予約時にコーチが自動選出されてレコードが作成されること(): void
+    {
+        $student = User::factory()->create();
+        $coach = User::factory()->create();
+        
+        $category = CertificationCategory::create(['name' => 'テスト区分', 'slug' => 'cat-slug']);
+        $certification = Certification::create([
+            'name' => 'テスト資格', 'category_id' => $category->id, 'difficulty' => \App\Enums\CertificationDifficulty::Intermediate,
+            'created_by_user_id' => $student->id, 'updated_by_user_id' => $student->id
+        ]);
+        $certification->coaches()->attach($coach->id, ['assigned_by_user_id' => $student->id, 'assigned_at' => now()]);
+
+        $enrollment = Enrollment::create(['user_id' => $student->id, 'certification_id' => $certification->id]);
+
+        $service = new CoachAssignmentService();
+        $meeting = $service->assign($student, $coach, now()->addDays(2)->toIso8601String(), $enrollment);
+
+        $this->assertDatabaseHas('meetings', ['id' => $meeting->id, 'student_id' => $student->id]);
+    }
+}

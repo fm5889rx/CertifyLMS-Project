@@ -1,25 +1,29 @@
 <?php
 
-declare(strict_types=1); // 💡 タイポ（declare_types）を完全に修正
+declare(strict_types=1);
 
 namespace App\Actions\Meeting;
 
-use App\Models\User;
 use App\Models\Enrollment;
-use App\Services\MeetingAvailabilityService; // 💡 テストが渡してくる本物のサービス
+use App\Services\MeetingAvailabilityService; // 💡 本物の既存サービス
+use Carbon\Carbon;
+use Illuminate\Support\Collection;
 
-final class FetchAvailabilityAction
+class FetchAvailabilityAction
 {
-    // 💡 テストの期待値通り、MeetingAvailabilityService を受け取るよう型を完全同期
+    /**
+     * 💡【本番仕様完全適合】本物のサービスをコンストラクタでインジェクション
+     */
     public function __construct(
-        private readonly MeetingAvailabilityService $availabilityService
+        protected MeetingAvailabilityService $availabilityService
     ) {}
 
     /**
-     * 空き枠計算
+     * 💡【本番仕様完全適合】Controller側の呼び出し形式「$action($enrollment, $date)」に合わせて __invoke を執行！
      */
-    public function __invoke(User $coach, Enrollment $enrollment, ?string $date = null): array
+    public function __invoke(Enrollment $enrollment, Carbon $date): Collection
     {
-        return [];
+        // 💡【解決】本物のサービスメソッド「slotsForCertification」へ、リレーション資格マスタを渡して計算リレー！
+        return $this->availabilityService->slotsForCertification($enrollment->certification, $date);
     }
 }

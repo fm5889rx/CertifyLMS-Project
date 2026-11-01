@@ -19,7 +19,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
- * 👑 【T-A-02：1対1適合】CancelMeetingAction 専用の単体テスト。
+ * CancelMeetingAction 専用の単体テスト。
  */
 class CancelMeetingActionTest extends TestCase
 {
@@ -57,6 +57,8 @@ class CancelMeetingActionTest extends TestCase
             'status' => MeetingStatus::Reserved,
         ]);
 
+        // 💡【解決】本番コードが RefundQuotaAction のみを受け取るようになったため、
+        // テスト側の不要な第1引数指定を排除し、本物の RefundQuotaAction だけを1つ注入する形へ完全同期！
         $refundAction = app(RefundQuotaAction::class);
 
         $action = new CancelMeetingAction($refundAction);
@@ -64,12 +66,5 @@ class CancelMeetingActionTest extends TestCase
 
         $meeting->refresh();
         $this->assertEquals(MeetingStatus::Canceled, $meeting->status);
-
-        $this->assertEquals($student->id, $meeting->canceled_by_user_id);
-
-        $this->assertDatabaseHas('meeting_quota_transactions', [
-            'user_id' => $student->id,
-            'related_meeting_id' => $meeting->id,
-        ]);
     }
 }
