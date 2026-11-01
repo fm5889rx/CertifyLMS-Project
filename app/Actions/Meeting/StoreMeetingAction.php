@@ -14,29 +14,23 @@ use App\Services\CoachMeetingLoadService;
 use App\Services\MeetingAvailabilityService;
 use App\Services\MeetingQuotaService;
 use App\UseCases\MeetingQuota\ConsumeQuotaAction;
+use App\Services\Google\GoogleCalendarService; // S-A-01追加
 use Carbon\Carbon;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Google\Service\Calendar\Event;
+use Exception;
 
-/**
- * 【T-A-02：受講生面談予約申請・自動割当ビジネスアクション】
- *
- * 仕様書に定義された面談予約の状態変更系コアロジックをトランザクション境界(`DB::transaction`)の内部で
- * 一括処理するアクション。
- * 1. 受講生の残面談回数のチェック
- * 2. 選択された時間スロットの整合性バリデーション
- * 3. 過去30日の実績が最少の空きコーチの自動検出および均等割当
- * 4. 同時刻競合状態(race condition)発生時における、MySQL物理層ユニークキー違反の409例外への安全自動変換
- * 5. 面談チケット回数の一括消費取引(ConsumeQuotaAction)の執行
- */
 final class StoreMeetingAction
 {
     public function __construct(
         private MeetingAvailabilityService $availabilityService,
         private CoachMeetingLoadService $coachLoadService,
         private MeetingQuotaService $quotaService,
-        private ConsumeQuotaAction $consumeAction
+        private ConsumeQuotaAction $consumeAction,
+        private GoogleCalendarService $calendarService // S-A-01追加
     ) {}
 
     public function __invoke(Enrollment $enrollment, Carbon $scheduledAt, string $topic): Meeting
@@ -73,6 +67,37 @@ final class StoreMeetingAction
 
             $transaction = ($this->consumeAction)($student, $meeting->id);
             $meeting->update(['meeting_quota_transaction_id' => $transaction->id]);
+
+            // --- 【S-A-01: Googleカレンダー連携処理】 ---
+            $client = $this->calendarService->authenticatedClientForUser($coach);
+            if ($client) {
+                try {
+                    $calendarService = new \Google\Service\Calendar($client);
+                    
+                    $event = new Event([
+                        'summary' => '【LMS面談】' . $student->name . '様',
+                        'description' => 'トピック: ' . $topic . "\n面談URL: " . ($coach->meeting_url ?? '未設定'),
+                        'start' => [
+                            'dateTime' => $scheduledAt->toRfc3339String(),
+                            'timeZone' => 'Asia/Tokyo',
+                        ],
+                        'end' => [
+                            'dateTime' => $scheduledAt->copy()->addMinutes(45)->toRfc3339String(), // 枠に合わせて設定
+                            'timeZone' => 'Asia/Tokyo',
+                        ],
+                    ]);
+
+                    $createdEvent = $calendarService->events->insert('primary', $event);
+                    
+                    // 動的プロパティまたは識別子退避用カラムを利用してEvent IDを永続化
+                    $meeting->google_event_id = $createdEvent->getId();
+                    $meeting->save();
+                    
+                } catch (Exception $e) {
+                    // APIが失敗してもLMSの予約コミットは正常に完了させる（フォールバック）
+                    Log::error('Google Calendar Event Insert Failed: ' . $e->getMessage());
+                }
+            }
 
             return $meeting->fresh();
         });
