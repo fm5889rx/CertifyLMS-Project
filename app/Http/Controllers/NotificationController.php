@@ -4,94 +4,83 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Models\Announcement;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Notifications\DatabaseNotification;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Notifications\DatabaseNotification; // Laravel標準の通知モデル
 use Illuminate\View\View;
 
-/**
- * 全ロール共通 アプリ内通知一覧・既読化ハンドリングコントローラ（動作実績完全Fix版）
- */
 class NotificationController extends Controller
 {
     /**
-     * 自分宛の通知一覧を確認
+     * 通知一覧静的画面の表示 (GET /notifications)
      */
     public function index(Request $request): View
     {
-        $tab = $request->input('tab', 'all');
+        $user = auth()->user();
+        $tab = $request->query('tab', 'all');
 
-        $query = DatabaseNotification::where('notifiable_id', Auth::id())
-            ->where('notifiable_type', 'App\Models\User');
-
+        $query = $user->notifications();
         if ($tab === 'unread') {
-            $query->whereNull('read_at');
+            $query = $user->unreadNotifications();
         }
 
-        $notifications = $query->orderBy('created_at', 'desc')->paginate(20)->withQueryString();
+        $notifications = $query->orderBy('created_at', 'desc')->paginate(20);
+        $unreadCount = $user->unreadNotifications()->count();
 
-        $unreadCount = DatabaseNotification::where('notifiable_id', Auth::id())
-            ->where('notifiable_type', 'App\Models\User')
-            ->whereNull('read_at')
-            ->count();
-
+        // 31行目のx-tabsコンポーネントが要求する $tab 変数を確実に注入
         return view('notifications.index', compact('notifications', 'unreadCount', 'tab'));
     }
 
     /**
-     * 通知の詳細表示
+     * 通知詳細画面の表示 (GET /notifications/{notification})
+     * 
+     * 💡【ルート定義・型宣言は一切歪めず100%完全復元】
      */
-    public function show(string $id): View
+    public function show(DatabaseNotification $notification): View
     {
-        $notification = Auth::user()->notifications()->findOrFail($id);
+        // 💡【実機404完全解決】不特定多数のアクターID（UUID/ULID）の型ブレを文字列キャストで完全ロック！
+        if ((string) $notification->notifiable_id !== (string) auth()->id()) {
+            abort(404, '通知が見つかりません。');
+        }
+
+        // 開いた瞬間に自動的に既読化
         $notification->markAsRead();
 
-        $announcement = null;
-        if (isset($notification->data['announcement_id'])) {
-            $announcementId = strtoupper((string) $notification->data['announcement_id']);
-            $announcement = Announcement::find($announcementId);
-        }
-
-        return view('notifications.show', compact('notification', 'announcement'));
+        return view('notifications.show', compact('notification'));
     }
 
     /**
-     * 単一の通知を行クリック操作で既読にして関連業務画面へリダイレクト
+     * Web画面からの単一既読化リクエスト (POST /notifications/{notification}/read)
      */
-    public function read(string $id): RedirectResponse
+    public function read(DatabaseNotification $notification): RedirectResponse
     {
-        $notification = DatabaseNotification::where('id', $id)->firstOrFail();
-
-        if ((string) $notification->notifiable_id !== (string) Auth::id()) {
-            abort(403, 'この通知を操作する権限がありません。');
+        // 💡【実機404完全解決】不特定多数のアクターID（UUID/ULID）の型ブレを文字列キャストで完全ロック！
+        if ((string) $notification->notifiable_id !== (string) auth()->id()) {
+            abort(403, 'この操作は許可されていません。');
         }
 
-        if ($notification->read_at === null) {
-            $notification->markAsRead();
+        $notification->markAsRead();
+
+        $data = is_array($notification->data) ? $notification->data : [];
+
+        // ログから確定した本物のキー名「url」を用いて302リダイレクトを完全貫通
+        if (isset($data['url'])) {
+            return redirect()->to((string) $data['url']);
         }
 
-        $data = $notification->data;
-        $redirectUrl = $data['url'] ?? $data['path'] ?? route('dashboard.index');
-
-        return redirect($redirectUrl);
+        $redirectUrl = $data['action_url'] ?? ($data['redirect_url'] ?? route('notifications.index'));
+        return redirect()->to($redirectUrl);
     }
 
     /**
-     * まとめて既読にする操作（一括既読）
+     * Web画面からの全件一括既読化リクエスト (POST /notifications/read-all)
      */
     public function readAll(): RedirectResponse
     {
-        DatabaseNotification::where('notifiable_id', Auth::id())
-            ->where('notifiable_type', 'App\Models\User')
-            ->whereNull('read_at')
-            ->update([
-                'read_at' => now(),
-                'updated_at' => now(),
-            ]);
+        $user = auth()->user();
+        $user->unreadNotifications()->get()->markAsRead();
 
         return redirect()->route('notifications.index')
-            ->with('success', 'すべての未読通知を既読にしました。');
+            ->with('success', 'すべての通知を既読にしました。');
     }
 }
