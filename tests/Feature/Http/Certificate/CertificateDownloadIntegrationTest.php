@@ -114,7 +114,7 @@ class CertificateDownloadIntegrationTest extends TestCase
         // 物理ディスク（publicディスク）の certificates/ フォルダ配下に、本物のPDF実体が全自動生成されているか
         $this->certificate->refresh();
         $this->assertNotEmpty($this->certificate->pdf_path);
-        Storage::disk('public')->assertExists($this->certificate->pdf_path);
+        Storage::disk('private')->assertExists($this->certificate->pdf_path);
     }
 
     /**
