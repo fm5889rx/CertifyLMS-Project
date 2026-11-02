@@ -18,15 +18,16 @@ final class StorePlanAction
      *
      * @param array<string, mixed> $validatedData フォームリクエストで検証済みのデータ
      * @param string $adminId 操作を実行した管理者のID
+     *
      * @return Plan
      */
     public function execute(array $validatedData, string $adminId): Plan
     {
         $validatedData['id'] = (string) Str::ulid();
-        
+
         // ⭕ Enum型安全：Enumオブジェクトのバリュー、または文字列型に完全適合
         $validatedData['status'] = PlanStatus::Draft->value ?? PlanStatus::Draft;
-        
+
         $validatedData['created_by_user_id'] = $adminId;
         $validatedData['updated_by_user_id'] = $adminId;
 

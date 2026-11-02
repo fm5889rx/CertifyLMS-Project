@@ -4,18 +4,17 @@ declare(strict_types=1);
 
 namespace App\UseCases\Google;
 
-use App\Models\User;
-use App\Models\CoachAvailability;
 use App\Exceptions\Google\GoogleApiException;
+use App\Models\CoachAvailability;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 
 final class SyncGoogleCalendarAction
 {
     /**
      * Google FreeBusy APIから予定をフェッチし同期する
-     * 
+     *
      * @throws GoogleApiException
      */
     public function execute(User $coach, ?string $accessToken = null): void
@@ -24,7 +23,7 @@ final class SyncGoogleCalendarAction
         $credential = $coach->googleCredential;
         $token = $accessToken ?? $credential?->access_token;
 
-        if (!$token) {
+        if (! $token) {
             throw new GoogleApiException('Google Calendar アクセストークンが見つかりません。');
         }
 
@@ -44,9 +43,9 @@ final class SyncGoogleCalendarAction
             ]);
 
         // 401未認可時の自動リフレッシュ回路
-        if (!$apiResponse->successful() && $apiResponse->status() === 401) {
+        if (! $apiResponse->successful() && $apiResponse->status() === 401) {
             if ($credential && $credential->refresh_token) {
-                
+
                 $tokenResponse = Http::asJson()->post('https://googleapis.com', [
                     'client_id' => config('services.google.client_id'),
                     'client_secret' => config('services.google.client_secret'),
@@ -73,10 +72,10 @@ final class SyncGoogleCalendarAction
                             'items' => [['id' => 'primary']],
                         ]);
 
-                    if (!$apiResponse->successful()) {
+                    if (! $apiResponse->successful()) {
                         $errorData = $apiResponse->json();
                         $retryMessage = $errorData['error']['message'] ?? '再試行通信に失敗しました。';
-                        throw new GoogleApiException('Google連携リトライエラー: ' . $retryMessage);
+                        throw new GoogleApiException('Google連携リトライエラー: '.$retryMessage);
                     }
                 } else {
                     throw new GoogleApiException('Google認証リフレッシュ失敗: リフレッシュトークンが失効しています。再連携してください。');
@@ -86,14 +85,14 @@ final class SyncGoogleCalendarAction
             }
         }
 
-        if (!$apiResponse->successful()) {
+        if (! $apiResponse->successful()) {
             $errorData = $apiResponse->json();
             $googleMessage = $errorData['error']['message'] ?? 'Google APIで予期せぬエラーが発生しました。';
-            throw new GoogleApiException("Google連携エラー({$apiResponse->status()}): " . $googleMessage);
+            throw new GoogleApiException("Google連携エラー({$apiResponse->status()}): ".$googleMessage);
         }
 
         $responseData = $apiResponse->json();
-        if (!isset($responseData['calendars']['primary']['busy'])) {
+        if (! isset($responseData['calendars']['primary']['busy'])) {
             throw new GoogleApiException('Google Calendar API のレスポンスに期待されるデータが含まれていません。');
         }
 

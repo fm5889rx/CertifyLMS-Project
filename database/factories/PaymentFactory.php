@@ -27,16 +27,16 @@ class PaymentFactory extends Factory
         return [
             'id' => (string) Str::ulid(),
             'user_id' => User::factory()->student(),
-            
+
             // ⭕ 【最終兵器】どこからこのファクトリが呼ばれても、下書き（draft）のパックを絶対に自動生成させないロジック
             'meeting_pack_id' => function () {
                 // すでにマスタシーダー（MeetingPackSeeder）によって作られた「本物の公開中（published）のパック」をDBから1件ランダムに取得
                 $publishedPack = MeetingPack::where('status', MeetingPackStatus::Published->value ?? 'published')->inRandomOrder()->first();
-                
+
                 // もし他シーダーの実行順の影響でDBにまだ無ければ、その場で1件だけ「公開中」マスタを安全に自動生成してそのIDを返す
                 return $publishedPack ? $publishedPack->id : MeetingPack::factory()->published()->create()->id;
             },
-            
+
             'amount' => function (array $attributes) {
                 return MeetingPack::find($attributes['meeting_pack_id'])->price ?? 3000;
             },
@@ -44,8 +44,8 @@ class PaymentFactory extends Factory
                 return MeetingPack::find($attributes['meeting_pack_id'])->meeting_count ?? 1;
             },
             'status' => PaymentStatus::Completed->value,
-            'stripe_checkout_session_id' => 'cs_test_' . Str::random(20),
-            'stripe_payment_intent_id' => 'pi_test_' . Str::random(20),
+            'stripe_checkout_session_id' => 'cs_test_'.Str::random(20),
+            'stripe_payment_intent_id' => 'pi_test_'.Str::random(20),
         ];
     }
 

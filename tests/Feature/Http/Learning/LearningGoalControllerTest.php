@@ -73,7 +73,7 @@ class LearningGoalControllerTest extends TestCase
         ]);
     }
 
-     /**
+    /**
      * ① 目標の追加
      * 仕様：成功時に「受講登録詳細画面」へリダイレクトし、フラッシュメッセージを表示する
      */

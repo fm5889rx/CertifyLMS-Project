@@ -16,6 +16,7 @@ class StoreAction
     /**
      * @param array<string, mixed> $validatedData
      * @param string $adminId
+     *
      * @return MeetingPack
      */
     public function execute(array $validatedData, string $adminId): MeetingPack

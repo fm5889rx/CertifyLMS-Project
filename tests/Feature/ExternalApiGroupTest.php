@@ -31,6 +31,7 @@ final class ExternalApiGroupTest extends TestCase
 
     /**
      * @test
+     *
      * @group external
      */
     public function test_外部_a_p_i_に依存するテストをまとめて分離実行できること(): void

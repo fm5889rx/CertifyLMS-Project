@@ -24,7 +24,7 @@ class LearningGoalRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:100'],
             'description' => ['nullable', 'string', 'max:1000'],
-            'target_date' => ['required', 'date', 'after_or_equal:' . $today], // 💡 today ではなく $today 変数を結合する
+            'target_date' => ['required', 'date', 'after_or_equal:'.$today],
         ];
     }
 

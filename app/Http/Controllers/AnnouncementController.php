@@ -20,15 +20,13 @@ use Illuminate\View\View;
 class AnnouncementController extends Controller
 {
     /**
-     * ① お知らせ配信履歴一覧
+     * Displays the paginated announcement history with all displayed relations loaded.
      */
     public function index(): View
     {
         $this->authorize('viewAny', Announcement::class);
 
-        // ⭕ 【型安全】モデルに定義されている本物のリレーション 'createdBy' を明示的に指定して Eager Loading。
-        // これによりN+1問題のクエリ発行数制限を完璧にパスし、500エラーも100%消滅します。
-        $announcements = Announcement::with(['createdBy'])
+        $announcements = Announcement::with(['createdBy', 'targetCertification', 'targetUser'])
             ->latest('created_at')
             ->paginate(20);
 
@@ -36,14 +34,14 @@ class AnnouncementController extends Controller
     }
 
     /**
-     * ② お知らせ作成画面
+     * Displays the announcement form and its recipient options.
      */
     public function create(): View
     {
         $this->authorize('create', Announcement::class);
 
         $certifications = Certification::select(['id', 'name'])->orderBy('name')->get();
-        
+
         $students = User::where('role', UserRole::Student->value ?? UserRole::Student)
             ->select(['id', 'name', 'email'])
             ->get();
@@ -52,7 +50,7 @@ class AnnouncementController extends Controller
     }
 
     /**
-     * ③ お知らせ一斉配信実行
+     * Dispatches an announcement using validated input.
      */
     public function store(AnnouncementStoreRequest $request, StoreAction $action): RedirectResponse
     {
@@ -66,14 +64,15 @@ class AnnouncementController extends Controller
     }
 
     /**
-     * ④ お知らせ詳細表示
+     * Displays announcement details and its recipient relations.
      */
     public function show(string $id): View
     {
         $this->authorize('view', Announcement::class);
 
-        // ⭕ 詳細表示時も、配信者の情報をEager LoadingしてN+1問題を完璧に防御
-        $announcement = Announcement::with(['createdBy'])->where('id', $id)->firstOrFail();
+        $announcement = Announcement::with(['createdBy', 'targetCertification', 'targetUser'])
+            ->where('id', $id)
+            ->firstOrFail();
 
         return view('announcement.management.show', compact('announcement'));
     }

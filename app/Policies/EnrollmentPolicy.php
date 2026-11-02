@@ -104,5 +104,4 @@ class EnrollmentPolicy
             ->where('certification_coach_assignments.certification_id', $enrollment->certification_id)
             ->exists();
     }
-
 }

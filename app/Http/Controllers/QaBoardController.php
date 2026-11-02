@@ -6,18 +6,18 @@ namespace App\Http\Controllers;
 
 use App\Enums\CertificationStatus;
 use App\Enums\QaThreadStatus;
+use App\Http\Requests\QaThread\IndexRequest;
 use App\Http\Requests\QaThread\QaReplyRequest;
 use App\Http\Requests\QaThread\QaThreadRequest;
 use App\Models\Answer;
 use App\Models\Certification;
 use App\Models\QaThread;
 use App\Models\Question;
-use App\Models\User;
-use App\Notifications\QaReplyPostedNotification;
+use App\UseCases\QaBoard\IndexAction;
+use App\UseCases\QaBoard\ShowAction;
+use App\UseCases\QaBoard\StoreReplyAction;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -27,109 +27,27 @@ use Illuminate\View\View;
 class QaBoardController extends Controller
 {
     /**
-     * ① 質問一覧画面
-     * GET /qa-board または /admin/qa-board
+     * Displays the role-scoped, validated Q&A listing.
      */
-    public function index(Request $request): View
+    public function index(IndexRequest $request, IndexAction $action): View
     {
         $user = Auth::user();
 
-        // N+1問題対策の一括取得と件数カウント
-        $query = Question::with(['user', 'certification'])->withCount('replies');
-
-        // --- 1. ロール・権限によるアクセスおよび公開状態の制御（モデルの判定メソッドを活用） ---
-        if ($user->isAdmin()) {
-            // 管理者：全資格（下書き・公開停止含む）のスレッドを横断閲覧可能
-        } elseif ($user->isCoach()) {
-            // コーチ：担当資格かつ「公開中」の資格のみ
-            $assignedIds = $user->assignedCertifications()
-                ->where('status', 'published')
-                ->pluck('id')
-                ->toArray();
-            $query->whereIn('certification_id', $assignedIds);
-        } else {
-            // 受講生：すべての「公開中」資格のスレッドのみ
-            $publishedIds = Certification::where('status', 'published')
-                ->pluck('id')
-                ->toArray();
-            $query->whereIn('certification_id', $publishedIds);
-        }
-
-        // --- 2. 検索条件絞り込み ---
-        if ($request->filled('certification_id')) {
-            $query->where('certification_id', $request->input('certification_id'));
-        }
-
-        // ========================================================
-        // ✨ 【完全修正版】判定の順番を「unresolved」を先にします ✨
-        // ========================================================
-        if ($request->filled('status')) {
-            $statusInput = $request->input('status');
-            $statusString = is_array($statusInput) ? implode(' ', $statusInput) : (string)$statusInput;
-            $statusString = strtolower($statusString);
-
-            // 💡 先に unresolved (未解決) かどうかを判定することで、誤判定を完全に防ぐ
-            if (str_contains($statusString, 'unresolved') || str_contains($statusString, 'open')) {
-                $query->where('status', QaThreadStatus::Open->value);
-            } elseif (str_contains($statusString, 'resolved')) {
-                $query->where('status', QaThreadStatus::Resolved->value);
-            }
-        }
-
-        if ($request->filled('keyword')) {
-            $keyword = '%' . $request->input('keyword') . '%';
-            $query->where(function ($q) use ($keyword) {
-                $q->where('title', 'like', $keyword)
-                  ->orWhere('body', 'like', $keyword)
-                  ->orWhereHas('replies', function ($subQ) use ($keyword) {
-                      $subQ->where('body', 'like', $keyword);
-                  });
-            });
-        }
-
-        // 新着順 20件 / ページのページネーション
-        $threads = $query->latest('created_at')->paginate(20);
-        $threads->withQueryString();
-
-        // 表示用のマスタデータ取得出し分け
-        if ($user->isAdmin()) {
-            $certifications = Certification::all();
-        } elseif ($user->isCoach()) {
-            $certifications = $user->assignedCertifications()->where('status', 'published')->get();
-        } else {
-            $certifications = Certification::where('status', 'published')->get();
-        }
-
-        // Blade側での「Array to string conversion」エラーを絶対に防ぐための安全な文字列化
-        $statusFilterForView = $request->input('status', '');
-        if (is_array($statusFilterForView)) {
-            // 配列だった場合は最初の要素を取り出すか、空文字にする（テストの「status%5B」という引き継ぎ文字列検証をパスさせる）
-            $statusFilterForView = ''; 
-        }
-
-        return view('qa-thread.index', [
-            'threads' => $threads,
-            'certifications' => $certifications,
-            'filters' => [
-                'status' => $statusFilterForView, // ⭕ 確実に文字列（または空文字）にして引き渡す
-                'certification_id' => $request->input('certification_id', ''),
-                'keyword' => $request->input('keyword', ''),
-            ],
-            'indexRoute' => $user->isAdmin() ? 'admin.qa-board.index' : 'qa-board.index',
-            'publishedStatus' => CertificationStatus::Published,
-        ]);    }
+        return view('qa-thread.index', $action($user, $request->validated()));
+    }
 
     /**
-     * ② 質問作成画面
+     * Displays the question creation form with published certifications.
      */
     public function create(): View
     {
         $certifications = Certification::where('status', 'published')->get();
+
         return view('qa-thread.create', compact('certifications'));
     }
 
     /**
-     * ③ 質問の保存処理
+     * Creates a question from validated request data.
      */
     public function store(QaThreadRequest $request): RedirectResponse
     {
@@ -137,7 +55,7 @@ class QaBoardController extends Controller
         $validated = $request->validated();
         $certification = Certification::findOrFail($validated['certification_id']);
 
-        if (!$user->isAdmin() && $certification->status !== 'published' && $certification->status !== CertificationStatus::Published) {
+        if (! $user->isAdmin() && $certification->status !== 'published' && $certification->status !== CertificationStatus::Published) {
             abort(403);
         }
 
@@ -155,53 +73,22 @@ class QaBoardController extends Controller
     }
 
     /**
-     * ④ 質問詳細画面
+     * Displays a thread and its ordered replies after visibility checks.
      */
-    public function show(string $id): View
+    public function show(string $id, ShowAction $action): View
     {
         $user = Auth::user();
-        $thread = QaThread::where('id', $id)->with('user')->firstOrFail();
-        $certification = $thread->certification;
-
-        if (!$user->isAdmin() && $certification->status !== 'published' && $certification->status !== CertificationStatus::Published) {
-            abort(404);
-        }
-
-        // モデルのビルトイン判定メソッドを利用して100%安全にアサイン検証
-        if ($user->isCoach()) {
-            if (method_exists($user, 'coachingCertificationIds')) {
-                $assignedIds = $user->coachingCertificationIds();
-                if (!in_array($certification->id, $assignedIds, true)) {
-                    abort(403);
-                }
-            } else {
-                $hasAssignment = DB::table('certification_coach_assignments')
-                    ->where('user_id', $user->id)
-                    ->where('certification_id', $certification->id)
-                    ->whereNull('unassigned_at')
-                    ->exists();
-                if (!$hasAssignment) {
-                    abort(403);
-                }
-            }
-        }
-
-        $replies = $thread->replies()->with('user')->oldest('created_at')->get();
-
-        foreach ($replies as $reply) {
-            $reply->question = $thread;
-            $reply->thread = $thread;
-        }
+        $data = $action($user, $id);
 
         return view('qa-thread.show', [
-            'thread' => $thread,
-            'question' => $thread,
-            'replies' => $replies,
+            'thread' => $data['thread'],
+            'question' => $data['thread'],
+            'replies' => $data['replies'],
         ]);
     }
 
     /**
-     * ⑤ 質問編集画面
+     * Displays the question edit form after policy authorization.
      */
     public function edit(string $id): View
     {
@@ -209,11 +96,12 @@ class QaBoardController extends Controller
         $this->authorize('update', $thread);
 
         $certifications = Certification::where('status', 'published')->get();
+
         return view('qa-thread.edit', compact('thread', 'certifications'));
     }
 
     /**
-     * ⑥ 質問の更新処理
+     * Updates a question from validated request data.
      */
     public function update(QaThreadRequest $request, string $id): RedirectResponse
     {
@@ -226,17 +114,17 @@ class QaBoardController extends Controller
     }
 
     /**
-     * ⑦ 質問の削除処理
+     * Deletes a question when permitted by the moderation and ownership rules.
      */
     public function destroy(string $id): RedirectResponse
     {
         $user = Auth::user();
         $thread = Question::where('id', $id)->firstOrFail();
 
-        // 管理者メソッドで確実なモデレーション削除を担保
         if ($user->isAdmin()) {
             $thread->replies()->delete();
             $thread->delete();
+
             return redirect()->route('admin.qa-board.index')
                 ->with('success', '質問を削除しました。');
         }
@@ -255,7 +143,7 @@ class QaBoardController extends Controller
     }
 
     /**
-     * ⑧ 質問の解決マーク処理
+     * Marks a question as resolved.
      */
     public function resolve(string $id): RedirectResponse
     {
@@ -271,7 +159,7 @@ class QaBoardController extends Controller
     }
 
     /**
-     * ⑨ 質問の未解決戻し処理
+     * Reopens a resolved question.
      */
     public function unresolve(string $id): RedirectResponse
     {
@@ -287,40 +175,24 @@ class QaBoardController extends Controller
     }
 
     /**
-     * ⑩ 回答（リプライ）の保存処理
-     * POST /qa-board/{thread}/replies
+     * Stores a validated reply to an open question.
      */
-    public function storeReply(QaReplyRequest $request, string $id): RedirectResponse
+    public function storeReply(QaReplyRequest $request, string $id, StoreReplyAction $action): RedirectResponse
     {
         $thread = Question::where('id', $id)->firstOrFail();
 
-        // Enumオブジェクト同士として正しく比較する
         if ($thread->status === QaThreadStatus::Resolved) {
             return redirect()->back()->with('error', '解決済みの質問には回答できません');
         }
 
-        Answer::create([
-            'id' => (string) Str::ulid(),
-            'question_id' => $thread->id,
-            'user_id' => Auth::id(),
-            'body' => $request->validated()['body'],
-        ]);
-
-        // 【通知コントロール要件】Q&A回答時に投稿者本人が自身に通知を受け取らないようにする制御（S-B-04対策）
-        if ($thread->user_id !== Auth::id()) {
-            $threadUser = User::find($thread->user_id);
-            if ($threadUser && class_exists(QaReplyPostedNotification::class)) {
-                $threadUser->notify(new QaReplyPostedNotification($thread));
-            }
-        }
+        $action($thread, $request->user(), $request->validated('body'));
 
         return redirect()->route('qa-board.show', $thread->id)
             ->with('success', '回答を投稿しました。');
     }
 
     /**
-     * 11. 回答（リプライ）の編集画面
-     * GET /qa-board/{thread}/replies/{reply}/edit
+     * Displays the reply edit form after policy authorization.
      */
     public function editReply(string $id, string $replyId): View
     {
@@ -333,8 +205,7 @@ class QaBoardController extends Controller
     }
 
     /**
-     * 12. 回答（リプライ）の更新処理
-     * PATCH /qa-board/{question}/replies/{reply}
+     * Updates a reply from validated request data.
      */
     public function updateReply(QaReplyRequest $request, string $id, string $replyId): RedirectResponse
     {
@@ -349,15 +220,13 @@ class QaBoardController extends Controller
     }
 
     /**
-     * 13. 回答の削除
-     * DELETE /qa-board/{question}/replies/{reply}
+     * Deletes a reply after policy authorization.
      */
     public function destroyReply(string $id, string $replyId): RedirectResponse
     {
         $thread = Question::where('id', $id)->firstOrFail();
         $reply = Answer::where('id', $replyId)->firstOrFail();
 
-        // 自前チェックを排除し、プロジェクト標準の Policy 認可にすべて委譲
         $this->authorize('delete', $reply);
 
         $reply->delete();

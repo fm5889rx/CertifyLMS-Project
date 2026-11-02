@@ -73,6 +73,8 @@ class AiChatIntegrationTest extends TestCase
      */
     public function test_会話一覧画面にアクセスした際に対象受講生の過去ログスレッド一覧が正常にロードされて描画されること(): void
     {
+        $this->withoutVite();
+
         $response = $this->actingAs($this->student)
             ->get(route('ai-chat.index'));
 

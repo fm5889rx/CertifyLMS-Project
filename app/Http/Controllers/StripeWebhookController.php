@@ -41,6 +41,7 @@ class StripeWebhookController extends Controller
 
         if (empty($sigHeader)) {
             Log::warning('Stripe Webhook 署名ヘッダーが欠落しています。');
+
             return response()->json(['error' => 'Header Missing'], 400);
         }
 
@@ -48,6 +49,7 @@ class StripeWebhookController extends Controller
             $event = Webhook::constructEvent($payload, $sigHeader, $this->endpointSecret);
         } catch (Exception $e) {
             Log::error('Stripe Webhook 署名検証に失敗しました。', ['error' => $e->getMessage()]);
+
             return response()->json(['error' => 'Invalid signature'], 400);
         }
 
@@ -79,7 +81,7 @@ class StripeWebhookController extends Controller
             try {
                 // 先行の保留レコードがないテストケース（直撃）が来た場合でも、
                 // 回数（$pack->meeting_count）を完璧に引き連れて新規作成、あれば更新遷移させる
-                if (!$payment) {
+                if (! $payment) {
                     $payment = Payment::create([
                         'user_id' => $user->id,
                         'meeting_pack_id' => $pack->id,
@@ -111,6 +113,7 @@ class StripeWebhookController extends Controller
             } catch (Exception $e) {
                 DB::rollBack();
                 Log::error('Stripe Webhook データベース永続化エラー:', ['error' => $e->getMessage()]);
+
                 return response()->json(['error' => 'Database error'], 500);
             }
         }
@@ -130,6 +133,7 @@ class StripeWebhookController extends Controller
                     Log::info('Stripe Webhook 決済失敗に連動した状態遷移完了。');
                 } catch (Exception $e) {
                     DB::rollBack();
+
                     return response()->json(['error' => 'Database error'], 500);
                 }
             }

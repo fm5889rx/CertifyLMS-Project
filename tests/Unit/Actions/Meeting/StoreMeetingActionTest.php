@@ -14,11 +14,11 @@ use App\Models\CertificationCategory;
 use App\Models\Enrollment;
 use App\Models\Meeting;
 use App\Models\User;
-use App\Services\MeetingQuotaService; // 💡 本物
-use App\UseCases\MeetingQuota\ConsumeQuotaAction; // 💡 本物
-use App\Exceptions\MeetingQuota\InsufficientMeetingQuotaException; // 💡 本物
+use App\Services\MeetingQuotaService;
+use App\UseCases\MeetingQuota\ConsumeQuotaAction;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class StoreMeetingActionTest extends TestCase
@@ -26,8 +26,11 @@ class StoreMeetingActionTest extends TestCase
     use RefreshDatabase;
 
     private User $student;
+
     private User $coach;
+
     private Enrollment $enrollment;
+
     private Carbon $scheduledAt;
 
     protected function setUp(): void
@@ -51,7 +54,7 @@ class StoreMeetingActionTest extends TestCase
         ]);
 
         $certification->coaches()->attach($this->coach->id, [
-            'id' => (string) \Illuminate\Support\Str::ulid(),
+            'id' => (string) Str::ulid(),
             'assigned_by_user_id' => $this->coach->id,
             'assigned_at' => now(),
         ]);
@@ -70,13 +73,11 @@ class StoreMeetingActionTest extends TestCase
      */
     public function test_store_meeting_actionが残数確認から自動コーチ割当までを執行し正常に面談予約が成立すること(): void
     {
-        // 💡【解決】本物になった2つのサービスオブジェクトを確実にインジェクション同期
         $quotaService = app(MeetingQuotaService::class);
         $consumeQuotaAction = app(ConsumeQuotaAction::class);
 
         $action = new StoreMeetingAction($quotaService, $consumeQuotaAction);
 
-        // 💡【解決】本番コントローラー通りの「$action($enrollment, $scheduledAt, $topic)」で同期実行！
         $meeting = $action($this->enrollment, $this->scheduledAt, '正常系の予約申請。');
 
         $this->assertInstanceOf(Meeting::class, $meeting);

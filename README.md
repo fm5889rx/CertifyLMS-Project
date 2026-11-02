@@ -114,6 +114,7 @@ http://localhost:8000 にアクセスし、下記の[ログインアカウント
 ```bash
 sail artisan test                  # 全テスト実行
 sail artisan test --filter=Xxx    # クラス名・メソッド名で絞り込み
+sail composer test:coverage-min   # 全テスト実行 + 行カバレッジ80%以上を確認
 ```
 
 ## コード整形

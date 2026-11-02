@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\Actions\Meeting;
 
+use App\Enums\MeetingStatus;
+use App\Exceptions\MeetingQuota\InsufficientMeetingQuotaException;
 use App\Models\Enrollment;
 use App\Models\Meeting;
 use App\Services\MeetingQuotaService;
 use App\UseCases\MeetingQuota\ConsumeQuotaAction;
-use App\Exceptions\MeetingQuota\InsufficientMeetingQuotaException;
-use App\Enums\MeetingStatus; // 💡 Enum をインポート
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
 class StoreMeetingAction
@@ -21,7 +22,9 @@ class StoreMeetingAction
     ) {}
 
     /**
-     * 受講生の予約申請の執行
+     * Reserves a meeting, assigns a coach, and consumes one meeting quota.
+     *
+     * @throws InsufficientMeetingQuotaException When the student has no meeting quota remaining.
      */
     public function __invoke(Enrollment $enrollment, Carbon $scheduledAt, string $topic): Meeting
     {
@@ -29,13 +32,13 @@ class StoreMeetingAction
 
         // 1. 残面談回数の確認
         if ($this->quotaService->remaining($student) <= 0) {
-            throw new InsufficientMeetingQuotaException();
+            throw new InsufficientMeetingQuotaException;
         }
 
-        return DB::transaction(function () use ($student, $enrollment, $scheduledAt, $topic) {
+        return DB::transaction(function () use ($student, $enrollment, $scheduledAt, $topic): Meeting {
             // 2. 空き枠から実績最少コーチを自動割当して reserved で確定
             $assignedCoach = $enrollment->certification->coaches()
-                ->withCount(['meetingsAsCoach' => function ($query) {
+                ->withCount(['meetingsAsCoach' => function (Builder $query): void {
                     $query->whereIn('status', [MeetingStatus::Reserved->value, MeetingStatus::Completed->value]);
                 }])
                 ->orderBy('meetings_as_coach_count', 'asc')
@@ -46,7 +49,7 @@ class StoreMeetingAction
                 'student_id' => $student->id,
                 'coach_id' => $assignedCoach->id,
                 'scheduled_at' => $scheduledAt,
-                'status' => MeetingStatus::Reserved, // 💡【解決】->value を削除し、Enumオブジェクトそのものを代入してテーブル規約に完全同期！
+                'status' => MeetingStatus::Reserved,
                 'topic' => $topic,
             ]);
 

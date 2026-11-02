@@ -13,6 +13,7 @@ final class MarkAsReadAction
 {
     /**
      * @param DatabaseNotification $notification
+     *
      * @return string 遷移先リダイレクトURL
      */
     public function execute(DatabaseNotification $notification): string

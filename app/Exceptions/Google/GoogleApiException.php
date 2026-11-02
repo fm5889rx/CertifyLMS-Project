@@ -6,6 +6,4 @@ namespace App\Exceptions\Google;
 
 use Exception;
 
-final class GoogleApiException extends Exception
-{
-}
+final class GoogleApiException extends Exception {}
