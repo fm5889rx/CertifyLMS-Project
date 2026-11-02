@@ -33,7 +33,7 @@ class AdminMeetingPackController extends Controller
         $query = MeetingPack::query()->withCount(['payments']);
 
         if ($request->filled('keyword')) {
-            $query->where('name', 'like', '%' . $request->input('keyword') . '%');
+            $query->where('name', 'like', '%'.$request->input('keyword').'%');
         }
 
         if ($request->filled('status')) {
@@ -54,6 +54,7 @@ class AdminMeetingPackController extends Controller
     public function create(): View
     {
         $this->authorize('create', MeetingPack::class);
+
         return view('meeting-pack.management.create');
     }
 
@@ -82,9 +83,9 @@ class AdminMeetingPackController extends Controller
         // ネストされたリレーション形式（'payments.user'）で安全に定義します。
         // これにより、paymentsが空（0件）のときでもLaravelが内部でエラーを出さず、安全にスキップしてくれます。
         $plan = MeetingPack::with([
-            'createdBy', 
-            'updatedBy', 
-            'payments' => fn ($q) => $q->latest('created_at')->take(20) // 直近20件制限の最適化
+            'createdBy',
+            'updatedBy',
+            'payments' => fn ($paymentQuery) => $paymentQuery->latest('created_at')->take(20),
         ])->where('id', $id)->firstOrFail();
 
         $this->authorize('view', $plan);
@@ -106,7 +107,7 @@ class AdminMeetingPackController extends Controller
     public function edit(string $id): View
     {
         $plan = MeetingPack::where('id', $id)->firstOrFail();
-        
+
         $this->authorize('update', $plan);
 
         return view('meeting-pack.management.edit', compact('plan'));
@@ -118,7 +119,7 @@ class AdminMeetingPackController extends Controller
     public function update(MeetingPackRequest $request, string $id, UpdateAction $action): RedirectResponse
     {
         $plan = MeetingPack::where('id', $id)->firstOrFail();
-        
+
         $this->authorize('update', $plan);
 
         $action->execute($plan, $request->validated(), Auth::id());
@@ -134,7 +135,7 @@ class AdminMeetingPackController extends Controller
     public function destroy(string $id): RedirectResponse
     {
         $plan = MeetingPack::where('id', $id)->firstOrFail();
-        
+
         $this->authorize('delete', $plan);
 
         // 公開中の面談パックは購入履歴の整合性を守るため削除不可
@@ -157,7 +158,7 @@ class AdminMeetingPackController extends Controller
     public function publish(string $id): RedirectResponse
     {
         $plan = MeetingPack::where('id', $id)->firstOrFail();
-        
+
         $this->authorize('update', $plan);
         $plan->update(['status' => MeetingPackStatus::Published]);
 
@@ -170,7 +171,7 @@ class AdminMeetingPackController extends Controller
     public function archive(string $id): RedirectResponse
     {
         $plan = MeetingPack::where('id', $id)->firstOrFail();
-        
+
         $this->authorize('update', $plan);
         $plan->update(['status' => MeetingPackStatus::Archived]);
 
@@ -183,7 +184,7 @@ class AdminMeetingPackController extends Controller
     public function unarchive(string $id): RedirectResponse
     {
         $plan = MeetingPack::where('id', $id)->firstOrFail();
-        
+
         $this->authorize('update', $plan);
         $plan->update(['status' => MeetingPackStatus::Draft]);
 

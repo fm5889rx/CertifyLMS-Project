@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
+use App\Enums\MeetingPackStatus;
 use App\Enums\PaymentStatus;
 use App\Enums\UserRole;
-use App\Enums\MeetingPackStatus;
 use App\Models\MeetingPack;
 use App\Models\Payment;
 use App\Models\User;
@@ -27,6 +27,7 @@ class PaymentSeeder extends Seeder
 
         if ($students->isEmpty() || $packs->isEmpty()) {
             $this->command?->warn('PaymentSeeder: 受講生または公開中の面談パックが存在しないため、スキップしました。先に UserSeeder と MeetingPackSeeder を実行してください。');
+
             return;
         }
 
@@ -34,12 +35,12 @@ class PaymentSeeder extends Seeder
         foreach ($students as $student) {
             // 1人あたり 1〜3 件の購入履歴をランダムに生成
             $purchaseCount = rand(1, 3);
-            
+
             for ($i = 0; $i < $purchaseCount; $i++) {
                 $pack = $packs->random();
 
                 // 🎲 確率の割り振り（1:保留中、2:決済失敗、その他:決済完了）
-                $dice = rand(1, 10); 
+                $dice = rand(1, 10);
 
                 $factory = Payment::factory();
                 if ($dice === 1) {

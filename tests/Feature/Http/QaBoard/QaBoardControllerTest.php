@@ -35,6 +35,8 @@ class QaBoardControllerTest extends TestCase
     {
         parent::setUp();
 
+        $this->withoutVite();
+
         // 1. テスト用の資格マスターを作成 (ステータスを published に)
         $this->certification = Certification::factory()->create([
             'status' => 'published',
@@ -92,7 +94,7 @@ class QaBoardControllerTest extends TestCase
                 'body' => '掲示板の本文です',
                 // ✖ 修正前: QaThreadStatus::Resolved->value (解決済なので未解決検索で消えていた)
                 // ⭕ 修正後: 検索条件にヒットするように Open または Unresolved の値をセットする
-                'status' => QaThreadStatus::Open->value, 
+                'status' => QaThreadStatus::Open->value,
             ]);
         }
 
@@ -284,7 +286,7 @@ class QaBoardControllerTest extends TestCase
 
         // 投稿者本人が削除を試みる
         $response = $this->actingAs($this->student)->delete(route('qa-board.destroy', $thread));
-        
+
         // 削除されずに元の画面に戻り、エラーのフラッシュメッセージがあること
         $response->assertStatus(302);
         $this->assertDatabaseHas('questions', ['id' => $thread->id]);
@@ -296,7 +298,7 @@ class QaBoardControllerTest extends TestCase
      */
     public function test_管理者はスレッドを無条件で削除でき配下回答も連動削除されること(): void
     {
-        $admin = User::factory()->create(['role' => \App\Enums\UserRole::Admin ?? 'admin']);
+        $admin = User::factory()->create(['role' => UserRole::Admin ?? 'admin']);
 
         $thread = QaThread::create([
             'id' => (string) Str::ulid(),

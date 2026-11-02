@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Tests\Feature\Http\Dashboard;
 
 use App\Models\Certification;
+use App\Models\ChatMember;
+use App\Models\ChatMessage;
+use App\Models\ChatRoom;
 use App\Models\Enrollment;
 use App\Models\Plan;
 use App\Models\User;
@@ -76,6 +79,30 @@ class DashboardQueryCountTest extends TestCase
         );
     }
 
+    public function test_coach_dashboard_unread_chat_query_count_does_not_grow_with_room_count(): void
+    {
+        $coach = User::factory()->coach()->inProgress()->create();
+        $certification = Certification::factory()->published()->create();
+        $certification->coaches()->attach($coach->id, [
+            'id' => (string) Str::ulid(),
+            'assigned_by_user_id' => User::factory()->admin()->create()->id,
+            'assigned_at' => now(),
+            'unassigned_at' => null,
+        ]);
+        $this->createUnreadChatRooms($coach, $certification, 1);
+        $this->actingAs($coach);
+
+        $baseline = $this->countQueriesFor(fn () => $this->get(route('dashboard.index'))->assertOk());
+        $this->createUnreadChatRooms($coach, $certification, 5);
+        $scaled = $this->countQueriesFor(fn () => $this->get(route('dashboard.index'))->assertOk());
+
+        $this->assertLessThanOrEqual(
+            $baseline + 3,
+            $scaled,
+            "Coach dashboard query count grew with unread chat rooms ({$baseline} → {$scaled}); batch unread counts by room.",
+        );
+    }
+
     public function test_student_dashboard_query_count_is_within_limit(): void
     {
         $plan = Plan::factory()->published()->create();
@@ -137,5 +164,28 @@ class DashboardQueryCountTest extends TestCase
         $closure();
 
         return $count;
+    }
+
+    private function createUnreadChatRooms(User $coach, Certification $certification, int $count): void
+    {
+        foreach (range(1, $count) as $index) {
+            $student = User::factory()->student()->inProgress()->create();
+            $enrollment = Enrollment::factory()
+                ->for($student)
+                ->for($certification)
+                ->learning()
+                ->create();
+            $room = ChatRoom::factory()->for($enrollment)->create();
+
+            ChatMember::factory()->create([
+                'chat_room_id' => $room->id,
+                'user_id' => $coach->id,
+                'last_read_at' => null,
+            ]);
+            ChatMessage::factory()->create([
+                'chat_room_id' => $room->id,
+                'sender_user_id' => $student->id,
+            ]);
+        }
     }
 }

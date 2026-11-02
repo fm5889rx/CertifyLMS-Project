@@ -24,6 +24,7 @@ class StoreAction
      *
      * @param array<string, mixed> $validatedData フォームリクエストで検証済みのデータ
      * @param string $adminId 操作を実行した管理者のID
+     *
      * @return int 実際に配信された受講生の件数
      */
     public function execute(array $validatedData, string $adminId): int

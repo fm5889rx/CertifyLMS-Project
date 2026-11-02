@@ -12,39 +12,24 @@ use App\Actions\Meeting\ShowMeetingAction;
 use App\Actions\Meeting\StoreMeetingAction;
 use App\Actions\Meeting\UpsertMeetingMemoAction;
 use App\Enums\EnrollmentStatus;
-use App\Enums\MeetingStatus;
 use App\Http\Requests\Meeting\AvailabilityRequest;
 use App\Http\Requests\Meeting\IndexAsCoachRequest;
 use App\Http\Requests\Meeting\IndexRequest;
-use App\Http\Requests\Meeting\StoreRequest;             // T-A-02：追加
-use App\Http\Requests\Meeting\UpsertMemoRequest;        // T-A-02：追加
-use App\Models\Certification;              // T-A-02：追加
-use App\Models\Enrollment;             // T-A-02：追加
-use App\Models\Meeting;            // T-A-02：追加
-use App\Models\User;        // T-A-02：追加
-use App\Services\MeetingQuotaService;        // T-A-02：追加
+use App\Http\Requests\Meeting\StoreRequest;
+use App\Http\Requests\Meeting\UpsertMemoRequest;
+use App\Models\Enrollment;
+use App\Models\Meeting;
+use App\Services\MeetingQuotaService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Collection;
 use Illuminate\View\View;
 
 /**
- * 1on1 面談予約 (Meeting) の HTTP エントリポイント。（B-B-10修正版 → T-A-02修正版）
- *
- * 受講生視点(index / show / create / store / cancel / fetchAvailability)とコーチ視点
- * (indexAsCoach / upsertMemo)を 1 Controller に集約する。予約 / キャンセル / メモ保存の
- * 状態変更系は残面談回数の消費・返却、通知発火、トランザクション境界を method 内で扱い、
- * 取得系はクエリ組み立てを method 内で行う。認可は $this->authorize() または FormRequest::authorize()。
- *
- * T-A-02で変更：各メソッドの内部ロジックをアクション化する。
+ * Handles student and coach meeting workflows.
  */
 class MeetingController extends Controller
 {
-    /**
-     * 受講生本人の面談一覧。filter (upcoming/past/all) クエリで履歴を切り替える。
-     * T-A-02：内部ロジックをアクション化する。
-     */
     public function index(IndexRequest $request, MeetingQuotaService $meetingQuota, IndexMeetingAction $action): View
     {
         $filter = $request->validated('filter') ?? 'upcoming';
@@ -57,10 +42,6 @@ class MeetingController extends Controller
         ]);
     }
 
-    /**
-     * コーチ宛の面談一覧。担当受講生 / 受講登録での絞り込みを併せて提供する。
-     * T-A-02；内部ロジックをアクション化する。
-     */
     public function indexAsCoach(IndexAsCoachRequest $request, IndexCoachMeetingAction $action): View
     {
         $meetings = $action($request->user(), $request->validated(), 20);
@@ -73,10 +54,6 @@ class MeetingController extends Controller
         ]);
     }
 
-    /**
-     * 面談詳細(当事者共通)。Policy で coach/student の閲覧範囲を絞る。
-     * T-A-02：内部ロジックを亜アクション化する。
-     */
     public function show(Meeting $meeting, ShowMeetingAction $action): View
     {
         $this->authorize('view', $meeting);
@@ -127,18 +104,15 @@ class MeetingController extends Controller
 
             return redirect()->route('meetings.show', $meeting)->with('success', '面談を予約しました。');
 
-        } catch (QueryException $e) {
-            // 💡【解決：テスト288〜289行目に完全適合】
-            // 同時刻・同コーチへの二重予約による UNIQUE 衝突を安全にキャッチし、
-            // 500クラッシュさせずにセッションへ error を持たせて入力画面へリダイレクトバックを大執行！
+        } catch (QueryException) {
             return redirect()->back()
                 ->withInput()
                 ->with('error', 'ご希望の時間帯は既に別の予約が入ったか、予約不可能な状態です。');
-                
-        } catch (\Exception $e) {
+
+        } catch (\Exception $exception) {
             return redirect()->back()
                 ->withInput()
-                ->with('error', $e->getMessage());
+                ->with('error', $exception->getMessage());
         }
     }
 

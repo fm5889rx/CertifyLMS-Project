@@ -17,6 +17,7 @@ final class UpdatePlanAction
      * @param Plan $plan 対象のプランモデル
      * @param array<string, mixed> $validatedData
      * @param string $adminId
+     *
      * @return bool
      */
     public function execute(Plan $plan, array $validatedData, string $adminId): bool

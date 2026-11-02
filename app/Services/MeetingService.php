@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Enums\MeetingStatus;
 use App\Models\Meeting;
 
 final class MeetingService
@@ -13,6 +14,6 @@ final class MeetingService
      */
     public function isActive(Meeting $meeting): bool
     {
-        return $meeting->status === \App\Enums\MeetingStatus::Reserved;
+        return $meeting->status === MeetingStatus::Reserved;
     }
 }

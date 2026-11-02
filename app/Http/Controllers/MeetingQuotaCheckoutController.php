@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Actions\Stripe\PrepareCheckoutAction;
 use App\Enums\MeetingPackStatus;
+use App\Http\Requests\MeetingQuota\StoreCheckoutRequest;
 use App\Models\MeetingPack;
 use App\Models\Payment;
-use App\Actions\Stripe\PrepareCheckoutAction;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -35,14 +36,10 @@ class MeetingQuotaCheckoutController extends Controller
     /**
      * Stripe Checkout セッションを生成し、外部決済画面へリダイレクト
      */
-    public function store(Request $request): RedirectResponse
+    public function store(StoreCheckoutRequest $request): RedirectResponse
     {
-        $request->validate([
-            'meeting_pack_id' => 'required|string',
-        ]);
-
         $pack = MeetingPack::where('status', MeetingPackStatus::Published)
-            ->findOrFail($request->input('meeting_pack_id'));
+            ->findOrFail($request->validated('meeting_pack_id'));
 
         try {
             $checkoutUrl = $this->prepareCheckoutAction->execute(auth()->user(), $pack);
@@ -51,6 +48,7 @@ class MeetingQuotaCheckoutController extends Controller
 
         } catch (\Exception $e) {
             Log::error('Stripe Checkoutセッションの生成に失敗しました。', ['error' => $e->getMessage()]);
+
             return redirect()->back()->withErrors(['error' => '決済画面への遷移に失敗しました。時間をおいて再度お試しください。']);
         }
     }

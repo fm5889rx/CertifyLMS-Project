@@ -21,6 +21,12 @@ class IndexRequestTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->withoutVite();
+    }
+
     public function test_validation_passes_with_empty_filters(): void
     {
         // Arrange

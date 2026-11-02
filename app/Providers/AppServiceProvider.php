@@ -24,10 +24,8 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        // 💡 サービスコンテナへActionをシンクロ登録
-        $this->app->singleton(PrepareCheckoutAction::class, fn ($app) => new PrepareCheckoutAction());
-        $this->app->singleton(ProcessStripeWebhookAction::class, fn ($app) => new ProcessStripeWebhookAction());
-
+        $this->app->singleton(PrepareCheckoutAction::class, fn () => new PrepareCheckoutAction);
+        $this->app->singleton(ProcessStripeWebhookAction::class, fn () => new ProcessStripeWebhookAction);
     }
 
     public function boot(): void
@@ -37,9 +35,6 @@ class AppServiceProvider extends ServiceProvider
         View::composer('components.enrollment-switcher', EnrollmentSwitcherComposer::class);
         View::composer('learning.sections.show', SectionPageMetaComposer::class);
 
-        /*＊
-         * 質問掲示板関係のGate定義とポリシー登録
-         */
         Gate::define('is-student', function ($user) {
             return $user->isStudent();
         });
@@ -60,12 +55,8 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(QaReply::class, QaReplyPolicy::class);
         Gate::policy(Answer::class, AnswerPolicy::class);
 
-        // ログインユーザーが管理者であれば、一律で「false」を返して処理を強制拒否（ブロック）する
-        Gate::before(function ($user, string $ability) {
-
+        Gate::before(function ($user, string $ability, array $arguments) {
             if (method_exists($user, 'isAdmin') && $user->isAdmin()) {
-
-                // 対象（第一引数）が Answerモデルまたはクラス名である場合のみ、作成・編集を一律非表示にする
                 $target = $arguments[0] ?? null;
                 if ($target instanceof Answer || $target === Answer::class) {
                     if (in_array($ability, ['create', 'update'], true)) {
@@ -73,7 +64,6 @@ class AppServiceProvider extends ServiceProvider
                     }
                 }
 
-                // 強制削除（delete）など、上記以外の管理権限はこれまで通り無条件で通過（true）させる
                 return true;
             }
         });

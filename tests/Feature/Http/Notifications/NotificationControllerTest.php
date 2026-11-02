@@ -145,12 +145,12 @@ class NotificationControllerTest extends TestCase
         $notification = DatabaseNotification::where('notifiable_id', $this->student->id)->first();
 
         $response = $this->actingAs($this->anotherStudent)->get(route('notifications.show', $notification->id));
-        $response->assertStatus(404); 
+        $response->assertStatus(404);
 
         // ⭕ 【本番Fixに完全同期】プレーンなID形式で他人宛の操作をポスト
         $response = $this->actingAs($this->coach)
             ->post(route('notifications.markAsRead', $notification->id));
-            
+
         $response->assertStatus(403);
     }
 }

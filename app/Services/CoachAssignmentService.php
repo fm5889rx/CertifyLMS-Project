@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Models\User;
+use App\Enums\MeetingStatus;
 use App\Models\Enrollment;
 use App\Models\Meeting;
-use App\Enums\MeetingStatus;
+use App\Models\User;
 use Carbon\Carbon;
 
 final class CoachAssignmentService

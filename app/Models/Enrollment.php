@@ -183,13 +183,12 @@ class Enrollment extends Model
 
     /**
      * 【追加仕様】受講登録に紐づくメモ一覧（S-B-07用）
-     * 
-     * @return HasMany<\App\Models\EnrollmentNote, $this>
+     *
+     * @return HasMany<EnrollmentNote, $this>
      */
     public function notes(): HasMany
     {
         // 親の受講登録(enrollment_id)に対して、複数のメモ(EnrollmentNote)が紐づくhasManyリレーション
         return $this->hasMany(EnrollmentNote::class, 'enrollment_id', 'id');
     }
-
 }

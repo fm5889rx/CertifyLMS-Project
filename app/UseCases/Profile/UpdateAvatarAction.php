@@ -30,6 +30,7 @@ class UpdateAvatarAction
         if ($user->avatar_url) {
             Storage::disk('public')->delete($user->avatar_url);
             $user->avatar_url = null;
+
             return $user->save();
         }
 

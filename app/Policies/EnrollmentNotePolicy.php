@@ -30,8 +30,8 @@ class EnrollmentNotePolicy
         // 3. コーチ（coach）は、すでにEnrollmentPolicy側で磨き上げた「現役の担当アサイン」の有無に型安全に完全委譲する
         if ($user->isCoach()) {
             // EnrollmentPolicyをインスタンス化して、全く同じ厳格なアサインチェックを走らせる
-            $enrollmentPolicy = new EnrollmentPolicy();
-            
+            $enrollmentPolicy = new EnrollmentPolicy;
+
             // EnrollmentPolicyのviewメソッド、または内部の現役判定メソッドと同じロジックで認可を返却
             return $user->assignedCertifications()
                 ->where('certification_coach_assignments.certification_id', $enrollment->certification_id)

@@ -15,12 +15,13 @@ class UpdateAction
      * @param MeetingPack $plan
      * @param array<string, mixed> $validatedData
      * @param string $adminId
+     *
      * @return bool
      */
     public function execute(MeetingPack $plan, array $validatedData, string $adminId): bool
     {
         $validatedData['updated_by_user_id'] = $adminId;
-        
+
         return $plan->update($validatedData);
     }
 }

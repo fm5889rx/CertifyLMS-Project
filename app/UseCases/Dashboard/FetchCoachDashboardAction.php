@@ -37,6 +37,9 @@ final class FetchCoachDashboardAction
         private readonly ChatUnreadCountService $chatUnread,
     ) {}
 
+    /**
+     * Builds the coach dashboard data, including batched unread chat counts.
+     */
     public function __invoke(User $coach): CoachDashboardViewModel
     {
         $coachingCertificationIds = $coach->coachingCertificationIds();
@@ -79,8 +82,7 @@ final class FetchCoachDashboardAction
     }
 
     /**
-     * コーチ宛て未読 chat ルームの上位 5 件を返す。
-     * 未読件数 0 のルームは除外、未読件数で並べ替えはせず最終メッセージ時刻順とする(`scopeOrderByLastMessage`)。
+     * Returns up to five recent chat rooms with unread messages for the coach.
      *
      * @return Collection<int, ChatRoom>
      */
@@ -92,14 +94,20 @@ final class FetchCoachDashboardAction
             ->orderByLastMessage()
             ->get();
 
+        $unreadCounts = $this->chatUnread->messageCountsByRoomForUser($rooms, $coach);
+
         return $rooms
-            ->filter(fn (ChatRoom $room) => $this->chatUnread->messageCountInRoom($room, $coach) > 0)
+            ->filter(fn (ChatRoom $room) => ($unreadCounts[$room->id] ?? 0) > 0)
             ->take(5)
             ->values();
     }
 
     /**
+     * Counts unanswered threads for the coach's assigned certifications.
+     *
      * @param array<int, string> $certificationIds
+     *
+     * @return int Number of open threads without replies.
      */
     private function fetchUnansweredQaCount(array $certificationIds): int
     {
@@ -116,7 +124,7 @@ final class FetchCoachDashboardAction
     }
 
     /**
-     * 担当資格スコープの未回答 Q&A スレッド上位 5 件を新着順で返す。
+     * Returns the five newest unanswered threads for assigned certifications.
      *
      * @param array<int, string> $certificationIds
      *

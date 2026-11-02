@@ -15,6 +15,7 @@ class UpdatePasswordAction
     public function __invoke(User $user, string $newPassword): bool
     {
         $user->password = Hash::make($newPassword);
+
         return $user->save();
     }
 }

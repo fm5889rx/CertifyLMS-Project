@@ -35,7 +35,7 @@ class AdminPlanController extends Controller
         $query = Plan::query()->withCount(['users']);
 
         if (! empty($keyword)) {
-            $query->where('name', 'like', '%' . $keyword . '%');
+            $query->where('name', 'like', '%'.$keyword.'%');
         }
 
         if (! empty($status)) {
@@ -56,6 +56,7 @@ class AdminPlanController extends Controller
     public function create(): View
     {
         $this->authorize('create', Plan::class);
+
         return view('plan.management.create');
     }
 

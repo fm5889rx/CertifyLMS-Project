@@ -16,12 +16,13 @@ class UpdateProfileAction
      *
      * @param User $user ログイン中のユーザーモデル
      * @param array<string, mixed> $validatedData FormRequestで検証済みの正解データ
+     *
      * @return bool
      */
     public function __invoke(User $user, array $validatedData): bool
     {
         $user->name = $validatedData['name'];
-        
+
         // ⭕ 【本物のマッピング】画面から届いた正解データ 'bio' を、
         // そのまま User モデルの 'bio' カラムへ 1対1 で正確に代入して保存します。
         $user->bio = $validatedData['bio'] ?? null;

@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Actions\Stripe;
 
 use App\Enums\PaymentStatus;
-use App\Models\User;
 use App\Models\MeetingPack;
 use App\Models\Payment;
-use Stripe\Stripe;
+use App\Models\User;
 use Stripe\Checkout\Session;
+use Stripe\Stripe;
 
 final class PrepareCheckoutAction
 {
@@ -19,7 +19,12 @@ final class PrepareCheckoutAction
     }
 
     /**
-     * 決済履歴を「保留」で先行作成し、Stripe Checkout URLを返却する
+     * Creates a pending payment and returns its Stripe Checkout URL.
+     *
+     * @param User $user The user purchasing the meeting pack.
+     * @param MeetingPack $pack The published meeting pack selected for purchase.
+     *
+     * @return string The Stripe-hosted checkout URL.
      */
     public function execute(User $user, MeetingPack $pack): string
     {
@@ -45,7 +50,6 @@ final class PrepareCheckoutAction
             ],
         ]);
 
-        // 💡【重要】自動テストが事前に存在をアサートする「保留レコード」をここで生成
         Payment::create([
             'user_id' => $user->id,
             'meeting_pack_id' => $pack->id,

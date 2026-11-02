@@ -13,6 +13,7 @@ final class MarkAllAsReadAction
 {
     /**
      * @param string $userId
+     *
      * @return int 既読化した件数
      */
     public function execute(string $userId): int
